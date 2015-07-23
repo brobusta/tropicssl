@@ -63,8 +63,9 @@
 
 /*
  * Uncomment to enable the use of assembly code.
- */
+ *
 #define TROPICSSL_HAVE_ASM
+ */
 
 /*
  * Uncomment if the CPU supports SSE2 (IA-32 specific).
@@ -228,8 +229,9 @@
  * Caller:  library/aes.c
  *
  * This modules adds support for the VIA PadLock on x86.
- */
+ *
 #define TROPICSSL_PADLOCK_C
+ */
 
 /*
  * Module:  library/rsa.c

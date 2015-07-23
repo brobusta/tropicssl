@@ -1075,7 +1075,7 @@ int ssl_read_record(ssl_context * ssl)
 int ssl_write_certificate(ssl_context * ssl)
 {
 	int ret, i, n;
-	x509_cert *crt;
+	const x509_cert *crt;
 
 	SSL_DEBUG_MSG(2, ("=> write certificate"));
 
@@ -1584,7 +1584,7 @@ void ssl_set_rng(ssl_context * ssl, int (*f_rng) (void *), void *p_rng)
 }
 
 void ssl_set_dbg(ssl_context * ssl,
-		 void (*f_dbg) (void *, int, char *), void *p_dbg)
+		 void (*f_dbg) (void *, int, const char *), void *p_dbg)
 {
 	ssl->f_dbg = f_dbg;
 	ssl->p_dbg = p_dbg;
@@ -1620,7 +1620,7 @@ void ssl_set_ciphers(ssl_context * ssl, int *ciphers)
 	ssl->ciphers = ciphers;
 }
 
-void ssl_set_ca_chain(ssl_context * ssl, x509_cert * ca_chain, char *peer_cn)
+void ssl_set_ca_chain(ssl_context * ssl, x509_cert * ca_chain, const char *peer_cn)
 {
 	ssl->ca_chain = ca_chain;
 	ssl->peer_cn = peer_cn;
@@ -1633,7 +1633,7 @@ void ssl_set_own_cert(ssl_context * ssl, x509_cert * own_cert,
 	ssl->rsa_key = rsa_key;
 }
 
-int ssl_set_dh_param(ssl_context * ssl, char *dhm_P, char *dhm_G)
+int ssl_set_dh_param(ssl_context * ssl, const char *dhm_P, const char *dhm_G)
 {
 	int ret;
 
@@ -1650,7 +1650,7 @@ int ssl_set_dh_param(ssl_context * ssl, char *dhm_P, char *dhm_G)
 	return (0);
 }
 
-int ssl_set_hostname(ssl_context * ssl, char *hostname)
+int ssl_set_hostname(ssl_context * ssl, const char *hostname)
 {
 	if (hostname == NULL)
 		return (TROPICSSL_ERR_SSL_BAD_INPUT_DATA);
@@ -1666,17 +1666,17 @@ int ssl_set_hostname(ssl_context * ssl, char *hostname)
 /*
  * SSL get accessors
  */
-int ssl_get_bytes_avail(ssl_context * ssl)
+int ssl_get_bytes_avail(const ssl_context * ssl)
 {
 	return (ssl->in_offt == NULL ? 0 : ssl->in_msglen);
 }
 
-int ssl_get_verify_result(ssl_context * ssl)
+int ssl_get_verify_result(const ssl_context * ssl)
 {
 	return (ssl->verify_result);
 }
 
-char *ssl_get_cipher(ssl_context * ssl)
+const char *ssl_get_cipher(const ssl_context * ssl)
 {
 	switch (ssl->session->cipher) {
 #if defined(TROPICSSL_ARC4_C)
@@ -1841,7 +1841,7 @@ int ssl_read(ssl_context * ssl, unsigned char *buf, int len)
 /*
  * Send application data to be encrypted by the SSL layer
  */
-int ssl_write(ssl_context * ssl, unsigned char *buf, int len)
+int ssl_write(ssl_context * ssl, const unsigned char *buf, int len)
 {
 	int ret, n;
 

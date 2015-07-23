@@ -194,7 +194,7 @@ struct _ssl_context {
 	 * Callbacks (RNG, debug, I/O)
 	 */
 	int (*f_rng) (void *);
-	void (*f_dbg) (void *, int, char *);
+	void (*f_dbg) (void *, int, const char *);
 	int (*f_recv) (void *, unsigned char *, int);
 	int (*f_send) (void *, unsigned char *, int);
 
@@ -245,7 +245,7 @@ struct _ssl_context {
 	x509_cert *own_cert;	/*!<  own X.509 certificate   */
 	x509_cert *ca_chain;	/*!<  own trusted CA chain    */
 	x509_cert *peer_cert;	/*!<  peer X.509 cert chain   */
-	char *peer_cn;		/*!<  expected peer CN        */
+	const char *peer_cn;	/*!<  expected peer CN        */
 
 	int endpoint;		/*!<  0: client, 1: server    */
 	int authmode;		/*!<  verification mode       */
@@ -345,7 +345,7 @@ extern "C" {
 	 * \param p_dbg    debug parameter
 	 */
 	void ssl_set_dbg(ssl_context * ssl,
-			 void (*f_dbg) (void *, int, char *), void *p_dbg);
+			 void (*f_dbg) (void *, int, const char *), void *p_dbg);
 
 	/**
 	 * \brief          Set the underlying BIO read and write callbacks
@@ -401,7 +401,7 @@ extern "C" {
 	 * \note           TODO: add two more parameters: depth and crl
 	 */
 	void ssl_set_ca_chain(ssl_context * ssl, x509_cert * ca_chain,
-			      char *peer_cn);
+			      const char *peer_cn);
 
 	/**
 	 * \brief          Set own certificate and private key
@@ -423,7 +423,7 @@ extern "C" {
 	 *
 	 * \return         0 if successful
 	 */
-	int ssl_set_dh_param(ssl_context * ssl, char *dhm_P, char *dhm_G);
+	int ssl_set_dh_param(ssl_context * ssl, const char *dhm_P, const char *dhm_G);
 
 	/**
 	 * \brief          Set hostname for ServerName TLS Extension
@@ -434,7 +434,7 @@ extern "C" {
 	 *
 	 * \return         0 if successful
 	 */
-	int ssl_set_hostname(ssl_context * ssl, char *hostname);
+	int ssl_set_hostname(ssl_context * ssl, const char *hostname);
 
 	/**
 	 * \brief          Return the number of data bytes available to read
@@ -443,7 +443,7 @@ extern "C" {
 	 *
 	 * \return         how many bytes are available in the read buffer
 	 */
-	int ssl_get_bytes_avail(ssl_context * ssl);
+	int ssl_get_bytes_avail(const ssl_context * ssl);
 
 	/**
 	 * \brief          Return the result of the certificate verification
@@ -456,7 +456,7 @@ extern "C" {
 	 *                      BADCERT_CN_MISMATCH
 	 *                      BADCERT_NOT_TRUSTED
 	 */
-	int ssl_get_verify_result(ssl_context * ssl);
+	int ssl_get_verify_result(const ssl_context * ssl);
 
 	/**
 	 * \brief          Return the name of the current cipher
@@ -465,7 +465,7 @@ extern "C" {
 	 *
 	 * \return         a string containing the cipher name
 	 */
-	char *ssl_get_cipher(ssl_context * ssl);
+	const char *ssl_get_cipher(const ssl_context * ssl);
 
 	/**
 	 * \brief          Perform the SSL handshake
@@ -503,7 +503,7 @@ extern "C" {
 	 *                 it must be called later with the *same* arguments,
 	 *                 until it returns a positive value.
 	 */
-	int ssl_write(ssl_context * ssl, unsigned char *buf, int len);
+	int ssl_write(ssl_context * ssl, const unsigned char *buf, int len);
 
 	/**
 	 * \brief          Notify the peer that the connection is being closed

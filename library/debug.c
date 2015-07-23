@@ -64,8 +64,8 @@ char *debug_fmt(const char *format, ...)
 	return (str);
 }
 
-void debug_print_msg(ssl_context * ssl, int level,
-		     char *file, int line, char *text)
+void debug_print_msg(const ssl_context * ssl, int level,
+		     const char *file, int line, const char *text)
 {
 	char str[512];
 	int maxlen = sizeof(str) - 1;
@@ -78,8 +78,8 @@ void debug_print_msg(ssl_context * ssl, int level,
 	ssl->f_dbg(ssl->p_dbg, level, str);
 }
 
-void debug_print_ret(ssl_context * ssl, int level,
-		     char *file, int line, char *text, int ret)
+void debug_print_ret(const ssl_context * ssl, int level,
+		     const char *file, int line, const char *text, int ret)
 {
 	char str[512];
 	int maxlen = sizeof(str) - 1;
@@ -94,8 +94,8 @@ void debug_print_ret(ssl_context * ssl, int level,
 	ssl->f_dbg(ssl->p_dbg, level, str);
 }
 
-void debug_print_buf(ssl_context * ssl, int level,
-		     char *file, int line, char *text,
+void debug_print_buf(const ssl_context * ssl, int level,
+		     const char *file, int line, const char *text,
 		     unsigned char *buf, int len)
 {
 	char str[512];
@@ -135,8 +135,8 @@ void debug_print_buf(ssl_context * ssl, int level,
 		ssl->f_dbg(ssl->p_dbg, level, "\n");
 }
 
-void debug_print_mpi(ssl_context * ssl, int level,
-		     char *file, int line, char *text, mpi * X)
+void debug_print_mpi(const ssl_context * ssl, int level,
+		     const char *file, int line, const char *text, const mpi * X)
 {
 	char str[512];
 	int i, j, k, n, maxlen = sizeof(str) - 1;
@@ -177,8 +177,8 @@ void debug_print_mpi(ssl_context * ssl, int level,
 	ssl->f_dbg(ssl->p_dbg, level, "\n");
 }
 
-void debug_print_crt(ssl_context * ssl, int level,
-		     char *file, int line, char *text, x509_cert * crt)
+void debug_print_crt(const ssl_context * ssl, int level,
+		     const char *file, int line, const char *text, const x509_cert * crt)
 {
 	char str[512], prefix[64], *p;
 	int i = 0, maxlen = sizeof(prefix) - 1;

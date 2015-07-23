@@ -431,7 +431,7 @@ static int ssl_write_certificate_request(ssl_context * ssl)
 {
 	int ret, n;
 	unsigned char *buf, *p;
-	x509_cert *crt;
+	const x509_cert *crt;
 
 	SSL_DEBUG_MSG(2, ("=> write certificate request"));
 

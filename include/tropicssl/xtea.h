@@ -65,7 +65,7 @@ extern "C" {
 	 */
 	void xtea_crypt(xtea_context * ctx,
 			int mode,
-			unsigned char input[8], unsigned char output[8]);
+			const unsigned char input[8], unsigned char output[8]);
 
 	/*
 	 * \brief          Checkup routine

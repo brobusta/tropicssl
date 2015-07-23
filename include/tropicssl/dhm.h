@@ -69,7 +69,7 @@ extern "C" {
 	 * \return         0 if successful, or an TROPICSSL_ERR_DHM_XXX error code
 	 */
 	int dhm_read_params(dhm_context * ctx,
-			    unsigned char **p, unsigned char *end);
+			    unsigned char **p, const unsigned char *end);
 
 	/**
 	 * \brief          Setup and write the ServerKeyExchange parameters
@@ -87,7 +87,7 @@ extern "C" {
 	 *
 	 * \return         0 if successful, or an TROPICSSL_ERR_DHM_XXX error code
 	 */
-	int dhm_make_params(dhm_context * ctx, int s_size,
+	int dhm_make_params(dhm_context * ctx, int x_size,
 			    unsigned char *output, int *olen,
 			    int (*f_rng) (void *), void *p_rng);
 
@@ -100,7 +100,7 @@ extern "C" {
 	 *
 	 * \return         0 if successful, or an TROPICSSL_ERR_DHM_XXX error code
 	 */
-	int dhm_read_public(dhm_context * ctx, unsigned char *input, int ilen);
+	int dhm_read_public(dhm_context * ctx, const unsigned char *input, int ilen);
 
 	/**
 	 * \brief          Create own private value X and export G^X

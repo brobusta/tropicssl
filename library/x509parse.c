@@ -64,7 +64,7 @@
 /*
  * ASN.1 DER decoding routines
  */
-static int asn1_get_len(unsigned char **p, unsigned char *end, int *len)
+static int asn1_get_len(unsigned char **p, const unsigned char *end, int *len)
 {
 	if ((end - *p) < 1)
 		return (TROPICSSL_ERR_ASN1_OUT_OF_DATA);
@@ -102,7 +102,7 @@ static int asn1_get_len(unsigned char **p, unsigned char *end, int *len)
 }
 
 static int asn1_get_tag(unsigned char **p,
-			unsigned char *end, int *len, int tag)
+			const unsigned char *end, int *len, int tag)
 {
 	if ((end - *p) < 1)
 		return (TROPICSSL_ERR_ASN1_OUT_OF_DATA);
@@ -115,7 +115,7 @@ static int asn1_get_tag(unsigned char **p,
 	return (asn1_get_len(p, end, len));
 }
 
-static int asn1_get_bool(unsigned char **p, unsigned char *end, int *val)
+static int asn1_get_bool(unsigned char **p, const unsigned char *end, int *val)
 {
 	int ret, len;
 
@@ -131,7 +131,7 @@ static int asn1_get_bool(unsigned char **p, unsigned char *end, int *val)
 	return (0);
 }
 
-static int asn1_get_int(unsigned char **p, unsigned char *end, int *val)
+static int asn1_get_int(unsigned char **p, const unsigned char *end, int *val)
 {
 	int ret, len;
 
@@ -151,7 +151,7 @@ static int asn1_get_int(unsigned char **p, unsigned char *end, int *val)
 	return (0);
 }
 
-static int asn1_get_mpi(unsigned char **p, unsigned char *end, mpi * X)
+static int asn1_get_mpi(unsigned char **p, const unsigned char *end, mpi * X)
 {
 	int ret, len;
 
@@ -168,7 +168,7 @@ static int asn1_get_mpi(unsigned char **p, unsigned char *end, mpi * X)
 /*
  *	Version	 ::=  INTEGER  {  v1(0), v2(1), v3(2)  }
  */
-static int x509_get_version(unsigned char **p, unsigned char *end, int *ver)
+static int x509_get_version(unsigned char **p, const unsigned char *end, int *ver)
 {
 	int ret, len;
 
@@ -197,7 +197,7 @@ static int x509_get_version(unsigned char **p, unsigned char *end, int *ver)
  *	CertificateSerialNumber	 ::=  INTEGER
  */
 static int x509_get_serial(unsigned char **p,
-			   unsigned char *end, x509_buf * serial)
+			   const unsigned char *end, x509_buf * serial)
 {
 	int ret;
 
@@ -226,7 +226,7 @@ static int x509_get_serial(unsigned char **p,
  *		 algorithm				 OBJECT IDENTIFIER,
  *		 parameters				 ANY DEFINED BY algorithm OPTIONAL	}
  */
-static int x509_get_alg(unsigned char **p, unsigned char *end, x509_buf * alg)
+static int x509_get_alg(unsigned char **p, const unsigned char *end, x509_buf * alg)
 {
 	int ret, len;
 
@@ -271,10 +271,10 @@ static int x509_get_alg(unsigned char **p, unsigned char *end, x509_buf * alg)
  *
  *	AttributeValue ::= ANY DEFINED BY AttributeType
  */
-static int x509_get_name(unsigned char **p, unsigned char *end, x509_name * cur)
+static int x509_get_name(unsigned char **p, const unsigned char *end, x509_name * cur)
 {
 	int ret, len;
-	unsigned char *end2;
+	const unsigned char *end2;
 	x509_buf *oid;
 	x509_buf *val;
 
@@ -351,7 +351,7 @@ static int x509_get_name(unsigned char **p, unsigned char *end, x509_name * cur)
  *		 generalTime	GeneralizedTime }
  */
 static int x509_get_dates(unsigned char **p,
-			  unsigned char *end, x509_time * from, x509_time * to)
+			  const unsigned char *end, x509_time * from, x509_time * to)
 {
 	int ret, len;
 	char date[64];
@@ -412,7 +412,7 @@ static int x509_get_dates(unsigned char **p,
  *		 subjectPublicKey	  BIT STRING }
  */
 static int x509_get_pubkey(unsigned char **p,
-			   unsigned char *end,
+			   const unsigned char *end,
 			   x509_buf * pk_alg_oid, mpi * N, mpi * E)
 {
 	int ret, len;
@@ -465,7 +465,7 @@ static int x509_get_pubkey(unsigned char **p,
 	return (0);
 }
 
-static int x509_get_sig(unsigned char **p, unsigned char *end, x509_buf * sig)
+static int x509_get_sig(unsigned char **p, const unsigned char *end, x509_buf * sig)
 {
 	int ret, len;
 
@@ -489,7 +489,7 @@ static int x509_get_sig(unsigned char **p, unsigned char *end, x509_buf * sig)
  * X.509 v2/v3 unique identifier (not parsed)
  */
 static int x509_get_uid(unsigned char **p,
-			unsigned char *end, x509_buf * uid, int n)
+			const unsigned char *end, x509_buf * uid, int n)
 {
 	int ret;
 
@@ -517,7 +517,7 @@ static int x509_get_uid(unsigned char **p,
  * X.509 v3 extensions (only BasicConstraints are parsed)
  */
 static int x509_get_ext(unsigned char **p,
-			unsigned char *end,
+			const unsigned char *end,
 			x509_buf * ext, int *ca_istrue, int *max_pathlen)
 {
 	int ret, len;
@@ -634,10 +634,10 @@ static int x509_get_ext(unsigned char **p,
 /*
  * Parse one or more certificates and add them to the chained list
  */
-int x509parse_crt(x509_cert * chain, unsigned char *buf, int buflen)
+int x509parse_crt(x509_cert * chain, const unsigned char *buf, int buflen)
 {
 	int ret, len;
-	unsigned char *s1, *s2;
+	const unsigned char *s1, *s2;
 	unsigned char *p, *end;
 	x509_cert *crt;
 
@@ -938,7 +938,7 @@ int x509parse_crt(x509_cert * chain, unsigned char *buf, int buflen)
 /*
  * Load one or more certificates and add them to the chained list
  */
-int x509parse_crtfile(x509_cert * chain, char *path)
+int x509parse_crtfile(x509_cert * chain, const char *path)
 {
 	int ret;
 	FILE *f;
@@ -976,7 +976,7 @@ int x509parse_crtfile(x509_cert * chain, char *path)
 /*
  * Read a 16-byte hex string and convert it to binary
  */
-static int x509_get_iv(unsigned char *s, unsigned char iv[8])
+static int x509_get_iv(const unsigned char *s, unsigned char iv[8])
 {
 	int i, j, k;
 
@@ -1005,7 +1005,7 @@ static int x509_get_iv(unsigned char *s, unsigned char iv[8])
  */
 static void x509_des3_decrypt(unsigned char des3_iv[8],
 			      unsigned char *buf, int buflen,
-			      unsigned char *pwd, int pwdlen)
+			      const unsigned char *pwd, int pwdlen)
 {
 	md5_context md5_ctx;
 	des3_context des3_ctx;
@@ -1042,19 +1042,19 @@ static void x509_des3_decrypt(unsigned char des3_iv[8],
 /*
  * Parse a private RSA key
  */
-int x509parse_key(rsa_context * rsa, unsigned char *buf, int buflen,
-		  unsigned char *pwd, int pwdlen)
+int x509parse_key(rsa_context * rsa, const unsigned char *key, int keylen,
+		  const unsigned char *pwd, int pwdlen)
 {
 	int ret, len, enc;
-	unsigned char *s1, *s2;
+	unsigned char *buf, *s1, *s2;
 	unsigned char *p, *end;
 	unsigned char des3_iv[8];
 
-	s1 = (unsigned char *)strstr((char *)buf,
+	s1 = (unsigned char *)strstr((char *)key,
 				     "-----BEGIN RSA PRIVATE KEY-----");
 
 	if (s1 != NULL) {
-		s2 = (unsigned char *)strstr((char *)buf,
+		s2 = (unsigned char *)strstr((char *)key,
 					     "-----END RSA PRIVATE KEY-----");
 
 		if (s2 == NULL || s2 <= s1)
@@ -1115,7 +1115,7 @@ int x509parse_key(rsa_context * rsa, unsigned char *buf, int buflen,
 			return (ret | TROPICSSL_ERR_X509_KEY_INVALID_PEM);
 		}
 
-		buflen = len;
+		keylen = len;
 
 		if (enc != 0) {
 #if defined(TROPICSSL_DES_C)
@@ -1125,7 +1125,7 @@ int x509parse_key(rsa_context * rsa, unsigned char *buf, int buflen,
 				    (TROPICSSL_ERR_X509_KEY_PASSWORD_REQUIRED);
 			}
 
-			x509_des3_decrypt(des3_iv, buf, buflen, pwd, pwdlen);
+			x509_des3_decrypt(des3_iv, buf, keylen, pwd, pwdlen);
 
 			if (buf[0] != 0x30 || buf[1] != 0x82 ||
 			    buf[4] != 0x02 || buf[5] != 0x01) {
@@ -1137,12 +1137,14 @@ int x509parse_key(rsa_context * rsa, unsigned char *buf, int buflen,
 			return (TROPICSSL_ERR_X509_FEATURE_UNAVAILABLE);
 #endif
 		}
+	} else {
+			buf = NULL;
 	}
 
 	memset(rsa, 0, sizeof(rsa_context));
 
-	p = buf;
-	end = buf + buflen;
+	p = (s1 != NULL) ? buf : (unsigned char *)key;
+	end = p + keylen;
 
 	/*
 	 *      RSAPrivateKey ::= SEQUENCE {
@@ -1228,7 +1230,7 @@ int x509parse_key(rsa_context * rsa, unsigned char *buf, int buflen,
 /*
  * Load and parse a private RSA key
  */
-int x509parse_keyfile(rsa_context * rsa, char *path, char *pwd)
+int x509parse_keyfile(rsa_context * rsa, const char *path, const char *pwd)
 {
 	int ret;
 	FILE *f;
@@ -1274,11 +1276,11 @@ int x509parse_keyfile(rsa_context * rsa, char *path, char *pwd)
  * Store the name in printable form into buf; no more
  * than (end - buf) characters will be written
  */
-int x509parse_dn_gets(char *buf, char *end, x509_name * dn)
+int x509parse_dn_gets(char *buf, char *end, const x509_name * dn)
 {
 	int i;
 	unsigned char c;
-	x509_name *name;
+	const x509_name *name;
 	char s[128], *p;
 
 	memset(s, 0, sizeof(s));
@@ -1357,7 +1359,7 @@ int x509parse_dn_gets(char *buf, char *end, x509_name * dn)
  * Return an informational string about the
  * certificate, or NULL if memory allocation failed
  */
-char *x509parse_cert_info(char *prefix, x509_cert * crt)
+char *x509parse_cert_info(char *prefix, const x509_cert * crt)
 {
 	int i, n;
 	char *p, *end;
@@ -1424,7 +1426,7 @@ char *x509parse_cert_info(char *prefix, x509_cert * crt)
 /*
  * Return 0 if the certificate is still valid, or BADCERT_EXPIRED
  */
-int x509parse_expired(x509_cert * crt)
+int x509parse_expired(const x509_cert * crt)
 {
 	struct tm *lt;
 	time_t tt;
@@ -1447,7 +1449,7 @@ int x509parse_expired(x509_cert * crt)
 	return (0);
 }
 
-static void x509_hash(unsigned char *in, int len, int alg, unsigned char *out)
+static void x509_hash(const unsigned char *in, int len, int alg, unsigned char *out)
 {
 	switch (alg) {
 #if defined(TROPICSSL_MD2_C)
@@ -1476,7 +1478,7 @@ static void x509_hash(unsigned char *in, int len, int alg, unsigned char *out)
  * Verify the certificate validity
  */
 int x509parse_verify(x509_cert * crt,
-		     x509_cert * trust_ca, char *cn, int *flags)
+		     x509_cert * trust_ca, const char *cn, int *flags)
 {
 	int cn_len;
 	int hash_id;

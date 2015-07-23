@@ -58,7 +58,7 @@ extern "C" {
 	 *                      TROPICSSL_ERR_NET_UNKNOWN_HOST,
 	 *                      TROPICSSL_ERR_NET_CONNECT_FAILED
 	 */
-	int net_connect(int *fd, char *host, int port);
+	int net_connect(int *fd, const char *host, int port);
 
 	/**
 	 * \brief          Create a listening socket on bind_ip:port.
@@ -69,7 +69,7 @@ extern "C" {
 	 *                      TROPICSSL_ERR_NET_BIND_FAILED,
 	 *                      TROPICSSL_ERR_NET_LISTEN_FAILED
 	 */
-	int net_bind(int *fd, char *bind_ip, int port);
+	int net_bind(int *fd, const char *bind_ip, int port);
 
 	/**
 	 * \brief          Accept a connection from a remote client
