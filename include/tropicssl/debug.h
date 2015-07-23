@@ -79,7 +79,7 @@ extern "C" {
 
 	void debug_print_buf(const ssl_context * ssl, int level,
 			     const char *file, int line, const char *text,
-			     unsigned char *buf, int len);
+			     unsigned char *buf, size_t len);
 
 	void debug_print_mpi(const ssl_context * ssl, int level,
 			     const char *file, int line, const char *text, const mpi * X);

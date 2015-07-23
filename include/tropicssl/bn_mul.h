@@ -50,6 +50,7 @@
 #define TROPICSSL_BN_MUL_H
 
 #include "tropicssl/config.h"
+#include "tropicssl/bignum.h"
 
 #if defined(TROPICSSL_HAVE_ASM)
 
@@ -682,15 +683,15 @@
 #endif /* TROPICSSL_HAVE_ASM */
 
 #if !defined(MULADDC_CORE)
-#if defined(TROPICSSL_HAVE_LONGLONG)
+#if defined(TROPICSSL_HAVE_INT64)
 
 #define MULADDC_INIT                    \
 {                                       \
-    t_dbl r;                            \
-    t_int r0, r1;
+    t_udbl r;                            \
+    t_uint r0, r1;
 
 #define MULADDC_CORE                    \
-    r   = *(s++) * (t_dbl) b;           \
+    r   = *(s++) * (t_udbl) b;           \
     r0  = r;                            \
     r1  = r >> biL;                     \
     r0 += c;  r1 += (r0 <  c);          \
@@ -703,8 +704,8 @@
 #else
 #define MULADDC_INIT                    \
 {                                       \
-    t_int s0, s1, b0, b1;               \
-    t_int r0, r1, rx, ry;               \
+    t_uint s0, s1, b0, b1;               \
+    t_uint r0, r1, rx, ry;               \
     b0 = ( b << biH ) >> biH;           \
     b1 = ( b >> biH );
 

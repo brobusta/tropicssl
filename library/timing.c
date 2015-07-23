@@ -67,7 +67,8 @@ struct _hr_time {
 unsigned long hardclock(void)
 {
 	unsigned long tsc;
-	__asm rdtsc __asm mov[tsc], eax return (tsc);
+	__asm rdtsc __asm mov[tsc], eax
+	return (tsc);
 }
 
 #else
@@ -76,7 +77,7 @@ unsigned long hardclock(void)
 unsigned long hardclock(void)
 {
 	unsigned long tsc;
-asm("rdtsc":"=a"(tsc));
+	asm("rdtsc":"=a"(tsc));
 	return (tsc);
 }
 
@@ -86,7 +87,7 @@ asm("rdtsc":"=a"(tsc));
 unsigned long hardclock(void)
 {
 	unsigned long lo, hi;
-asm("rdtsc":"=a"(lo), "=d"(hi));
+	asm("rdtsc":"=a"(lo), "=d"(hi));
 	return (lo | (hi << 32));
 }
 
@@ -98,9 +99,9 @@ unsigned long hardclock(void)
 	unsigned long tbl, tbu0, tbu1;
 
 	do {
-asm("mftbu %0":"=r"(tbu0));
-asm("mftb	%0":"=r"(tbl));
-asm("mftbu %0":"=r"(tbu1));
+		asm("mftbu %0":"=r"(tbu0));
+		asm("mftb	%0":"=r"(tbl));
+		asm("mftbu %0":"=r"(tbu1));
 	} while (tbu0 != tbu1);
 
 	return (tbl);
@@ -113,7 +114,7 @@ unsigned long hardclock(void)
 {
 	unsigned long tick;
 	asm(".byte 0x83, 0x41, 0x00, 0x00");
-asm("mov	%%g1, %0":"=r"(tick));
+	asm("mov	%%g1, %0":"=r"(tick));
 	return (tick);
 }
 
@@ -123,7 +124,7 @@ asm("mov	%%g1, %0":"=r"(tick));
 unsigned long hardclock(void)
 {
 	unsigned long cc;
-asm("rpcc %0":"=r"(cc));
+	asm("rpcc %0":"=r"(cc));
 	return (cc & 0xFFFFFFFF);
 }
 
@@ -133,7 +134,7 @@ asm("rpcc %0":"=r"(cc));
 unsigned long hardclock(void)
 {
 	unsigned long itc;
-asm("mov %0 = ar.itc":"=r"(itc));
+	asm("mov %0 = ar.itc":"=r"(itc));
 	return (itc);
 }
 

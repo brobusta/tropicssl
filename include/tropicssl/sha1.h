@@ -35,12 +35,15 @@
 #ifndef TROPICSSL_SHA1_H
 #define TROPICSSL_SHA1_H
 
+#include <string.h>
+#include <inttypes.h>
+
 /**
  * \brief          SHA-1 context structure
  */
 typedef struct {
-	unsigned long total[2];	/*!< number of bytes processed  */
-	unsigned long state[5];	/*!< intermediate digest state  */
+	uint32_t total[2];	/*!< number of bytes processed  */
+	uint32_t state[5];	/*!< intermediate digest state  */
 	unsigned char buffer[64];	/*!< data block being processed */
 
 	unsigned char ipad[64];	/*!< HMAC: inner padding        */
@@ -65,7 +68,7 @@ extern "C" {
 	 * \param input    buffer holding the  data
 	 * \param ilen     length of the input data
 	 */
-	void sha1_update(sha1_context * ctx, const unsigned char *input, int ilen);
+	void sha1_update(sha1_context * ctx, const unsigned char *input, size_t ilen);
 
 	/**
 	 * \brief          SHA-1 final digest
@@ -82,7 +85,7 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 * \param output   SHA-1 checksum result
 	 */
-	void sha1(const unsigned char *input, int ilen, unsigned char output[20]);
+	void sha1(const unsigned char *input, size_t ilen, unsigned char output[20]);
 
 	/**
 	 * \brief          Output = SHA-1( file contents )
@@ -103,7 +106,7 @@ extern "C" {
 	 * \param keylen   length of the HMAC key
 	 */
 	void sha1_hmac_starts(sha1_context * ctx, const unsigned char *key,
-			      int keylen);
+			      size_t keylen);
 
 	/**
 	 * \brief          SHA-1 HMAC process buffer
@@ -113,7 +116,7 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 */
 	void sha1_hmac_update(sha1_context * ctx, const unsigned char *input,
-			      int ilen);
+			      size_t ilen);
 
 	/**
 	 * \brief          SHA-1 HMAC final digest
@@ -132,8 +135,8 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 * \param output   HMAC-SHA-1 result
 	 */
-	void sha1_hmac(const unsigned char *key, int keylen,
-		       const unsigned char *input, int ilen,
+	void sha1_hmac(const unsigned char *key, size_t keylen,
+		       const unsigned char *input, size_t ilen,
 		       unsigned char output[20]);
 
 	/**

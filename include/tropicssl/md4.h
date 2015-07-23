@@ -35,12 +35,15 @@
 #ifndef TROPICSSL_MD4_H
 #define TROPICSSL_MD4_H
 
+#include <string.h>
+#include <inttypes.h>
+
 /**
  * \brief          MD4 context structure
  */
 typedef struct {
-	unsigned long total[2];	/*!< number of bytes processed  */
-	unsigned long state[4];	/*!< intermediate digest state  */
+	uint32_t total[2];	/*!< number of bytes processed  */
+	uint32_t state[4];	/*!< intermediate digest state  */
 	unsigned char buffer[64];	/*!< data block being processed */
 
 	unsigned char ipad[64];	/*!< HMAC: inner padding        */
@@ -65,7 +68,7 @@ extern "C" {
 	 * \param input    buffer holding the  data
 	 * \param ilen     length of the input data
 	 */
-	void md4_update(md4_context * ctx, const unsigned char *input, int ilen);
+	void md4_update(md4_context * ctx, const unsigned char *input, size_t ilen);
 
 	/**
 	 * \brief          MD4 final digest
@@ -82,7 +85,7 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 * \param output   MD4 checksum result
 	 */
-	void md4(const unsigned char *input, int ilen, unsigned char output[16]);
+	void md4(const unsigned char *input, size_t ilen, unsigned char output[16]);
 
 	/**
 	 * \brief          Output = MD4( file contents )
@@ -102,7 +105,7 @@ extern "C" {
 	 * \param key      HMAC secret key
 	 * \param keylen   length of the HMAC key
 	 */
-	void md4_hmac_starts(md4_context * ctx, const unsigned char *key, int keylen);
+	void md4_hmac_starts(md4_context * ctx, const unsigned char *key, size_t keylen);
 
 	/**
 	 * \brief          MD4 HMAC process buffer
@@ -111,7 +114,7 @@ extern "C" {
 	 * \param input    buffer holding the  data
 	 * \param ilen     length of the input data
 	 */
-	void md4_hmac_update(md4_context * ctx, const unsigned char *input, int ilen);
+	void md4_hmac_update(md4_context * ctx, const unsigned char *input, size_t ilen);
 
 	/**
 	 * \brief          MD4 HMAC final digest
@@ -130,8 +133,8 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 * \param output   HMAC-MD4 result
 	 */
-	void md4_hmac(const unsigned char *key, int keylen,
-		      const unsigned char *input, int ilen, unsigned char output[16]);
+	void md4_hmac(const unsigned char *key, size_t keylen,
+		      const unsigned char *input, size_t ilen, unsigned char output[16]);
 
 	/**
 	 * \brief          Checkup routine

@@ -56,9 +56,9 @@
  */
 
 /*
- * Uncomment if the compiler supports long long.
+ * Uncomment if the compiler supports 64-bit wide.
  *
-#define TROPICSSL_HAVE_LONGLONG
+ #define TROPICSSL_HAVE_INT64
  */
 
 /*

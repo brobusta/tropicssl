@@ -47,7 +47,8 @@
 
 static int ssl_write_client_hello(ssl_context * ssl)
 {
-	int ret, i, n;
+	int ret;
+	size_t i, n;
 	unsigned char *buf;
 	unsigned char *p;
 	time_t t;
@@ -177,7 +178,8 @@ static int ssl_write_client_hello(ssl_context * ssl)
 static int ssl_parse_server_hello(ssl_context * ssl)
 {
 	time_t t;
-	int ret, i, n;
+	int ret, i;
+	size_t n;
 	int ext_len;
 	unsigned char *buf;
 
@@ -304,7 +306,8 @@ static int ssl_parse_server_hello(ssl_context * ssl)
 
 static int ssl_parse_server_key_exchange(ssl_context * ssl)
 {
-	int ret, n;
+	int ret;
+	size_t n;
 	unsigned char *p, *end;
 	unsigned char hash[36];
 	md5_context md5;
@@ -483,7 +486,8 @@ static int ssl_parse_server_hello_done(ssl_context * ssl)
 
 static int ssl_write_client_key_exchange(ssl_context * ssl)
 {
-	int ret, i, n;
+	int ret;
+	size_t i, n;
 
 	SSL_DEBUG_MSG(2, ("=> write client key exchange"));
 
@@ -575,7 +579,8 @@ static int ssl_write_client_key_exchange(ssl_context * ssl)
 
 static int ssl_write_certificate_verify(ssl_context * ssl)
 {
-	int ret, n;
+	int ret;
+	size_t n;
 	unsigned char hash[36];
 
 	SSL_DEBUG_MSG(2, ("=> write certificate verify"));

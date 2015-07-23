@@ -87,7 +87,7 @@
  */
 typedef struct {
 	int ver;		/*!<  always 0          */
-	int len;		/*!<  size(N) in chars  */
+	size_t len;		/*!<  size(N) in chars  */
 
 	mpi N;			/*!<  public modulus    */
 	mpi E;			/*!<  public exponent   */
@@ -212,7 +212,7 @@ extern "C" {
 	 *                 of ctx->N (eg. 128 bytes if RSA-1024 is used).
 	 */
 	int rsa_pkcs1_encrypt(rsa_context * ctx,
-			      int mode, int ilen,
+			      int mode, size_t ilen,
 			      const unsigned char *input, unsigned char *output);
 
 	/**
@@ -232,9 +232,9 @@ extern "C" {
 	 *                 an error is thrown.
 	 */
 	int rsa_pkcs1_decrypt(rsa_context * ctx,
-			      int mode, int *olen,
+			      int mode, size_t *olen,
 			      const unsigned char *input,
-			      unsigned char *output, int output_max_len);
+			      unsigned char *output, size_t output_max_len);
 
 	/**
 	 * \brief          Do a private RSA to sign a message digest
@@ -255,7 +255,7 @@ extern "C" {
 	int rsa_pkcs1_sign(rsa_context * ctx,
 			   int mode,
 			   int hash_id,
-			   int hashlen,
+			   unsigned int hashlen,
 			   const unsigned char *hash, unsigned char *sig);
 
 	/**
@@ -277,7 +277,7 @@ extern "C" {
 	int rsa_pkcs1_verify(rsa_context * ctx,
 			     int mode,
 			     int hash_id,
-			     int hashlen,
+			     unsigned int hashlen,
 			     const unsigned char *hash, unsigned char *sig);
 
 	/**

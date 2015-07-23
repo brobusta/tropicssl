@@ -52,7 +52,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#define ciL	   ((int) sizeof(t_int))	/* chars in limb  */
+#define ciL	   ((int) sizeof(t_uint))	/* chars in limb  */
 #define biL	   (ciL << 3)	/* bits  in limb  */
 #define biH	   (ciL << 2)	/* half limb size */
 
@@ -110,12 +110,12 @@ void mpi_free(mpi * X, ...)
 /*
  * Enlarge to the specified number of limbs
  */
-int mpi_grow(mpi * X, int nblimbs)
+int mpi_grow(mpi * X, size_t nblimbs)
 {
-	t_int *p;
+	t_uint *p;
 
 	if (X->n < nblimbs) {
-		if ((p = (t_int *) malloc(nblimbs * ciL)) == NULL)
+		if ((p = (t_uint *) malloc(nblimbs * ciL)) == NULL)
 			return (1);
 
 		memset(p, 0, nblimbs * ciL);
@@ -138,7 +138,8 @@ int mpi_grow(mpi * X, int nblimbs)
  */
 int mpi_copy(mpi * X, const mpi * Y)
 {
-	int ret, i;
+	int ret;
+	size_t i;
 
 	if (X == Y)
 		return (0);
@@ -175,7 +176,7 @@ void mpi_swap(mpi * X, mpi * Y)
 /*
  * Set value from integer
  */
-int mpi_lset(mpi * X, int z)
+int mpi_lset(mpi * X, t_sint z)
 {
 	int ret;
 
@@ -193,12 +194,12 @@ cleanup:
 /*
  * Return the number of least significant bits
  */
-int mpi_lsb(const mpi * X)
+size_t mpi_lsb(const mpi * X)
 {
-	int i, j, count = 0;
+	size_t i, j, count = 0;
 
 	for (i = 0; i < X->n; i++)
-		for (j = 0; j < (int)biL; j++, count++)
+		for (j = 0; j < biL; j++, count++)
 			if (((X->p[i] >> j) & 1) != 0)
 				return (count);
 
@@ -208,9 +209,9 @@ int mpi_lsb(const mpi * X)
 /*
  * Return the number of most significant bits
  */
-int mpi_msb(const mpi * X)
+size_t mpi_msb(const mpi * X)
 {
-	int i, j;
+	size_t i, j;
 
 	for (i = X->n - 1; i > 0; i--)
 		if (X->p[i] != 0)
@@ -226,7 +227,7 @@ int mpi_msb(const mpi * X)
 /*
  * Return the total size in bytes
  */
-int mpi_size(const mpi * X)
+size_t mpi_size(const mpi * X)
 {
 	return ((mpi_msb(X) + 7) >> 3);
 }
@@ -234,7 +235,7 @@ int mpi_size(const mpi * X)
 /*
  * Convert an ASCII character to digit value
  */
-static int mpi_get_digit(t_int * d, int radix, char c)
+static int mpi_get_digit(t_uint * d, int radix, char c)
 {
 	*d = 255;
 
@@ -245,7 +246,7 @@ static int mpi_get_digit(t_int * d, int radix, char c)
 	if (c >= 0x61 && c <= 0x66)
 		*d = c - 0x57;
 
-	if (*d >= (t_int) radix)
+	if (*d >= (t_uint) radix)
 		return (TROPICSSL_ERR_MPI_INVALID_CHARACTER);
 
 	return (0);
@@ -256,8 +257,9 @@ static int mpi_get_digit(t_int * d, int radix, char c)
  */
 int mpi_read_string(mpi * X, int radix, const char *s)
 {
-	int ret, i, j, n;
-	t_int d;
+	int ret;
+	size_t i, j, n;
+	t_uint d;
 	mpi T;
 
 	if (radix < 2 || radix > 16)
@@ -283,7 +285,7 @@ int mpi_read_string(mpi * X, int radix, const char *s)
 	} else {
 		MPI_CHK(mpi_lset(X, 0));
 
-		for (i = 0; i < (int)strlen(s); i++) {
+		for (i = 0; i < strlen(s); i++) {
 			if (i == 0 && s[i] == '-') {
 				X->s = -1;
 				continue;
@@ -308,7 +310,7 @@ cleanup:
 static int mpi_write_hlp(mpi * X, int radix, char **p)
 {
 	int ret;
-	t_int r;
+	t_uint r;
 
 	if (radix < 2 || radix > 16)
 		return (TROPICSSL_ERR_MPI_BAD_INPUT_DATA);
@@ -332,9 +334,10 @@ cleanup:
 /*
  * Export into an ASCII string
  */
-int mpi_write_string(const mpi * X, int radix, char *s, int *slen)
+int mpi_write_string(const mpi * X, int radix, char *s, size_t *slen)
 {
-	int ret = 0, n;
+	int ret = 0;
+	size_t n;
 	char *p;
 	mpi T;
 
@@ -360,7 +363,8 @@ int mpi_write_string(const mpi * X, int radix, char *s, int *slen)
 		*p++ = '-';
 
 	if (radix == 16) {
-		int c, i, j, k;
+		int c;
+		size_t i, j, k;
 
 		for (i = X->n - 1, k = 0; i >= 0; i--) {
 			for (j = ciL - 1; j >= 0; j--) {
@@ -393,8 +397,8 @@ cleanup:
  */
 int mpi_read_file(mpi * X, int radix, FILE * fin)
 {
-	t_int d;
-	int slen;
+	t_uint d;
+	size_t slen;
 	char *p;
 	char s[1024];
 
@@ -425,7 +429,8 @@ int mpi_read_file(mpi * X, int radix, FILE * fin)
  */
 int mpi_write_file(const char *p, const mpi * X, int radix, FILE * fout)
 {
-	int n, ret;
+	int ret;
+	size_t n;
 	size_t slen;
 	size_t plen;
 	char s[1024];
@@ -434,7 +439,7 @@ int mpi_write_file(const char *p, const mpi * X, int radix, FILE * fout)
 	memset(s, 0, n);
 	n -= 2;
 
-	MPI_CHK(mpi_write_string(X, radix, s, (int *)&n));
+	MPI_CHK(mpi_write_string(X, radix, s, &n));
 
 	if (p == NULL)
 		p = "";
@@ -459,9 +464,10 @@ cleanup:
 /*
  * Import X from unsigned binary data, big endian
  */
-int mpi_read_binary(mpi * X, const unsigned char *buf, int buflen)
+int mpi_read_binary(mpi * X, const unsigned char *buf, size_t buflen)
 {
-	int ret, i, j, n;
+	int ret;
+	size_t i, j, n;
 
 	for (n = 0; n < buflen; n++)
 		if (buf[n] != 0)
@@ -471,7 +477,7 @@ int mpi_read_binary(mpi * X, const unsigned char *buf, int buflen)
 	MPI_CHK(mpi_lset(X, 0));
 
 	for (i = buflen - 1, j = 0; i >= n; i--, j++)
-		X->p[j / ciL] |= ((t_int) buf[i]) << ((j % ciL) << 3);
+		X->p[j / ciL] |= ((t_uint) buf[i]) << ((j % ciL) << 3);
 
 cleanup:
 
@@ -481,9 +487,9 @@ cleanup:
 /*
  * Export X into unsigned binary data, big endian
  */
-int mpi_write_binary(const mpi * X, unsigned char *buf, int buflen)
+int mpi_write_binary(const mpi * X, unsigned char *buf, size_t buflen)
 {
-	int i, j, n;
+	size_t i, j, n;
 
 	n = mpi_size(X);
 
@@ -501,17 +507,18 @@ int mpi_write_binary(const mpi * X, unsigned char *buf, int buflen)
 /*
  * Left-shift: X <<= count
  */
-int mpi_shift_l(mpi * X, int count)
+int mpi_shift_l(mpi * X, size_t count)
 {
-	int ret, i, v0, t1;
-	t_int r0 = 0, r1;
+	int ret;
+	size_t i, v0, t1;
+	t_uint r0 = 0, r1;
 
 	v0 = count / (biL);
 	t1 = count & (biL - 1);
 
 	i = mpi_msb(X) + count;
 
-	if (X->n * (int)biL < i)
+	if (X->n * biL < i)
 		MPI_CHK(mpi_grow(X, BITS_TO_LIMBS(i)));
 
 	ret = 0;
@@ -547,10 +554,10 @@ cleanup:
 /*
  * Right-shift: X >>= count
  */
-int mpi_shift_r(mpi * X, int count)
+int mpi_shift_r(mpi * X, size_t count)
 {
-	int i, v0, v1;
-	t_int r0 = 0, r1;
+	size_t i, v0, v1;
+	t_uint r0 = 0, r1;
 
 	v0 = count / biL;
 	v1 = count & (biL - 1);
@@ -586,7 +593,7 @@ int mpi_shift_r(mpi * X, int count)
  */
 int mpi_cmp_abs(const mpi * X, const mpi * Y)
 {
-	int i, j;
+	size_t i, j;
 
 	for (i = X->n - 1; i >= 0; i--)
 		if (X->p[i] != 0)
@@ -619,7 +626,7 @@ int mpi_cmp_abs(const mpi * X, const mpi * Y)
  */
 int mpi_cmp_mpi(const mpi * X, const mpi * Y)
 {
-	int i, j;
+	size_t i, j;
 
 	for (i = X->n - 1; i >= 0; i--)
 		if (X->p[i] != 0)
@@ -655,10 +662,10 @@ int mpi_cmp_mpi(const mpi * X, const mpi * Y)
 /*
  * Compare signed values
  */
-int mpi_cmp_int(const mpi * X, int z)
+int mpi_cmp_int(const mpi * X, t_sint z)
 {
 	mpi Y;
-	t_int p[1];
+	t_uint p[1];
 
 	*p = (z < 0) ? -z : z;
 	Y.s = (z < 0) ? -1 : 1;
@@ -673,8 +680,9 @@ int mpi_cmp_int(const mpi * X, int z)
  */
 int mpi_add_abs(mpi * X, const mpi * A, const mpi * B)
 {
-	int ret, i, j;
-	t_int *o, *p, c;
+	int ret;
+	size_t i, j;
+	t_uint *o, *p, c;
 
 	if (X == B) {
 		const mpi *T = A;
@@ -721,10 +729,10 @@ cleanup:
 /*
  * Helper for mpi substraction
  */
-static void mpi_sub_hlp(int n, t_int * s, t_int * d)
+static void mpi_sub_hlp(size_t n, t_uint * s, t_uint * d)
 {
-	int i;
-	t_int c, z;
+	size_t i;
+	t_uint c, z;
 
 	for (i = c = 0; i < n; i++, s++, d++) {
 		z = (*d < c);
@@ -748,7 +756,8 @@ static void mpi_sub_hlp(int n, t_int * s, t_int * d)
 int mpi_sub_abs(mpi * X, const mpi * A, const mpi * B)
 {
 	mpi TB;
-	int ret, n;
+	int ret;
+	size_t n;
 
 	if (mpi_cmp_abs(A, B) < 0)
 		return (TROPICSSL_ERR_MPI_NEGATIVE_VALUE);
@@ -831,10 +840,10 @@ cleanup:
 /*
  * Signed addition: X = A + b
  */
-int mpi_add_int(mpi * X, const mpi * A, int b)
+int mpi_add_int(mpi * X, const mpi * A, t_sint b)
 {
 	mpi _B;
-	t_int p[1];
+	t_uint p[1];
 
 	p[0] = (b < 0) ? -b : b;
 	_B.s = (b < 0) ? -1 : 1;
@@ -847,10 +856,10 @@ int mpi_add_int(mpi * X, const mpi * A, int b)
 /*
  * Signed substraction: X = A - b
  */
-int mpi_sub_int(mpi * X, const mpi * A, int b)
+int mpi_sub_int(mpi * X, const mpi * A, t_sint b)
 {
 	mpi _B;
-	t_int p[1];
+	t_uint p[1];
 
 	p[0] = (b < 0) ? -b : b;
 	_B.s = (b < 0) ? -1 : 1;
@@ -863,9 +872,9 @@ int mpi_sub_int(mpi * X, const mpi * A, int b)
 /*
  * Helper for mpi multiplication
  */
-static void mpi_mul_hlp(int i, t_int * s, t_int * d, t_int b)
+static void mpi_mul_hlp(size_t i, t_uint * s, t_uint * d, t_uint b)
 {
-	t_int c = 0, t = 0;
+	t_uint c = 0, t = 0;
 
 #if defined(MULADDC_HUIT)
 	for (; i >= 8; i -= 8) {
@@ -907,7 +916,8 @@ static void mpi_mul_hlp(int i, t_int * s, t_int * d, t_int b)
  */
 int mpi_mul_mpi(mpi * X, const mpi * A, const mpi * B)
 {
-	int ret, i, j;
+	int ret;
+	size_t i, j;
 	mpi TA, TB;
 
 	mpi_init(&TA, &TB, NULL);
@@ -947,10 +957,10 @@ cleanup:
 /*
  * Baseline multiplication: X = A * b
  */
-int mpi_mul_int(mpi * X, const mpi * A, t_int b)
+int mpi_mul_int(mpi * X, const mpi * A, t_sint b)
 {
 	mpi _B;
-	t_int p[1];
+	t_uint p[1];
 
 	_B.s = 1;
 	_B.n = 1;
@@ -965,7 +975,8 @@ int mpi_mul_int(mpi * X, const mpi * A, t_int b)
  */
 int mpi_div_mpi(mpi * Q, mpi * R, const mpi * A, const mpi * B)
 {
-	int ret, i, n, t, k;
+	int ret;
+	size_t i, n, t, k;
 	mpi X, Y, Z, T1, T2;
 
 	if (mpi_cmp_int(B, 0) == 0)
@@ -1012,22 +1023,22 @@ int mpi_div_mpi(mpi * Q, mpi * R, const mpi * A, const mpi * B)
 		if (X.p[i] >= Y.p[t])
 			Z.p[i - t - 1] = ~0;
 		else {
-#if defined(TROPICSSL_HAVE_LONGLONG)
-			t_dbl r;
+#if defined(TROPICSSL_HAVE_INT64)
+			t_udbl r;
 
-			r = (t_dbl) X.p[i] << biL;
-			r |= (t_dbl) X.p[i - 1];
+			r = (t_udbl) X.p[i] << biL;
+			r |= (t_udbl) X.p[i - 1];
 			r /= Y.p[t];
-			if (r > ((t_dbl) 1 << biL) - 1)
-				r = ((t_dbl) 1 << biL) - 1;
+			if (r > ((t_udbl) 1 << biL) - 1)
+				r = ((t_udbl) 1 << biL) - 1;
 
-			Z.p[i - t - 1] = (t_int) r;
+			Z.p[i - t - 1] = (t_uint) r;
 #else
 			/*
 			 * __udiv_qrnnd_c, from gmp/longlong.h
 			 */
-			t_int q0, q1, r0, r1;
-			t_int d0, d1, d, m;
+			t_uint q0, q1, r0, r1;
+			t_uint d0, d1, d, m;
 
 			d = Y.p[t];
 			d0 = (d << biH) >> biH;
@@ -1118,10 +1129,10 @@ cleanup:
  *		   1 if memory allocation failed
  *		   TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if b == 0
  */
-int mpi_div_int(mpi * Q, mpi * R, const mpi * A, int b)
+int mpi_div_int(mpi * Q, mpi * R, const mpi * A, t_sint b)
 {
 	mpi _B;
-	t_int p[1];
+	t_uint p[1];
 
 	p[0] = (b < 0) ? -b : b;
 	_B.s = (b < 0) ? -1 : 1;
@@ -1154,10 +1165,10 @@ cleanup:
 /*
  * Modulo: r = A mod b
  */
-int mpi_mod_int(t_int * r, const mpi * A, int b)
+int mpi_mod_int(t_uint * r, const mpi * A, t_sint b)
 {
-	int i;
-	t_int x, y, z;
+	size_t i;
+	t_uint x, y, z;
 
 	if (b == 0)
 		return (TROPICSSL_ERR_MPI_DIVISION_BY_ZERO);
@@ -1201,9 +1212,9 @@ int mpi_mod_int(t_int * r, const mpi * A, int b)
 /*
  * Fast Montgomery initialization (thanks to Tom St Denis)
  */
-static void mpi_montg_init(t_int * mm, const mpi * N)
+static void mpi_montg_init(t_uint * mm, const mpi * N)
 {
-	t_int x, m0 = N->p[0];
+	t_uint x, m0 = N->p[0];
 
 	x = m0;
 	x += ((m0 + 2) & 4) << 1;
@@ -1222,10 +1233,10 @@ static void mpi_montg_init(t_int * mm, const mpi * N)
 /*
  * Montgomery multiplication: A = A * B * R^-1 mod N  (HAC 14.36)
  */
-static void mpi_montmul(mpi * A, const mpi * B, const mpi * N, t_int mm, const mpi * T)
+static void mpi_montmul(mpi * A, const mpi * B, const mpi * N, t_uint mm, const mpi * T)
 {
-	int i, n, m;
-	t_int u0, u1, *d;
+	size_t i, n, m;
+	t_uint u0, u1, *d;
 
 	memset(T->p, 0, T->n * ciL);
 
@@ -1259,9 +1270,9 @@ static void mpi_montmul(mpi * A, const mpi * B, const mpi * N, t_int mm, const m
 /*
  * Montgomery reduction: A = A * R^-1 mod N
  */
-static void mpi_montred(mpi * A, const mpi * N, t_int mm, const mpi * T)
+static void mpi_montred(mpi * A, const mpi * N, t_uint mm, const mpi * T)
 {
-	t_int z = 1;
+	t_uint z = 1;
 	mpi U;
 
 	U.n = U.s = z;
@@ -1275,9 +1286,10 @@ static void mpi_montred(mpi * A, const mpi * N, t_int mm, const mpi * T)
  */
 int mpi_exp_mod(mpi * X, const mpi * A, const mpi * E, const mpi * N, mpi * _RR)
 {
-	int ret, i, j, wsize, wbits;
-	int bufsize, nblimbs, nbits;
-	t_int ei, mm, state;
+	int ret;
+	size_t i, j, wsize, wbits;
+	size_t bufsize, nblimbs, nbits;
+	t_uint ei, mm, state;
 	mpi RR, T, W[64];
 
 	if (mpi_cmp_int(N, 0) < 0 || (N->p[0] & 1) == 0)
@@ -1362,7 +1374,7 @@ int mpi_exp_mod(mpi * X, const mpi * A, const mpi * E, const mpi * N, mpi * _RR)
 			if (nblimbs-- == 0)
 				break;
 
-			bufsize = sizeof(t_int) << 3;
+			bufsize = sizeof(t_uint) << 3;
 		}
 
 		bufsize--;
@@ -1444,7 +1456,8 @@ cleanup:
  */
 int mpi_gcd(mpi * G, const mpi * A, const mpi * B)
 {
-	int ret, lz, lzt;
+	int ret;
+	size_t lz, lzt;
 	mpi TG, TA, TB;
 
 	mpi_init(&TG, &TA, &TB, NULL);
@@ -1598,7 +1611,8 @@ static const int small_prime[] = {
  */
 int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng)
 {
-	int ret, i, j, n, s, xs;
+	int ret, xs;
+	size_t i, j, n, s;
 	mpi W, R, T, A, RR;
 	unsigned char *p;
 
@@ -1617,7 +1631,7 @@ int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng)
 		return (TROPICSSL_ERR_MPI_NOT_ACCEPTABLE);
 
 	for (i = 0; small_prime[i] > 0; i++) {
-		t_int r;
+		t_uint r;
 
 		if (mpi_cmp_int(X, small_prime[i]) <= 0)
 			return (0);
@@ -1702,10 +1716,11 @@ cleanup:
 /*
  * Prime number generation
  */
-int mpi_gen_prime(mpi * X, int nbits, int dh_flag,
+int mpi_gen_prime(mpi * X, size_t nbits, int dh_flag,
 		  int (*f_rng) (void *), void *p_rng)
 {
-	int ret, k, n;
+	int ret;
+	size_t k, n;
 	unsigned char *p;
 	mpi Y;
 

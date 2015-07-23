@@ -33,6 +33,9 @@
 #ifndef TROPICSSL_CAMELLIA_H
 #define TROPICSSL_CAMELLIA_H
 
+#include <inttypes.h>
+#include <string.h>
+
 #define CAMELLIA_ENCRYPT     1
 #define CAMELLIA_DECRYPT     0
 
@@ -41,7 +44,7 @@
  */
 typedef struct {
 	int nr;			/*!<  number of rounds  */
-	unsigned long rk[68];	/*!<  CAMELLIA round keys    */
+	uint32_t rk[68];	/*!<  CAMELLIA round keys    */
 } camellia_context;
 
 #ifdef __cplusplus
@@ -56,7 +59,7 @@ extern "C" {
 	 * \param keysize  must be 128, 192 or 256
 	 */
 	void camellia_setkey_enc(camellia_context * ctx, const unsigned char *key,
-				 int keysize);
+				 unsigned int keysize);
 
 	/**
 	 * \brief          CAMELLIA key schedule (decryption)
@@ -66,7 +69,7 @@ extern "C" {
 	 * \param keysize  must be 128, 192 or 256
 	 */
 	void camellia_setkey_dec(camellia_context * ctx, const unsigned char *key,
-				 int keysize);
+				 unsigned int keysize);
 
 	/**
 	 * \brief          CAMELLIA-ECB block encryption/decryption
@@ -93,7 +96,7 @@ extern "C" {
 	 */
 	void camellia_crypt_cbc(camellia_context * ctx,
 				int mode,
-				int length,
+				size_t length,
 				unsigned char iv[16],
 				const unsigned char *input, unsigned char *output);
 
@@ -110,8 +113,8 @@ extern "C" {
 	 */
 	void camellia_crypt_cfb128(camellia_context * ctx,
 				   int mode,
-				   int length,
-				   int *iv_off,
+				   size_t length,
+				   size_t *iv_off,
 				   unsigned char iv[16],
 				   const unsigned char *input, unsigned char *output);
 

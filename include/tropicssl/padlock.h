@@ -48,7 +48,7 @@
 #define PADLOCK_PHE 0x0C00
 #define PADLOCK_PMM 0x3000
 
-#define PADLOCK_ALIGN16(x) (unsigned long *) (16 + ((long) x & ~15))
+#define PADLOCK_ALIGN16(x) (uint32_t *) (16 + ((long) x & ~15))
 
 #ifdef __cplusplus
 extern "C" {

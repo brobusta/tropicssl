@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_AES_H
 #define TROPICSSL_AES_H
 
+#include <string.h>
+#include <inttypes.h>
+
 #define AES_ENCRYPT     1
 #define AES_DECRYPT     0
 
@@ -43,8 +46,8 @@
  */
 typedef struct {
 	int nr;			/*!<  number of rounds  */
-	unsigned long *rk;	/*!<  AES round keys    */
-	unsigned long buf[68];	/*!<  unaligned data    */
+	uint32_t *rk;	/*!<  AES round keys    */
+	uint32_t buf[68];	/*!<  unaligned data    */
 } aes_context;
 
 #ifdef __cplusplus
@@ -93,7 +96,7 @@ extern "C" {
 	 */
 	void aes_crypt_cbc(aes_context * ctx,
 			   int mode,
-			   int length,
+			   size_t length,
 			   unsigned char iv[16],
 			   const unsigned char *input, unsigned char *output);
 
@@ -110,8 +113,8 @@ extern "C" {
 	 */
 	void aes_crypt_cfb128(aes_context * ctx,
 			      int mode,
-			      int length,
-			      int *iv_off,
+			      size_t length,
+			      size_t *iv_off,
 			      unsigned char iv[16],
 			      const unsigned char *input, unsigned char *output);
 

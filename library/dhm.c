@@ -102,16 +102,17 @@ int dhm_read_params(dhm_context * ctx, unsigned char **p, const unsigned char *e
  * Setup and write the ServerKeyExchange parameters
  */
 int dhm_make_params(dhm_context * ctx, int x_size,
-		    unsigned char *output, int *olen,
+		    unsigned char *output, size_t *olen,
 		    int (*f_rng) (void *), void *p_rng)
 {
-	int i, ret, n, n1, n2, n3;
+	int i, ret, n;
+	size_t n1, n2, n3;
 	unsigned char *p;
 
 	/*
 	 * generate X and calculate GX = G^X mod P
 	 */
-	n = x_size / sizeof(t_int);
+	n = x_size / sizeof(t_uint);
 	MPI_CHK(mpi_grow(&ctx->X, n));
 	MPI_CHK(mpi_lset(&ctx->X, 0));
 
@@ -157,7 +158,7 @@ cleanup:
 /*
  * Import the peer's public value G^Y
  */
-int dhm_read_public(dhm_context * ctx, const unsigned char *input, int ilen)
+int dhm_read_public(dhm_context * ctx, const unsigned char *input, size_t ilen)
 {
 	int ret;
 
@@ -174,7 +175,7 @@ int dhm_read_public(dhm_context * ctx, const unsigned char *input, int ilen)
  * Create own private value X and export G^X
  */
 int dhm_make_public(dhm_context * ctx, int x_size,
-		    unsigned char *output, int olen,
+		    unsigned char *output, size_t olen,
 		    int (*f_rng) (void *), void *p_rng)
 {
 	int ret, i, n;
@@ -186,7 +187,7 @@ int dhm_make_public(dhm_context * ctx, int x_size,
 	/*
 	 * generate X and calculate GX = G^X mod P
 	 */
-	n = x_size / sizeof(t_int);
+	n = x_size / sizeof(t_uint);
 	MPI_CHK(mpi_grow(&ctx->X, n));
 	MPI_CHK(mpi_lset(&ctx->X, 0));
 
@@ -213,7 +214,7 @@ cleanup:
 /*
  * Derive and export the shared secret (G^Y)^X mod P
  */
-int dhm_calc_secret(dhm_context * ctx, unsigned char *output, int *olen)
+int dhm_calc_secret(dhm_context * ctx, unsigned char *output, size_t *olen)
 {
 	int ret;
 

@@ -35,12 +35,15 @@
 #ifndef TROPICSSL_SHA2_H
 #define TROPICSSL_SHA2_H
 
+#include <string.h>
+#include <inttypes.h>
+
 /**
  * \brief          SHA-256 context structure
  */
 typedef struct {
-	unsigned long total[2];	/*!< number of bytes processed  */
-	unsigned long state[8];	/*!< intermediate digest state  */
+	uint32_t total[2];	/*!< number of bytes processed  */
+	uint32_t state[8];	/*!< intermediate digest state  */
 	unsigned char buffer[64];	/*!< data block being processed */
 
 	unsigned char ipad[64];	/*!< HMAC: inner padding        */
@@ -67,7 +70,7 @@ extern "C" {
 	 * \param input    buffer holding the  data
 	 * \param ilen     length of the input data
 	 */
-	void sha2_update(sha2_context * ctx, const unsigned char *input, int ilen);
+	void sha2_update(sha2_context * ctx, const unsigned char *input, size_t ilen);
 
 	/**
 	 * \brief          SHA-256 final digest
@@ -85,7 +88,7 @@ extern "C" {
 	 * \param output   SHA-224/256 checksum result
 	 * \param is224    0 = use SHA256, 1 = use SHA224
 	 */
-	void sha2(const unsigned char *input, int ilen,
+	void sha2(const unsigned char *input, size_t ilen,
 		  unsigned char output[32], int is224);
 
 	/**
@@ -109,7 +112,7 @@ extern "C" {
 	 * \param is224    0 = use SHA256, 1 = use SHA224
 	 */
 	void sha2_hmac_starts(sha2_context * ctx, const unsigned char *key,
-			      int keylen, int is224);
+			      size_t keylen, int is224);
 
 	/**
 	 * \brief          SHA-256 HMAC process buffer
@@ -119,7 +122,7 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 */
 	void sha2_hmac_update(sha2_context * ctx, const unsigned char *input,
-			      int ilen);
+			      size_t ilen);
 
 	/**
 	 * \brief          SHA-256 HMAC final digest
@@ -139,8 +142,8 @@ extern "C" {
 	 * \param output   HMAC-SHA-224/256 result
 	 * \param is224    0 = use SHA256, 1 = use SHA224
 	 */
-	void sha2_hmac(const unsigned char *key, int keylen,
-		       const unsigned char *input, int ilen,
+	void sha2_hmac(const unsigned char *key, size_t keylen,
+		       const unsigned char *input, size_t ilen,
 		       unsigned char output[32], int is224);
 
 	/**

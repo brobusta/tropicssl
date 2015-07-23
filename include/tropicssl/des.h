@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_DES_H
 #define TROPICSSL_DES_H
 
+#include <string.h>
+#include <inttypes.h>
+
 #define DES_ENCRYPT     1
 #define DES_DECRYPT     0
 
@@ -43,7 +46,7 @@
  */
 typedef struct {
 	int mode;		/*!<  encrypt/decrypt   */
-	unsigned long sk[32];	/*!<  DES subkeys       */
+	uint32_t sk[32];	/*!<  DES subkeys       */
 } des_context;
 
 /**
@@ -51,7 +54,7 @@ typedef struct {
  */
 typedef struct {
 	int mode;		/*!<  encrypt/decrypt   */
-	unsigned long sk[96];	/*!<  3DES subkeys      */
+	uint32_t sk[96];	/*!<  3DES subkeys      */
 } des3_context;
 
 #ifdef __cplusplus
@@ -128,7 +131,7 @@ extern "C" {
 	 */
 	void des_crypt_cbc(des_context * ctx,
 			   int mode,
-			   int length,
+			   size_t length,
 			   unsigned char iv[8],
 			   const unsigned char *input, unsigned char *output);
 
@@ -154,7 +157,7 @@ extern "C" {
 	 */
 	void des3_crypt_cbc(des3_context * ctx,
 			    int mode,
-			    int length,
+			    size_t length,
 			    unsigned char iv[8],
 			    const unsigned char *input, unsigned char *output);
 

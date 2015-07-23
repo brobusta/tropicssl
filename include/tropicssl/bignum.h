@@ -36,6 +36,8 @@
 #define TROPICSSL_BIGNUM_H
 
 #include <stdio.h>
+#include <string.h>
+#include <inttypes.h>
 
 #define TROPICSSL_ERR_MPI_FILE_IO_ERROR                     -0x0002
 #define TROPICSSL_ERR_MPI_BAD_INPUT_DATA                    -0x0004
@@ -51,35 +53,39 @@
  * Define the base integer type, architecture-wise
  */
 #if defined(TROPICSSL_HAVE_INT8)
-typedef unsigned char t_int;
-typedef unsigned short t_dbl;
+typedef   signed char  t_sint;
+typedef unsigned char  t_uint;
+typedef uint16_t       t_udbl;
 #else
 #if defined(TROPICSSL_HAVE_INT16)
-typedef unsigned short t_int;
-typedef unsigned long t_dbl;
+typedef  int16_t t_sint;
+typedef uint16_t t_uint;
+typedef uint32_t t_udbl;
 #else
-typedef unsigned long t_int;
-#if defined(_MSC_VER) && defined(_M_IX86)
-typedef unsigned __int64 t_dbl;
-#else
-#if defined(__amd64__) || defined(__x86_64__)    || \
+  typedef  int32_t t_sint;
+  typedef uint32_t t_uint;
+  #if ( defined(_MSC_VER) && defined(_M_IX86) )      || \
+      ( defined(__GNUC__) && (                          \
+        defined(__amd64__) || defined(__x86_64__)    || \
         defined(__ppc64__) || defined(__powerpc64__) || \
-        defined(__ia64__)  || defined(__alpha__)
-typedef unsigned int t_dbl __attribute__ ((mode(TI)));
-#else
-typedef unsigned long long t_dbl;
-#endif
-#endif
-#endif
-#endif
+        defined(__ia64__)  || defined(__alpha__)     || \
+        (defined(__sparc__) && defined(__arch64__))  || \
+        defined(__s390x__) ) )
+      #define TROPICSSL_HAVE_INT64
+  #endif
+  #if defined(TROPICSSL_HAVE_INT64)
+    typedef uint64_t t_udbl;
+  #endif
+#endif /* TROPICSSL_HAVE_INT16 */
+#endif /* TROPICSSL_HAVE_INT8  */
 
 /**
  * \brief          MPI structure
  */
 typedef struct {
 	int s;			/*!<  integer sign      */
-	int n;			/*!<  total # of limbs  */
-	t_int *p;		/*!<  pointer to limbs  */
+	size_t n;		/*!<  total # of limbs  */
+	t_uint *p;		/*!<  pointer to limbs  */
 } mpi;
 
 #ifdef __cplusplus
@@ -102,7 +108,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_grow(mpi * X, int nblimbs);
+	int mpi_grow(mpi * X, size_t nblimbs);
 
 	/**
 	 * \brief          Copy the contents of Y into X
@@ -123,22 +129,22 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_lset(mpi * X, int z);
+	int mpi_lset(mpi * X, t_sint z);
 
 	/**
 	 * \brief          Return the number of least significant bits
 	 */
-	int mpi_lsb(const mpi * X);
+	size_t mpi_lsb(const mpi * X);
 
 	/**
 	 * \brief          Return the number of most significant bits
 	 */
-	int mpi_msb(const mpi * X);
+	size_t mpi_msb(const mpi * X);
 
 	/**
 	 * \brief          Return the total size in bytes
 	 */
-	int mpi_size(const mpi * X);
+	size_t mpi_size(const mpi * X);
 
 	/**
 	 * \brief          Import from an ASCII string
@@ -164,7 +170,7 @@ extern "C" {
 	 * \note           Call this function with *slen = 0 to obtain the
 	 *                 minimum required buffer size in *slen.
 	 */
-	int mpi_write_string(const mpi * X, int radix, char *s, int *slen);
+	int mpi_write_string(const mpi * X, int radix, char *s, size_t *slen);
 
 	/**
 	 * \brief          Read X from an opened file
@@ -201,7 +207,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_read_binary(mpi * X, const unsigned char *buf, int buflen);
+	int mpi_read_binary(mpi * X, const unsigned char *buf, size_t buflen);
 
 	/**
 	 * \brief          Export X into unsigned binary data, big endian
@@ -216,7 +222,7 @@ extern "C" {
 	 * \note           Call this function with *buflen = 0 to obtain the
 	 *                 minimum required buffer size in *buflen.
 	 */
-	int mpi_write_binary(const mpi * X, unsigned char *buf, int buflen);
+	int mpi_write_binary(const mpi * X, unsigned char *buf, size_t buflen);
 
 	/**
 	 * \brief          Left-shift: X <<= count
@@ -224,7 +230,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_shift_l(mpi * X, int count);
+	int mpi_shift_l(mpi * X, size_t count);
 
 	/**
 	 * \brief          Right-shift: X >>= count
@@ -232,7 +238,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_shift_r(mpi * X, int count);
+	int mpi_shift_r(mpi * X, size_t count);
 
 	/**
 	 * \brief          Compare unsigned values
@@ -259,7 +265,7 @@ extern "C" {
 	 *                -1 if X is lesser  than z or
 	 *                 0 if X is equal to z
 	 */
-	int mpi_cmp_int(const mpi * X, int z);
+	int mpi_cmp_int(const mpi * X, t_sint z);
 
 	/**
 	 * \brief          Unsigned addition: X = |A| + |B|
@@ -299,7 +305,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_add_int(mpi * X, const mpi * A, int b);
+	int mpi_add_int(mpi *X, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Signed substraction: X = A - b
@@ -307,7 +313,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_sub_int(mpi * X, const mpi * A, int b);
+	int mpi_sub_int(mpi *X, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Baseline multiplication: X = A * B
@@ -323,7 +329,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed
 	 */
-	int mpi_mul_int(mpi * X, const mpi * A, t_int b);
+	int mpi_mul_int(mpi * X, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Division by mpi: A = Q * B + R
@@ -345,7 +351,7 @@ extern "C" {
 	 *
 	 * \note           Either Q or R can be NULL.
 	 */
-	int mpi_div_int(mpi * Q, mpi * R, const mpi * A, int b);
+	int mpi_div_int(mpi * Q, mpi * R, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Modulo: R = A mod B
@@ -363,7 +369,7 @@ extern "C" {
 	 *                 1 if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if b == 0
 	 */
-	int mpi_mod_int(t_int * r, const mpi * A, int b);
+	int mpi_mod_int(t_uint * r, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Sliding-window exponentiation: X = A^E mod N
@@ -418,7 +424,7 @@ extern "C" {
 	 *                 1 if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_BAD_INPUT_DATA if nbits is < 3
 	 */
-	int mpi_gen_prime(mpi * X, int nbits, int dh_flag,
+	int mpi_gen_prime(mpi * X, size_t nbits, int dh_flag,
 			  int (*f_rng) (void *), void *p_rng);
 
 	/**

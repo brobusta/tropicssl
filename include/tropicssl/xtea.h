@@ -33,6 +33,8 @@
 #ifndef TROPICSSL_XTEA_H
 #define TROPICSSL_XTEA_H
 
+#include <inttypes.h>
+
 #define XTEA_ENCRYPT     1
 #define XTEA_DECRYPT     0
 
@@ -40,7 +42,7 @@
  * \brief          XTEA context structure
  */
 typedef struct {
-	unsigned long k[4];	/*!< key */
+	uint32_t k[4];	/*!< key */
 } xtea_context;
 
 #ifdef __cplusplus

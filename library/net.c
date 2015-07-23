@@ -71,10 +71,10 @@ static int wsa_init_done = 0;
 
 #endif
 
-#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <inttypes.h>
 
 /*
  * htons() is not always available
@@ -168,9 +168,9 @@ int net_bind(int *fd, const char *bind_ip, int port)
 
 		if (n == 4)
 			server_addr.sin_addr.s_addr =
-			    ((unsigned long)c[0] << 24) |
-			    ((unsigned long)c[1] << 16) |
-			    ((unsigned long)c[2] << 8) | ((unsigned long)c[3]);
+			    ((uint32_t)c[0] << 24) |
+			    ((uint32_t)c[1] << 16) |
+			    ((uint32_t)c[2] << 8) | ((uint32_t)c[3]);
 	}
 
 	if (bind(*fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
@@ -274,7 +274,7 @@ void net_usleep(unsigned long usec)
 /*
  * Read at most 'len' characters
  */
-int net_recv(void *ctx, unsigned char *buf, int len)
+int net_recv(void *ctx, unsigned char *buf, size_t len)
 {
 	int ret = read(*((int *)ctx), buf, len);
 
@@ -305,7 +305,7 @@ int net_recv(void *ctx, unsigned char *buf, int len)
 /*
  * Write at most 'len' characters
  */
-int net_send(void *ctx, unsigned char *buf, int len)
+int net_send(void *ctx, unsigned char *buf, size_t len)
 {
 	int ret = write(*((int *)ctx), buf, len);
 

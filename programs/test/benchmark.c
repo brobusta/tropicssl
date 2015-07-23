@@ -69,7 +69,7 @@ unsigned char buf[BUFSIZE];
 int main(void)
 {
 	int keysize;
-	unsigned long i, j, tsc;
+	uint32_t i, j, tsc;
 	unsigned char tmp[32];
 #if defined(TROPICSSL_ARC4_C)
 	arc4_context arc4;

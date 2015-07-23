@@ -96,16 +96,16 @@ void debug_print_ret(const ssl_context * ssl, int level,
 
 void debug_print_buf(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text,
-		     unsigned char *buf, int len)
+		     unsigned char *buf, size_t len)
 {
 	char str[512];
-	int i, maxlen = sizeof(str) - 1;
+	size_t i, maxlen = sizeof(str) - 1;
 
 	if (ssl->f_dbg == NULL || len < 0)
 		return;
 
 	snprintf(str, maxlen, "%s(%04d): dumping '%s' (%d bytes)\n",
-		 file, line, text, len);
+		 file, line, text, (unsigned int)len);
 
 	str[maxlen] = '\0';
 	ssl->f_dbg(ssl->p_dbg, level, str);
@@ -119,7 +119,7 @@ void debug_print_buf(const ssl_context * ssl, int level,
 				ssl->f_dbg(ssl->p_dbg, level, "\n");
 
 			snprintf(str, maxlen, "%s(%04d): %04x: ", file, line,
-				 i);
+				 (unsigned int)i);
 
 			str[maxlen] = '\0';
 			ssl->f_dbg(ssl->p_dbg, level, str);
@@ -139,7 +139,8 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text, const mpi * X)
 {
 	char str[512];
-	int i, j, k, n, maxlen = sizeof(str) - 1;
+	int j, k, maxlen = sizeof(str) - 1;
+	size_t i, n;
 
 	if (ssl->f_dbg == NULL || X == NULL)
 		return;
@@ -148,14 +149,14 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 		if (X->p[n] != 0)
 			break;
 
-	snprintf(str, maxlen, "%s(%04d): value of '%s' (%lu bits) is:\n",
-		 file, line, text, ((n + 1) * sizeof(t_int)) << 3);
+	snprintf(str, maxlen, "%s(%04d): value of '%s' (%d bits) is:\n",
+		 file, line, text, (int) ((n + 1) * sizeof(t_uint)) << 3);
 
 	str[maxlen] = '\0';
 	ssl->f_dbg(ssl->p_dbg, level, str);
 
 	for (i = n, j = 0; i >= 0; i--, j++) {
-		if (j % (16 / sizeof(t_int)) == 0) {
+		if (j % (16 / sizeof(t_uint)) == 0) {
 			if (j > 0)
 				ssl->f_dbg(ssl->p_dbg, level, "\n");
 
@@ -165,7 +166,7 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 			ssl->f_dbg(ssl->p_dbg, level, str);
 		}
 
-		for (k = sizeof(t_int) - 1; k >= 0; k--) {
+		for (k = sizeof(t_uint) - 1; k >= 0; k--) {
 			snprintf(str, maxlen, " %02x", (unsigned int)
 				 (X->p[i] >> (k << 3)) & 0xFF);
 

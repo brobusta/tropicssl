@@ -40,16 +40,17 @@
 #include "tropicssl/debug.h"
 #include "tropicssl/ssl.h"
 
-#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 
 static int ssl_parse_client_hello(ssl_context * ssl)
 {
-	int ret, i, j, n;
-	int ciph_len, sess_len;
-	int chal_len, comp_len;
+	int ret;
+	unsigned int i, j;
+	size_t n;
+	unsigned int ciph_len, sess_len;
+	unsigned int chal_len, comp_len;
 	unsigned char *buf, *p;
 
 	SSL_DEBUG_MSG(2, ("=> parse client hello"));
@@ -336,7 +337,8 @@ have_cipher:
 static int ssl_write_server_hello(ssl_context * ssl)
 {
 	time_t t;
-	int ret, i, n;
+	int ret, i;
+	size_t n;
 	unsigned char *buf, *p;
 
 	SSL_DEBUG_MSG(2, ("=> write server hello"));
@@ -429,7 +431,8 @@ static int ssl_write_server_hello(ssl_context * ssl)
 
 static int ssl_write_certificate_request(ssl_context * ssl)
 {
-	int ret, n;
+	int ret;
+	size_t n;
 	unsigned char *buf, *p;
 	const x509_cert *crt;
 
@@ -493,7 +496,8 @@ static int ssl_write_certificate_request(ssl_context * ssl)
 
 static int ssl_write_server_key_exchange(ssl_context * ssl)
 {
-	int ret, n;
+	int ret;
+	size_t n;
 	unsigned char hash[36];
 	md5_context md5;
 	sha1_context sha1;
@@ -609,7 +613,8 @@ static int ssl_write_server_hello_done(ssl_context * ssl)
 
 static int ssl_parse_client_key_exchange(ssl_context * ssl)
 {
-	int ret, i, n;
+	int ret;
+	size_t i, n;
 
 	SSL_DEBUG_MSG(2, ("=> parse client key exchange"));
 
@@ -727,7 +732,8 @@ static int ssl_parse_client_key_exchange(ssl_context * ssl)
 
 static int ssl_parse_certificate_verify(ssl_context * ssl)
 {
-	int n1, n2, ret;
+	int ret;
+	size_t n1, n2;
 	unsigned char hash[36];
 
 	SSL_DEBUG_MSG(2, ("=> parse certificate verify"));

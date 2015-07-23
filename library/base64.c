@@ -39,6 +39,8 @@
 
 #include "tropicssl/base64.h"
 
+#include <inttypes.h>
+
 static const unsigned char base64_enc_map[64] = {
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
 	'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
@@ -68,9 +70,9 @@ static const unsigned char base64_dec_map[128] = {
 /*
  * Encode a buffer into base64 format
  */
-int base64_encode(unsigned char *dst, int *dlen, const unsigned char *src, int slen)
+int base64_encode(unsigned char *dst, size_t *dlen, const unsigned char *src, size_t slen)
 {
-	int i, n;
+	size_t i, n;
 	int C1, C2, C3;
 	unsigned char *p;
 
@@ -132,10 +134,10 @@ int base64_encode(unsigned char *dst, int *dlen, const unsigned char *src, int s
 /*
  * Decode a base64-formatted buffer
  */
-int base64_decode(unsigned char *dst, int *dlen, const unsigned char *src, int slen)
+int base64_decode(unsigned char *dst, size_t *dlen, const unsigned char *src, size_t slen)
 {
-	int i, j, n;
-	unsigned long x;
+	size_t i, n;
+	uint32_t j, x;
 	unsigned char *p;
 
 	for (i = j = n = 0; i < slen; i++) {
@@ -215,7 +217,7 @@ static const unsigned char base64_test_enc[] =
  */
 int base64_self_test(int verbose)
 {
-	int len;
+	size_t len;
 	unsigned char *src, buffer[128];
 
 	if (verbose != 0)
