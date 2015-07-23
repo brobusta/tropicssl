@@ -44,16 +44,16 @@
 #include "tropicssl/ssl.h"
 #include "tropicssl/havege.h"
 
-#define SERVER_PORT 443
-/*
+#define SERVER_PORT 4433
+#if 1
 #define SERVER_NAME "localhost"
 #define GET_REQUEST "GET / HTTP/1.0\r\n\r\n"
-*/
+#else
 #define SERVER_NAME "tropicssl.org"
 #define GET_REQUEST \
     "GET /hello/ HTTP/1.1\r\n" \
     "Host: tropicssl.org\r\n\r\n"
-
+#endif
 #define DEBUG_LEVEL 0
 
 void my_debug(void *ctx, int level, const char *str)
