@@ -6,7 +6,10 @@ PREFIX=tropicssl_
 
 all:
 	make -C library all
-	make -C programs all
+#	make -C programs all
+	make -C programs ssl/ssl_client1
+	make -C programs ssl/ssl_server
+	make -C programs test/selftest
 
 install:
 	mkdir -p $(DESTDIR)/include/tropicssl
