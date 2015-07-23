@@ -79,7 +79,7 @@ void xtea_setup(xtea_context * ctx, unsigned char key[16])
 /*
  * XTEA encrypt function
  */
-void xtea_crypt_ecb(xtea_context * ctx, int mode, unsigned char input[8],
+void xtea_crypt_ecb(xtea_context * ctx, int mode, const unsigned char input[8],
 		    unsigned char output[8])
 {
 	unsigned long *k, v0, v1, i;
@@ -93,25 +93,17 @@ void xtea_crypt_ecb(xtea_context * ctx, int mode, unsigned char input[8],
 		unsigned long sum = 0, delta = 0x9E3779B9;
 
 		for (i = 0; i < 32; i++) {
-			v0 +=
-			    (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + k[sum & 3]);
+			v0 += (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + k[sum & 3]);
 			sum += delta;
-			v1 +=
-			    (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum +
-							      k[(sum >> 11) &
-								3]);
+			v1 += (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum + k[(sum >> 11) & 3]);
 		}
 	} else {		/* XTEA_DECRYPT */
 		unsigned long delta = 0x9E3779B9, sum = delta * 32;
 
 		for (i = 0; i < 32; i++) {
-			v1 -=
-			    (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum +
-							      k[(sum >> 11) &
-								3]);
+			v1 -= (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum + k[(sum >> 11) & 3]);
 			sum -= delta;
-			v0 -=
-			    (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + k[sum & 3]);
+			v0 -= (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + k[sum & 3]);
 		}
 	}
 

@@ -63,7 +63,7 @@ extern "C" {
 	 * \param input    8-byte input block
 	 * \param output   8-byte output block
 	 */
-	void xtea_crypt(xtea_context * ctx,
+	void xtea_crypt_ecb(xtea_context * ctx,
 			int mode,
 			const unsigned char input[8], unsigned char output[8]);
 
