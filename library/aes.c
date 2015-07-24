@@ -44,7 +44,6 @@
 #if defined(TROPICSSL_AES_C)
 
 #include "tropicssl/aes.h"
-#include "tropicssl/padlock.h"
 
 /*
  * 32-bit integer manipulation macros (little endian)
@@ -479,11 +478,7 @@ void aes_setkey_enc(aes_context * ctx, const unsigned char *key, unsigned int ke
 		return;
 	}
 
-#if defined(PADLOCK_ALIGN16)
-	ctx->rk = RK = PADLOCK_ALIGN16(ctx->buf);
-#else
 	ctx->rk = RK = ctx->buf;
-#endif
 
 	for (i = 0; i < (keysize >> 5); i++) {
 		GET_UINT32_LE(RK[i], key, i << 2);
@@ -663,13 +658,6 @@ void aes_crypt_ecb(aes_context * ctx,
 	int i;
 	uint32_t *RK, X0, X1, X2, X3, Y0, Y1, Y2, Y3;
 
-#if defined(TROPICSSL_PADLOCK_C) && defined(TROPICSSL_HAVE_X86)
-	if (padlock_supports(PADLOCK_ACE)) {
-		if (padlock_xcryptecb(ctx, mode, input, output) == 0)
-			return;
-	}
-#endif
-
 	RK = ctx->rk;
 
 	GET_UINT32_LE(X0, input, 0);
@@ -762,14 +750,6 @@ void aes_crypt_cbc(aes_context * ctx,
 {
 	int i;
 	unsigned char temp[16];
-
-#if defined(TROPICSSL_PADLOCK_C) && defined(TROPICSSL_HAVE_X86)
-	if (padlock_supports(PADLOCK_ACE)) {
-		if (padlock_xcryptcbc(ctx, mode, length, iv, input, output) ==
-		    0)
-			return;
-	}
-#endif
 
 	if (mode == AES_DECRYPT) {
 		while (length > 0) {
