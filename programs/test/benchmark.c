@@ -43,7 +43,6 @@
 
 #include "tropicssl/config.h"
 
-#include "tropicssl/md4.h"
 #include "tropicssl/md5.h"
 #include "tropicssl/sha1.h"
 #include "tropicssl/sha2.h"
@@ -91,22 +90,6 @@ int main(void)
 	memset(buf, 0xAA, sizeof(buf));
 
 	printf("\n");
-
-#if defined(TROPICSSL_MD4_C)
-	printf("  MD4       :  ");
-	fflush(stdout);
-
-	set_alarm(1);
-	for (i = 1; !alarmed; i++)
-		md4(buf, BUFSIZE, tmp);
-
-	tsc = hardclock();
-	for (j = 0; j < 1024; j++)
-		md4(buf, BUFSIZE, tmp);
-
-	printf("%9lu Kb/s,  %9lu cycles/byte\n", i * BUFSIZE / 1024,
-	       (hardclock() - tsc) / (j * BUFSIZE));
-#endif
 
 #if defined(TROPICSSL_MD5_C)
 	printf("  MD5       :  ");

@@ -42,7 +42,6 @@
 
 #include "tropicssl/config.h"
 
-#include "tropicssl/md4.h"
 #include "tropicssl/md5.h"
 #include "tropicssl/sha1.h"
 #include "tropicssl/sha2.h"
@@ -66,11 +65,6 @@ int main(int argc, char *argv[])
 		v = 1;
 		printf("\n");
 	}
-
-#if defined(TROPICSSL_MD4_C)
-	if ((ret = md4_self_test(v)) != 0)
-		return (ret);
-#endif
 
 #if defined(TROPICSSL_MD5_C)
 	if ((ret = md5_self_test(v)) != 0)
