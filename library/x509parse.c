@@ -51,7 +51,6 @@
 #include "tropicssl/x509.h"
 #include "tropicssl/base64.h"
 #include "tropicssl/des.h"
-#include "tropicssl/md2.h"
 #include "tropicssl/md4.h"
 #include "tropicssl/md5.h"
 #include "tropicssl/sha1.h"
@@ -1465,11 +1464,6 @@ int x509parse_expired(const x509_cert * crt)
 static void x509_hash(const unsigned char *in, size_t len, int alg, unsigned char *out)
 {
 	switch (alg) {
-#if defined(TROPICSSL_MD2_C)
-	case RSA_MD2:
-		md2(in, len, out);
-		break;
-#endif
 #if defined(TROPICSSL_MD4_C)
 	case RSA_MD4:
 		md4(in, len, out);
