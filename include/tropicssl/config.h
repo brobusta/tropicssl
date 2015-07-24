@@ -190,24 +190,6 @@
 #define TROPICSSL_HAVEGE_C
 
 /*
- * Module:  library/md2.c
- * Caller:  library/x509parse.c
- *
- * Uncomment to enable support for (rare) MD2-signed X.509 certs.
- *
-#define TROPICSSL_MD2_C
- */
-
-/*
- * Module:  library/md4.c
- * Caller:  library/x509parse.c
- *
- * Uncomment to enable support for (rare) MD4-signed X.509 certs.
- *
-#define TROPICSSL_MD4_C
- */
-
-/*
  * Module:  library/md5.c
  * Caller:  library/ssl_tls.c
  *          library/x509parse.c
@@ -223,15 +205,6 @@
  * This module provides TCP/IP networking routines.
  */
 #define TROPICSSL_NET_C
-
-/*
- * Module:  library/padlock.c
- * Caller:  library/aes.c
- *
- * This modules adds support for the VIA PadLock on x86.
- *
-#define TROPICSSL_PADLOCK_C
- */
 
 /*
  * Module:  library/rsa.c
