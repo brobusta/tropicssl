@@ -359,6 +359,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if B == 0
+	 *                 TROPICSSL_ERR_MPI_NEGATIVE_VALUE if B < 0
 	 */
 	int mpi_mod_mpi(mpi * R, const mpi * A, const mpi * B);
 
@@ -368,6 +369,7 @@ extern "C" {
 	 * \return         0 if successful,
 	 *                 1 if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if b == 0
+	 *                 TROPICSSL_ERR_MPI_NEGATIVE_VALUE if b < 0
 	 */
 	int mpi_mod_int(t_uint * r, const mpi * A, t_sint b);
 

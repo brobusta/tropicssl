@@ -293,7 +293,12 @@ int mpi_read_string(mpi * X, int radix, const char *s)
 
 			MPI_CHK(mpi_get_digit(&d, radix, s[i]));
 			MPI_CHK(mpi_mul_int(&T, X, radix));
-			MPI_CHK(mpi_add_int(X, &T, d));
+
+			if(X->s == 1) {
+				MPI_CHK(mpi_add_int(X, &T, d));
+			} else {
+				MPI_CHK(mpi_sub_int(X, &T, d));
+			}
 		}
 	}
 
@@ -379,6 +384,11 @@ int mpi_write_string(const mpi * X, int radix, char *s, size_t *slen)
 		}
 	} else {
 		MPI_CHK(mpi_copy(&T, X));
+
+		if (T.s == -1) {
+			T.s = 1;
+		}
+
 		MPI_CHK(mpi_write_hlp(&T, radix, &p));
 	}
 
@@ -693,6 +703,8 @@ int mpi_add_abs(mpi * X, const mpi * A, const mpi * B)
 	if (X != A)
 		MPI_CHK(mpi_copy(X, A));
 
+	X->s = 1;
+
 	for (j = B->n - 1; j >= 0; j--)
 		if (B->p[j] != 0)
 			break;
@@ -771,6 +783,8 @@ int mpi_sub_abs(mpi * X, const mpi * A, const mpi * B)
 
 	if (X != A)
 		MPI_CHK(mpi_copy(X, A));
+
+	X->s = 1;
 
 	ret = 0;
 
@@ -1149,6 +1163,9 @@ int mpi_mod_mpi(mpi * R, const mpi * A, const mpi * B)
 {
 	int ret;
 
+	if(mpi_cmp_int(B, 0) < 0)
+		return (TROPICSSL_ERR_MPI_NEGATIVE_VALUE);
+
 	MPI_CHK(mpi_div_mpi(NULL, R, A, B));
 
 	while (mpi_cmp_int(R, 0) < 0)
@@ -1174,7 +1191,7 @@ int mpi_mod_int(t_uint * r, const mpi * A, t_sint b)
 		return (TROPICSSL_ERR_MPI_DIVISION_BY_ZERO);
 
 	if (b < 0)
-		b = -b;
+		return (TROPICSSL_ERR_MPI_NEGATIVE_VALUE);
 
 	/*
 	 * handle trivial cases
@@ -1203,6 +1220,9 @@ int mpi_mod_int(t_uint * r, const mpi * A, t_sint b)
 		z = y / b;
 		y -= z * b;
 	}
+
+	if(A->s < 0 && y != 0)
+		y = b - y;
 
 	*r = y;
 
@@ -1616,7 +1636,10 @@ int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng)
 	mpi W, R, T, A, RR;
 	unsigned char *p;
 
-	if (mpi_cmp_int(X, 0) == 0)
+	if(mpi_cmp_int(X, 0) == 0 || mpi_cmp_int(X, 1) == 0)
+        return(TROPICSSL_ERR_MPI_NOT_ACCEPTABLE);
+
+	if (mpi_cmp_int(X, 2) == 0)
 		return (0);
 
 	mpi_init(&W, &R, &T, &A, &RR, NULL);
