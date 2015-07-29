@@ -10,6 +10,7 @@ all:
 	make -C programs ssl/ssl_client1
 	make -C programs ssl/ssl_server
 	make -C programs test/selftest
+	make -C test/unit all
 
 install:
 	mkdir -p $(DESTDIR)/include/tropicssl
@@ -30,4 +31,5 @@ install:
 clean:
 	make -C library clean
 	make -C programs clean
+	make -C test/unit clean
 
