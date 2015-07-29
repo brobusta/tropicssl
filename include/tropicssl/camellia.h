@@ -58,7 +58,7 @@ extern "C" {
 	 * \param key      encryption key
 	 * \param keysize  must be 128, 192 or 256
 	 */
-	void camellia_setkey_enc(camellia_context * ctx, const unsigned char *key,
+	void camellia_setkey_enc(camellia_context * ctx, const uint8_t *key,
 				 unsigned int keysize);
 
 	/**
@@ -68,7 +68,7 @@ extern "C" {
 	 * \param key      decryption key
 	 * \param keysize  must be 128, 192 or 256
 	 */
-	void camellia_setkey_dec(camellia_context * ctx, const unsigned char *key,
+	void camellia_setkey_dec(camellia_context * ctx, const uint8_t *key,
 				 unsigned int keysize);
 
 	/**
@@ -81,8 +81,8 @@ extern "C" {
 	 */
 	void camellia_crypt_ecb(camellia_context * ctx,
 				int mode,
-				const unsigned char input[16],
-				unsigned char output[16]);
+				const uint8_t input[16],
+				uint8_t output[16]);
 
 	/**
 	 * \brief          CAMELLIA-CBC buffer encryption/decryption
@@ -97,8 +97,8 @@ extern "C" {
 	void camellia_crypt_cbc(camellia_context * ctx,
 				int mode,
 				size_t length,
-				unsigned char iv[16],
-				const unsigned char *input, unsigned char *output);
+				uint8_t iv[16],
+				const uint8_t *input, uint8_t *output);
 
 	/**
 	 * \brief          CAMELLIA-CFB128 buffer encryption/decryption
@@ -115,8 +115,8 @@ extern "C" {
 				   int mode,
 				   size_t length,
 				   size_t *iv_off,
-				   unsigned char iv[16],
-				   const unsigned char *input, unsigned char *output);
+				   uint8_t iv[16],
+				   const uint8_t *input, uint8_t *output);
 
 	/**
 	 * \brief          Checkup routine

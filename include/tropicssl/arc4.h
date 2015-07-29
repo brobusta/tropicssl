@@ -35,13 +35,15 @@
 #ifndef TROPICSSL_ARC4_H
 #define TROPICSSL_ARC4_H
 
+#include <inttypes.h>
+
 /**
  * \brief          ARC4 context structure
  */
 typedef struct {
 	int x;			/*!< permutation index */
 	int y;			/*!< permutation index */
-	unsigned char m[256];	/*!< permutation table */
+	uint8_t m[256];	/*!< permutation table */
 } arc4_context;
 
 #ifdef __cplusplus
@@ -55,7 +57,7 @@ extern "C" {
 	 * \param key      the secret key
 	 * \param keylen   length of the key
 	 */
-	void arc4_setup(arc4_context * ctx, const unsigned char *key, unsigned int keylen);
+	void arc4_setup(arc4_context * ctx, const uint8_t *key, unsigned int keylen);
 
 	/**
 	 * \brief          ARC4 cipher function
@@ -64,7 +66,7 @@ extern "C" {
 	 * \param buf      buffer to be processed
 	 * \param buflen   amount of data in buf
 	 */
-	void arc4_crypt(arc4_context * ctx, unsigned char *buf, int buflen);
+	void arc4_crypt(arc4_context * ctx, uint8_t *buf, int buflen);
 
 	/*
 	 * \brief          Checkup routine

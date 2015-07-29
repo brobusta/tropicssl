@@ -57,9 +57,9 @@ int main(void)
 	int ret, n, buflen;
 	int server_fd = -1;
 
-	unsigned char *p, *end;
-	unsigned char buf[1024];
-	unsigned char hash[20];
+	uint8_t *p, *end;
+	uint8_t buf[1024];
+	uint8_t hash[20];
 
 	havege_state hs;
 	rsa_context rsa;

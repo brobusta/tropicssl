@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
 	FILE *f;
 	int ret, i, c;
 	rsa_context rsa;
-	unsigned char hash[20];
-	unsigned char buf[512];
+	uint8_t hash[20];
+	uint8_t buf[512];
 
 	ret = 1;
 	if (argc != 2) {
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 	argv[1][i] = '\0', i = 0;
 
 	while (fscanf(f, "%02X", &c) > 0 && i < (int)sizeof(buf))
-		buf[i++] = (unsigned char)c;
+		buf[i++] = (uint8_t)c;
 
 	fclose(f);
 

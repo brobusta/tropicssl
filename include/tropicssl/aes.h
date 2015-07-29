@@ -61,7 +61,7 @@ extern "C" {
 	 * \param key      encryption key
 	 * \param keysize  must be 128, 192 or 256
 	 */
-	void aes_setkey_enc(aes_context * ctx, const unsigned char *key, unsigned int keysize);
+	void aes_setkey_enc(aes_context * ctx, const uint8_t *key, unsigned int keysize);
 
 	/**
 	 * \brief          AES key schedule (decryption)
@@ -70,7 +70,7 @@ extern "C" {
 	 * \param key      decryption key
 	 * \param keysize  must be 128, 192 or 256
 	 */
-	void aes_setkey_dec(aes_context * ctx, const unsigned char *key, unsigned int keysize);
+	void aes_setkey_dec(aes_context * ctx, const uint8_t *key, unsigned int keysize);
 
 	/**
 	 * \brief          AES-ECB block encryption/decryption
@@ -82,7 +82,7 @@ extern "C" {
 	 */
 	void aes_crypt_ecb(aes_context * ctx,
 			   int mode,
-			   const unsigned char input[16], unsigned char output[16]);
+			   const uint8_t input[16], uint8_t output[16]);
 
 	/**
 	 * \brief          AES-CBC buffer encryption/decryption
@@ -97,8 +97,8 @@ extern "C" {
 	void aes_crypt_cbc(aes_context * ctx,
 			   int mode,
 			   size_t length,
-			   unsigned char iv[16],
-			   const unsigned char *input, unsigned char *output);
+			   uint8_t iv[16],
+			   const uint8_t *input, uint8_t *output);
 
 	/**
 	 * \brief          AES-CFB128 buffer encryption/decryption
@@ -115,8 +115,8 @@ extern "C" {
 			      int mode,
 			      size_t length,
 			      size_t *iv_off,
-			      unsigned char iv[16],
-			      const unsigned char *input, unsigned char *output);
+			      uint8_t iv[16],
+			      const uint8_t *input, uint8_t *output);
 
 	/**
 	 * \brief          Checkup routine

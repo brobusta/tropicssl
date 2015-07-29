@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
 	FILE *f;
 	int ret, i;
 	rsa_context rsa;
-	unsigned char hash[20];
-	unsigned char buf[512];
+	uint8_t hash[20];
+	uint8_t buf[512];
 
 	ret = 1;
 

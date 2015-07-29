@@ -35,11 +35,13 @@
 #ifndef TROPICSSL_TIMING_H
 #define TROPICSSL_TIMING_H
 
+#include <inttypes.h>
+
 /**
  * \brief          timer structure
  */
 struct hr_time {
-	unsigned char opaque[32];
+	uint8_t opaque[32];
 };
 
 #ifdef __cplusplus

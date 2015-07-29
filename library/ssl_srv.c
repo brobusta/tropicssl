@@ -51,7 +51,7 @@ static int ssl_parse_client_hello(ssl_context * ssl)
 	size_t n;
 	unsigned int ciph_len, sess_len;
 	unsigned int chal_len, comp_len;
-	unsigned char *buf, *p;
+	uint8_t *buf, *p;
 
 	SSL_DEBUG_MSG(2, ("=> parse client hello"));
 
@@ -339,7 +339,7 @@ static int ssl_write_server_hello(ssl_context * ssl)
 	time_t t;
 	int ret, i;
 	size_t n;
-	unsigned char *buf, *p;
+	uint8_t *buf, *p;
 
 	SSL_DEBUG_MSG(2, ("=> write server hello"));
 
@@ -353,22 +353,22 @@ static int ssl_write_server_hello(ssl_context * ssl)
 	buf = ssl->out_msg;
 	p = buf + 4;
 
-	*p++ = (unsigned char)ssl->major_ver;
-	*p++ = (unsigned char)ssl->minor_ver;
+	*p++ = (uint8_t)ssl->major_ver;
+	*p++ = (uint8_t)ssl->minor_ver;
 
 	SSL_DEBUG_MSG(3, ("server hello, chosen version: [%d:%d]",
 			  buf[4], buf[5]));
 
 	t = time(NULL);
-	*p++ = (unsigned char)(t >> 24);
-	*p++ = (unsigned char)(t >> 16);
-	*p++ = (unsigned char)(t >> 8);
-	*p++ = (unsigned char)(t);
+	*p++ = (uint8_t)(t >> 24);
+	*p++ = (uint8_t)(t >> 16);
+	*p++ = (uint8_t)(t >> 8);
+	*p++ = (uint8_t)(t);
 
 	SSL_DEBUG_MSG(3, ("server hello, current time: %lu", t));
 
 	for (i = 28; i > 0; i--)
-		*p++ = (unsigned char)ssl->f_rng(ssl->p_rng);
+		*p++ = (uint8_t)ssl->f_rng(ssl->p_rng);
 
 	memcpy(ssl->randbytes + 32, buf + 6, 32);
 
@@ -381,7 +381,7 @@ static int ssl_write_server_hello(ssl_context * ssl)
 	 *   41+n . 41+n  chosen compression alg.
 	 */
 	ssl->session->length = n = 32;
-	*p++ = (unsigned char)ssl->session->length;
+	*p++ = (uint8_t)ssl->session->length;
 
 	if (ssl->s_get == NULL || ssl->s_get(ssl) != 0) {
 		/*
@@ -392,7 +392,7 @@ static int ssl_write_server_hello(ssl_context * ssl)
 
 		for (i = 0; i < n; i++)
 			ssl->session->id[i] =
-			    (unsigned char)ssl->f_rng(ssl->p_rng);
+			    (uint8_t)ssl->f_rng(ssl->p_rng);
 	} else {
 		/*
 		 * Found a matching session, resume it
@@ -410,8 +410,8 @@ static int ssl_write_server_hello(ssl_context * ssl)
 	SSL_DEBUG_MSG(3, ("%s session has been resumed",
 			  ssl->resume ? "a" : "no"));
 
-	*p++ = (unsigned char)(ssl->session->cipher >> 8);
-	*p++ = (unsigned char)(ssl->session->cipher);
+	*p++ = (uint8_t)(ssl->session->cipher >> 8);
+	*p++ = (uint8_t)(ssl->session->cipher);
 	*p++ = SSL_COMPRESS_NULL;
 
 	SSL_DEBUG_MSG(3, ("server hello, chosen cipher: %d",
@@ -433,7 +433,7 @@ static int ssl_write_certificate_request(ssl_context * ssl)
 {
 	int ret;
 	size_t n;
-	unsigned char *buf, *p;
+	uint8_t *buf, *p;
 	const x509_cert *crt;
 
 	SSL_DEBUG_MSG(2, ("=> write certificate request"));
@@ -472,8 +472,8 @@ static int ssl_write_certificate_request(ssl_context * ssl)
 			break;
 
 		n = crt->subject_raw.len;
-		*p++ = (unsigned char)(n >> 8);
-		*p++ = (unsigned char)(n);
+		*p++ = (uint8_t)(n >> 8);
+		*p++ = (uint8_t)(n);
 		memcpy(p, crt->subject_raw.p, n);
 
 		SSL_DEBUG_BUF(3, "requested DN", p, n);
@@ -484,8 +484,8 @@ static int ssl_write_certificate_request(ssl_context * ssl)
 	ssl->out_msglen = n = p - buf;
 	ssl->out_msgtype = SSL_MSG_HANDSHAKE;
 	ssl->out_msg[0] = SSL_HS_CERTIFICATE_REQUEST;
-	ssl->out_msg[6] = (unsigned char)((n - 8) >> 8);
-	ssl->out_msg[7] = (unsigned char)((n - 8));
+	ssl->out_msg[6] = (uint8_t)((n - 8) >> 8);
+	ssl->out_msg[7] = (uint8_t)((n - 8));
 
 	ret = ssl_write_record(ssl);
 
@@ -498,7 +498,7 @@ static int ssl_write_server_key_exchange(ssl_context * ssl)
 {
 	int ret;
 	size_t n;
-	unsigned char hash[36];
+	uint8_t hash[36];
 	md5_context md5;
 	sha1_context sha1;
 
@@ -560,8 +560,8 @@ static int ssl_write_server_key_exchange(ssl_context * ssl)
 
 	SSL_DEBUG_BUF(3, "parameters hash", hash, 36);
 
-	ssl->out_msg[4 + n] = (unsigned char)(ssl->rsa_key->len >> 8);
-	ssl->out_msg[5 + n] = (unsigned char)(ssl->rsa_key->len);
+	ssl->out_msg[4 + n] = (uint8_t)(ssl->rsa_key->len >> 8);
+	ssl->out_msg[5 + n] = (uint8_t)(ssl->rsa_key->len);
 
 	ret = rsa_pkcs1_sign(ssl->rsa_key, RSA_PRIVATE,
 			     RSA_RAW, 36, hash, ssl->out_msg + 6 + n);
@@ -714,7 +714,7 @@ static int ssl_parse_client_key_exchange(ssl_context * ssl)
 
 			for (i = 0; i < ssl->pmslen; i++)
 				ssl->premaster[i] =
-				    (unsigned char)ssl->f_rng(ssl->p_rng);
+				    (uint8_t)ssl->f_rng(ssl->p_rng);
 		}
 	}
 
@@ -734,7 +734,7 @@ static int ssl_parse_certificate_verify(ssl_context * ssl)
 {
 	int ret;
 	size_t n1, n2;
-	unsigned char hash[36];
+	uint8_t hash[36];
 
 	SSL_DEBUG_MSG(2, ("=> parse certificate verify"));
 

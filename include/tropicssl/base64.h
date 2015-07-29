@@ -36,6 +36,7 @@
 #define TROPICSSL_BASE64_H
 
 #include <string.h>
+#include <inttypes.h>
 
 #define TROPICSSL_ERR_BASE64_BUFFER_TOO_SMALL               -0x0010
 #define TROPICSSL_ERR_BASE64_INVALID_CHARACTER              -0x0012
@@ -59,8 +60,8 @@ extern "C" {
 	 * \note           Call this function with *dlen = 0 to obtain the
 	 *                 required buffer size in *dlen
 	 */
-	int base64_encode(unsigned char *dst, size_t *dlen,
-			  const unsigned char *src, size_t slen);
+	int base64_encode(uint8_t *dst, size_t *dlen,
+			  const uint8_t *src, size_t slen);
 
 	/**
 	 * \brief          Decode a base64-formatted buffer
@@ -78,8 +79,8 @@ extern "C" {
 	 * \note           Call this function with *dlen = 0 to obtain the
 	 *                 required buffer size in *dlen
 	 */
-	int base64_decode(unsigned char *dst, size_t *dlen,
-			  const unsigned char *src, size_t slen);
+	int base64_decode(uint8_t *dst, size_t *dlen,
+			  const uint8_t *src, size_t slen);
 
 	/**
 	 * \brief          Checkup routine

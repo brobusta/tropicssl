@@ -61,10 +61,10 @@
 #ifndef PUT_UINT32_BE
 #define PUT_UINT32_BE(n,b,i)								\
 	{													\
-		(b)[(i)	   ] = (unsigned char) ( (n) >> 24 );	\
-		(b)[(i) + 1] = (unsigned char) ( (n) >> 16 );	\
-		(b)[(i) + 2] = (unsigned char) ( (n) >>	 8 );	\
-		(b)[(i) + 3] = (unsigned char) ( (n)	   );	\
+		(b)[(i)	   ] = (uint8_t) ( (n) >> 24 );	\
+		(b)[(i) + 1] = (uint8_t) ( (n) >> 16 );	\
+		(b)[(i) + 2] = (uint8_t) ( (n) >>	 8 );	\
+		(b)[(i) + 3] = (uint8_t) ( (n)	   );	\
 	}
 #endif
 
@@ -288,7 +288,7 @@ static const uint32_t RHs[16] = {
 
 #define SWAP(a,b) { uint32_t t = a; a = b; b = t; t = 0; }
 
-static void des_setkey(uint32_t SK[32], const unsigned char key[8])
+static void des_setkey(uint32_t SK[32], const uint8_t key[8])
 {
 	int i;
 	uint32_t X, Y, T;
@@ -360,7 +360,7 @@ static void des_setkey(uint32_t SK[32], const unsigned char key[8])
 /*
  * DES key schedule (56-bit, encryption)
  */
-void des_setkey_enc(des_context * ctx, const unsigned char key[8])
+void des_setkey_enc(des_context * ctx, const uint8_t key[8])
 {
 	des_setkey(ctx->sk, key);
 }
@@ -368,7 +368,7 @@ void des_setkey_enc(des_context * ctx, const unsigned char key[8])
 /*
  * DES key schedule (56-bit, decryption)
  */
-void des_setkey_dec(des_context * ctx, const unsigned char key[8])
+void des_setkey_dec(des_context * ctx, const uint8_t key[8])
 {
 	int i;
 
@@ -381,7 +381,7 @@ void des_setkey_dec(des_context * ctx, const unsigned char key[8])
 }
 
 static void des3_set2key(uint32_t esk[96],
-			 uint32_t dsk[96], const unsigned char key[16])
+			 uint32_t dsk[96], const uint8_t key[16])
 {
 	int i;
 
@@ -406,7 +406,7 @@ static void des3_set2key(uint32_t esk[96],
 /*
  * Triple-DES key schedule (112-bit, encryption)
  */
-void des3_set2key_enc(des3_context * ctx, const unsigned char key[16])
+void des3_set2key_enc(des3_context * ctx, const uint8_t key[16])
 {
 	uint32_t sk[96];
 
@@ -417,7 +417,7 @@ void des3_set2key_enc(des3_context * ctx, const unsigned char key[16])
 /*
  * Triple-DES key schedule (112-bit, decryption)
  */
-void des3_set2key_dec(des3_context * ctx, const unsigned char key[16])
+void des3_set2key_dec(des3_context * ctx, const uint8_t key[16])
 {
 	uint32_t sk[96];
 
@@ -426,7 +426,7 @@ void des3_set2key_dec(des3_context * ctx, const unsigned char key[16])
 }
 
 static void des3_set3key(uint32_t esk[96],
-			 uint32_t dsk[96], const unsigned char key[24])
+			 uint32_t dsk[96], const uint8_t key[24])
 {
 	int i;
 
@@ -449,7 +449,7 @@ static void des3_set3key(uint32_t esk[96],
 /*
  * Triple-DES key schedule (168-bit, encryption)
  */
-void des3_set3key_enc(des3_context * ctx, const unsigned char key[24])
+void des3_set3key_enc(des3_context * ctx, const uint8_t key[24])
 {
 	uint32_t sk[96];
 
@@ -460,7 +460,7 @@ void des3_set3key_enc(des3_context * ctx, const unsigned char key[24])
 /*
  * Triple-DES key schedule (168-bit, decryption)
  */
-void des3_set3key_dec(des3_context * ctx, const unsigned char key[24])
+void des3_set3key_dec(des3_context * ctx, const uint8_t key[24])
 {
 	uint32_t sk[96];
 
@@ -472,7 +472,7 @@ void des3_set3key_dec(des3_context * ctx, const unsigned char key[24])
  * DES-ECB block encryption/decryption
  */
 void des_crypt_ecb(des_context * ctx,
-		   const unsigned char input[8], unsigned char output[8])
+		   const uint8_t input[8], uint8_t output[8])
 {
 	int i;
 	uint32_t X, Y, T, *SK;
@@ -501,16 +501,16 @@ void des_crypt_ecb(des_context * ctx,
 void des_crypt_cbc(des_context * ctx,
 		   int mode,
 		   size_t length,
-		   unsigned char iv[8],
-		   const unsigned char *input, unsigned char *output)
+		   uint8_t iv[8],
+		   const uint8_t *input, uint8_t *output)
 {
 	int i;
-	unsigned char temp[8];
+	uint8_t temp[8];
 
 	if (mode == DES_ENCRYPT) {
 		while (length > 0) {
 			for (i = 0; i < 8; i++)
-				output[i] = (unsigned char)(input[i] ^ iv[i]);
+				output[i] = (uint8_t)(input[i] ^ iv[i]);
 
 			des_crypt_ecb(ctx, output, output);
 			memcpy(iv, output, 8);
@@ -525,7 +525,7 @@ void des_crypt_cbc(des_context * ctx,
 			des_crypt_ecb(ctx, input, output);
 
 			for (i = 0; i < 8; i++)
-				output[i] = (unsigned char)(output[i] ^ iv[i]);
+				output[i] = (uint8_t)(output[i] ^ iv[i]);
 
 			memcpy(iv, temp, 8);
 
@@ -540,7 +540,7 @@ void des_crypt_cbc(des_context * ctx,
  * 3DES-ECB block encryption/decryption
  */
 void des3_crypt_ecb(des3_context * ctx,
-		    const unsigned char input[8], unsigned char output[8])
+		    const uint8_t input[8], uint8_t output[8])
 {
 	int i;
 	uint32_t X, Y, T, *SK;
@@ -579,16 +579,16 @@ void des3_crypt_ecb(des3_context * ctx,
 void des3_crypt_cbc(des3_context * ctx,
 		    int mode,
 		    size_t length,
-		    unsigned char iv[8],
-		    const unsigned char *input, unsigned char *output)
+		    uint8_t iv[8],
+		    const uint8_t *input, uint8_t *output)
 {
 	int i;
-	unsigned char temp[8];
+	uint8_t temp[8];
 
 	if (mode == DES_ENCRYPT) {
 		while (length > 0) {
 			for (i = 0; i < 8; i++)
-				output[i] = (unsigned char)(input[i] ^ iv[i]);
+				output[i] = (uint8_t)(input[i] ^ iv[i]);
 
 			des3_crypt_ecb(ctx, output, output);
 			memcpy(iv, output, 8);
@@ -603,7 +603,7 @@ void des3_crypt_cbc(des3_context * ctx,
 			des3_crypt_ecb(ctx, input, output);
 
 			for (i = 0; i < 8; i++)
-				output[i] = (unsigned char)(output[i] ^ iv[i]);
+				output[i] = (uint8_t)(output[i] ^ iv[i]);
 
 			memcpy(iv, temp, 8);
 
@@ -623,39 +623,39 @@ void des3_crypt_cbc(des3_context * ctx,
  *
  * http://csrc.nist.gov/groups/STM/cavp/documents/des/tripledes-vectors.zip
  */
-static const unsigned char des3_test_keys[24] = {
+static const uint8_t des3_test_keys[24] = {
 	0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
 	0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01,
 	0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01, 0x23
 };
 
-static const unsigned char des3_test_iv[8] = {
+static const uint8_t des3_test_iv[8] = {
 	0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF,
 };
 
-static const unsigned char des3_test_buf[8] = {
+static const uint8_t des3_test_buf[8] = {
 	0x4E, 0x6F, 0x77, 0x20, 0x69, 0x73, 0x20, 0x74
 };
 
-static const unsigned char des3_test_ecb_dec[3][8] = {
+static const uint8_t des3_test_ecb_dec[3][8] = {
 	{0xCD, 0xD6, 0x4F, 0x2F, 0x94, 0x27, 0xC1, 0x5D},
 	{0x69, 0x96, 0xC8, 0xFA, 0x47, 0xA2, 0xAB, 0xEB},
 	{0x83, 0x25, 0x39, 0x76, 0x44, 0x09, 0x1A, 0x0A}
 };
 
-static const unsigned char des3_test_ecb_enc[3][8] = {
+static const uint8_t des3_test_ecb_enc[3][8] = {
 	{0x6A, 0x2A, 0x19, 0xF4, 0x1E, 0xCA, 0x85, 0x4B},
 	{0x03, 0xE6, 0x9F, 0x5B, 0xFA, 0x58, 0xEB, 0x42},
 	{0xDD, 0x17, 0xE8, 0xB8, 0xB4, 0x37, 0xD2, 0x32}
 };
 
-static const unsigned char des3_test_cbc_dec[3][8] = {
+static const uint8_t des3_test_cbc_dec[3][8] = {
 	{0x12, 0x9F, 0x40, 0xB9, 0xD2, 0x00, 0x56, 0xB3},
 	{0x47, 0x0E, 0xFC, 0x9A, 0x6B, 0x8E, 0xE3, 0x93},
 	{0xC5, 0xCE, 0xCF, 0x63, 0xEC, 0xEC, 0x51, 0x4C}
 };
 
-static const unsigned char des3_test_cbc_enc[3][8] = {
+static const uint8_t des3_test_cbc_enc[3][8] = {
 	{0x54, 0xF1, 0x5A, 0xF6, 0xEB, 0xE3, 0xA4, 0xB4},
 	{0x35, 0x76, 0x11, 0x56, 0x5F, 0xA1, 0x8E, 0x4D},
 	{0xCB, 0x19, 0x1F, 0x85, 0xD1, 0xED, 0x84, 0x39}
@@ -669,10 +669,10 @@ int des_self_test(int verbose)
 	int i, j, u, v;
 	des_context ctx;
 	des3_context ctx3;
-	unsigned char key[24];
-	unsigned char buf[8];
-	unsigned char prv[8];
-	unsigned char iv[8];
+	uint8_t key[24];
+	uint8_t buf[8];
+	uint8_t prv[8];
+	uint8_t iv[8];
 
 	memset(key, 0, 24);
 
@@ -692,31 +692,31 @@ int des_self_test(int verbose)
 
 		switch (i) {
 		case 0:
-			des_setkey_dec(&ctx, (unsigned char *)des3_test_keys);
+			des_setkey_dec(&ctx, (uint8_t *)des3_test_keys);
 			break;
 
 		case 1:
-			des_setkey_enc(&ctx, (unsigned char *)des3_test_keys);
+			des_setkey_enc(&ctx, (uint8_t *)des3_test_keys);
 			break;
 
 		case 2:
 			des3_set2key_dec(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		case 3:
 			des3_set2key_enc(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		case 4:
 			des3_set3key_dec(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		case 5:
 			des3_set3key_enc(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		default:
@@ -765,31 +765,31 @@ int des_self_test(int verbose)
 
 		switch (i) {
 		case 0:
-			des_setkey_dec(&ctx, (unsigned char *)des3_test_keys);
+			des_setkey_dec(&ctx, (uint8_t *)des3_test_keys);
 			break;
 
 		case 1:
-			des_setkey_enc(&ctx, (unsigned char *)des3_test_keys);
+			des_setkey_enc(&ctx, (uint8_t *)des3_test_keys);
 			break;
 
 		case 2:
 			des3_set2key_dec(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		case 3:
 			des3_set2key_enc(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		case 4:
 			des3_set3key_dec(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		case 5:
 			des3_set3key_enc(&ctx3,
-					 (unsigned char *)des3_test_keys);
+					 (uint8_t *)des3_test_keys);
 			break;
 
 		default:
@@ -806,7 +806,7 @@ int des_self_test(int verbose)
 			}
 		} else {
 			for (j = 0; j < 10000; j++) {
-				unsigned char tmp[8];
+				uint8_t tmp[8];
 
 				if (u == 0)
 					des_crypt_cbc(&ctx, v, 8, iv, buf, buf);

@@ -63,8 +63,8 @@
  * Define the base integer type, architecture-wise
  */
 #if defined(TROPICSSL_HAVE_INT8)
-typedef   signed char  t_sint;
-typedef unsigned char  t_uint;
+typedef   int8_t  t_sint;
+typedef uint8_t  t_uint;
 typedef uint16_t       t_udbl;
 #else
 #if defined(TROPICSSL_HAVE_INT16)
@@ -217,7 +217,7 @@ extern "C" {
 	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
 	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
-	int mpi_read_binary(mpi * X, const unsigned char *buf, size_t buflen);
+	int mpi_read_binary(mpi * X, const uint8_t *buf, size_t buflen);
 
 	/**
 	 * \brief          Export X into unsigned binary data, big endian
@@ -232,7 +232,7 @@ extern "C" {
 	 * \note           Call this function with *buflen = 0 to obtain the
 	 *                 minimum required buffer size in *buflen.
 	 */
-	int mpi_write_binary(const mpi * X, unsigned char *buf, size_t buflen);
+	int mpi_write_binary(const mpi * X, uint8_t *buf, size_t buflen);
 
 	/**
 	 * \brief          Left-shift: X <<= count

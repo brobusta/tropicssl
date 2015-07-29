@@ -55,7 +55,7 @@ extern "C" {
 	 * \param ctx      XTEA context to be initialized
 	 * \param key      the secret key
 	 */
-	void xtea_setup(xtea_context * ctx, unsigned char key[16]);
+	void xtea_setup(xtea_context * ctx, uint8_t key[16]);
 
 	/**
 	 * \brief          XTEA cipher function
@@ -67,7 +67,7 @@ extern "C" {
 	 */
 	void xtea_crypt_ecb(xtea_context * ctx,
 			int mode,
-			const unsigned char input[8], unsigned char output[8]);
+			const uint8_t input[8], uint8_t output[8]);
 
 	/*
 	 * \brief          Checkup routine

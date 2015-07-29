@@ -61,10 +61,10 @@
 #ifndef PUT_UINT32_LE
 #define PUT_UINT32_LE(n,b,i)                             \
 {                                                       \
-    (b)[(i)    ] = (unsigned char) ( (n)       );       \
-    (b)[(i) + 1] = (unsigned char) ( (n) >>  8 );       \
-    (b)[(i) + 2] = (unsigned char) ( (n) >> 16 );       \
-    (b)[(i) + 3] = (unsigned char) ( (n) >> 24 );       \
+    (b)[(i)    ] = (uint8_t) ( (n)       );       \
+    (b)[(i) + 1] = (uint8_t) ( (n) >>  8 );       \
+    (b)[(i) + 2] = (uint8_t) ( (n) >> 16 );       \
+    (b)[(i) + 3] = (uint8_t) ( (n) >> 24 );       \
 }
 #endif
 
@@ -72,7 +72,7 @@
 /*
  * Forward S-box
  */
-static const unsigned char FSb[256] = {
+static const uint8_t FSb[256] = {
 	0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5,
 	0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
 	0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0,
@@ -202,7 +202,7 @@ static const uint32_t FT3[256] = { FT };
 /*
  * Reverse S-box
  */
-static const unsigned char RSb[256] = {
+static const uint8_t RSb[256] = {
 	0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38,
 	0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
 	0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87,
@@ -343,7 +343,7 @@ static const uint32_t RCON[10] = {
 /*
  * Forward S-box & tables
  */
-static unsigned char FSb[256];
+static uint8_t FSb[256];
 static uint32_t FT0[256];
 static uint32_t FT1[256];
 static uint32_t FT2[256];
@@ -352,7 +352,7 @@ static uint32_t FT3[256];
 /*
  * Reverse S-box & tables
  */
-static unsigned char RSb[256];
+static uint8_t RSb[256];
 static uint32_t RT0[256];
 static uint32_t RT1[256];
 static uint32_t RT2[256];
@@ -414,8 +414,8 @@ static void aes_gen_tables(void)
 		y = ((y << 1) | (y >> 7)) & 0xFF;
 		x ^= y ^ 0x63;
 
-		FSb[i] = (unsigned char)x;
-		RSb[x] = (unsigned char)i;
+		FSb[i] = (uint8_t)x;
+		RSb[x] = (uint8_t)i;
 	}
 
 	/*
@@ -452,7 +452,7 @@ static void aes_gen_tables(void)
 /*
  * AES key schedule (encryption)
  */
-void aes_setkey_enc(aes_context * ctx, const unsigned char *key, unsigned int keysize)
+void aes_setkey_enc(aes_context * ctx, const uint8_t *key, unsigned int keysize)
 {
 	unsigned int i;
 	uint32_t *RK;
@@ -551,7 +551,7 @@ void aes_setkey_enc(aes_context * ctx, const unsigned char *key, unsigned int ke
 /*
  * AES key schedule (decryption)
  */
-void aes_setkey_dec(aes_context * ctx, const unsigned char *key, unsigned int keysize)
+void aes_setkey_dec(aes_context * ctx, const uint8_t *key, unsigned int keysize)
 {
 	int i, j;
 	aes_context cty;
@@ -653,7 +653,7 @@ void aes_setkey_dec(aes_context * ctx, const unsigned char *key, unsigned int ke
  * AES-ECB block encryption/decryption
  */
 void aes_crypt_ecb(aes_context * ctx,
-		   int mode, const unsigned char input[16], unsigned char output[16])
+		   int mode, const uint8_t input[16], uint8_t output[16])
 {
 	int i;
 	uint32_t *RK, X0, X1, X2, X3, Y0, Y1, Y2, Y3;
@@ -745,11 +745,11 @@ void aes_crypt_ecb(aes_context * ctx,
 void aes_crypt_cbc(aes_context * ctx,
 		   int mode,
 		   size_t length,
-		   unsigned char iv[16],
-		   const unsigned char *input, unsigned char *output)
+		   uint8_t iv[16],
+		   const uint8_t *input, uint8_t *output)
 {
 	int i;
-	unsigned char temp[16];
+	uint8_t temp[16];
 
 	if (mode == AES_DECRYPT) {
 		while (length > 0) {
@@ -757,7 +757,7 @@ void aes_crypt_cbc(aes_context * ctx,
 			aes_crypt_ecb(ctx, mode, input, output);
 
 			for (i = 0; i < 16; i++)
-				output[i] = (unsigned char)(output[i] ^ iv[i]);
+				output[i] = (uint8_t)(output[i] ^ iv[i]);
 
 			memcpy(iv, temp, 16);
 
@@ -768,7 +768,7 @@ void aes_crypt_cbc(aes_context * ctx,
 	} else {
 		while (length > 0) {
 			for (i = 0; i < 16; i++)
-				output[i] = (unsigned char)(input[i] ^ iv[i]);
+				output[i] = (uint8_t)(input[i] ^ iv[i]);
 
 			aes_crypt_ecb(ctx, mode, output, output);
 			memcpy(iv, output, 16);
@@ -787,8 +787,8 @@ void aes_crypt_cfb128(aes_context * ctx,
 		      int mode,
 		      size_t length,
 		      size_t *iv_off,
-		      unsigned char iv[16],
-		      const unsigned char *input, unsigned char *output)
+		      uint8_t iv[16],
+		      const uint8_t *input, uint8_t *output)
 {
 	int c;
 	size_t n = *iv_off;
@@ -799,8 +799,8 @@ void aes_crypt_cfb128(aes_context * ctx,
 				aes_crypt_ecb(ctx, AES_ENCRYPT, iv, iv);
 
 			c = *input++;
-			*output++ = (unsigned char)(c ^ iv[n]);
-			iv[n] = (unsigned char)c;
+			*output++ = (uint8_t)(c ^ iv[n]);
+			iv[n] = (uint8_t)c;
 
 			n = (n + 1) & 0x0F;
 		}
@@ -809,7 +809,7 @@ void aes_crypt_cfb128(aes_context * ctx,
 			if (n == 0)
 				aes_crypt_ecb(ctx, AES_ENCRYPT, iv, iv);
 
-			iv[n] = *output++ = (unsigned char)(iv[n] ^ *input++);
+			iv[n] = *output++ = (uint8_t)(iv[n] ^ *input++);
 
 			n = (n + 1) & 0x0F;
 		}
@@ -827,7 +827,7 @@ void aes_crypt_cfb128(aes_context * ctx,
  *
  * http://csrc.nist.gov/archive/aes/rijndael/rijndael-vals.zip
  */
-static const unsigned char aes_test_ecb_dec[3][16] = {
+static const uint8_t aes_test_ecb_dec[3][16] = {
 	{
 	 0x44, 0x41, 0x6A, 0xC2, 0xD1, 0xF5, 0x3C, 0x58,
 	 0x33, 0x03, 0x91, 0x7E, 0x6B, 0xE9, 0xEB, 0xE0},
@@ -839,7 +839,7 @@ static const unsigned char aes_test_ecb_dec[3][16] = {
 	 0x1F, 0x6F, 0x56, 0x58, 0x5D, 0x8A, 0x4A, 0xDE}
 };
 
-static const unsigned char aes_test_ecb_enc[3][16] = {
+static const uint8_t aes_test_ecb_enc[3][16] = {
 	{
 	 0xC3, 0x4C, 0x05, 0x2C, 0xC0, 0xDA, 0x8D, 0x73,
 	 0x45, 0x1A, 0xFE, 0x5F, 0x03, 0xBE, 0x29, 0x7F},
@@ -851,7 +851,7 @@ static const unsigned char aes_test_ecb_enc[3][16] = {
 	 0xFF, 0x30, 0xB4, 0xEA, 0x21, 0x63, 0x6D, 0xA4}
 };
 
-static const unsigned char aes_test_cbc_dec[3][16] = {
+static const uint8_t aes_test_cbc_dec[3][16] = {
 	{
 	 0xFA, 0xCA, 0x37, 0xE0, 0xB0, 0xC8, 0x53, 0x73,
 	 0xDF, 0x70, 0x6E, 0x73, 0xF7, 0xC9, 0xAF, 0x86},
@@ -863,7 +863,7 @@ static const unsigned char aes_test_cbc_dec[3][16] = {
 	 0x19, 0xA3, 0xE8, 0x8C, 0x57, 0x31, 0x04, 0x13}
 };
 
-static const unsigned char aes_test_cbc_enc[3][16] = {
+static const uint8_t aes_test_cbc_enc[3][16] = {
 	{
 	 0x8A, 0x05, 0xFC, 0x5E, 0x09, 0x5A, 0xF4, 0x84,
 	 0x8A, 0x08, 0xD3, 0x28, 0xD3, 0x68, 0x8E, 0x3D},
@@ -880,7 +880,7 @@ static const unsigned char aes_test_cbc_enc[3][16] = {
  *
  * http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
  */
-static const unsigned char aes_test_cfb128_key[3][32] = {
+static const uint8_t aes_test_cfb128_key[3][32] = {
 	{
 	 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6,
 	 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C},
@@ -895,12 +895,12 @@ static const unsigned char aes_test_cfb128_key[3][32] = {
 	 0x2D, 0x98, 0x10, 0xA3, 0x09, 0x14, 0xDF, 0xF4}
 };
 
-static const unsigned char aes_test_cfb128_iv[16] = {
+static const uint8_t aes_test_cfb128_iv[16] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 };
 
-static const unsigned char aes_test_cfb128_pt[64] = {
+static const uint8_t aes_test_cfb128_pt[64] = {
 	0x6B, 0xC1, 0xBE, 0xE2, 0x2E, 0x40, 0x9F, 0x96,
 	0xE9, 0x3D, 0x7E, 0x11, 0x73, 0x93, 0x17, 0x2A,
 	0xAE, 0x2D, 0x8A, 0x57, 0x1E, 0x03, 0xAC, 0x9C,
@@ -911,7 +911,7 @@ static const unsigned char aes_test_cfb128_pt[64] = {
 	0xAD, 0x2B, 0x41, 0x7B, 0xE6, 0x6C, 0x37, 0x10
 };
 
-static const unsigned char aes_test_cfb128_ct[3][64] = {
+static const uint8_t aes_test_cfb128_ct[3][64] = {
 	{
 	 0x3B, 0x3F, 0xD9, 0x2E, 0xB7, 0x2D, 0xAD, 0x20,
 	 0x33, 0x34, 0x49, 0xF8, 0xE8, 0x3C, 0xFB, 0x4A,
@@ -948,10 +948,10 @@ int aes_self_test(int verbose)
 {
 	int i, j, u, v;
 	size_t offset;
-	unsigned char key[32];
-	unsigned char buf[64];
-	unsigned char prv[16];
-	unsigned char iv[16];
+	uint8_t key[32];
+	uint8_t buf[64];
+	uint8_t prv[16];
+	uint8_t iv[16];
 	aes_context ctx;
 
 	memset(key, 0, 32);
@@ -1033,7 +1033,7 @@ int aes_self_test(int verbose)
 			aes_setkey_enc(&ctx, key, 128 + u * 64);
 
 			for (j = 0; j < 10000; j++) {
-				unsigned char tmp[16];
+				uint8_t tmp[16];
 
 				aes_crypt_cbc(&ctx, v, 16, iv, buf, buf);
 

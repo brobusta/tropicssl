@@ -151,8 +151,8 @@ static int ssl_test(struct options *opt)
 	uint32_t read_state[5];
 	uint32_t write_state[5];
 
-	unsigned char *read_buf;
-	unsigned char *write_buf;
+	uint8_t *read_buf;
+	uint8_t *write_buf;
 
 	struct hr_time t;
 	havege_state hs;
@@ -188,21 +188,21 @@ static int ssl_test(struct options *opt)
 	}
 
 	if (opt->opmode == OPMODE_SERVER) {
-		ret = x509parse_crt(&srvcert, (unsigned char *)test_srv_crt,
+		ret = x509parse_crt(&srvcert, (uint8_t *)test_srv_crt,
 				    strlen(test_srv_crt));
 		if (ret != 0) {
 			printf("  !  x509parse_crt returned %d\n\n", ret);
 			goto exit;
 		}
 
-		ret = x509parse_crt(&srvcert, (unsigned char *)test_ca_crt,
+		ret = x509parse_crt(&srvcert, (uint8_t *)test_ca_crt,
 				    strlen(test_ca_crt));
 		if (ret != 0) {
 			printf("  !  x509parse_crt returned %d\n\n", ret);
 			goto exit;
 		}
 
-		ret = x509parse_key(&rsa, (unsigned char *)test_srv_key,
+		ret = x509parse_key(&rsa, (uint8_t *)test_srv_key,
 				    strlen(test_srv_key), NULL, 0);
 		if (ret != 0) {
 			printf("  !  x509parse_key returned %d\n\n", ret);
@@ -249,8 +249,8 @@ static int ssl_test(struct options *opt)
 	if (opt->iomode == IOMODE_NONBLOCK)
 		net_set_nonblock(client_fd);
 
-	read_buf = (unsigned char *)malloc(opt->buffer_size);
-	write_buf = (unsigned char *)malloc(opt->buffer_size);
+	read_buf = (uint8_t *)malloc(opt->buffer_size);
+	write_buf = (uint8_t *)malloc(opt->buffer_size);
 
 	if (read_buf == NULL || write_buf == NULL) {
 		printf("  ! malloc(%d bytes) failed\n\n", opt->buffer_size);
@@ -269,7 +269,7 @@ static int ssl_test(struct options *opt)
 
 				for (i = 0; i < bytes_to_write; i++)
 					write_buf[i] =
-					    (unsigned char)lcppm5(write_state);
+					    (uint8_t)lcppm5(write_state);
 
 				offset_to_write = 0;
 			}
@@ -307,7 +307,7 @@ static int ssl_test(struct options *opt)
 			if (ret >= 0) {
 				for (i = 0; i < ret; i++) {
 					if (read_buf[offset_to_read + i] !=
-					    (unsigned char)lcppm5(read_state)) {
+					    (uint8_t)lcppm5(read_state)) {
 						ret = 1;
 						printf
 						    ("  ! plaintext mismatch\n\n");

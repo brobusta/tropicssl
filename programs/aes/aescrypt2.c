@@ -69,10 +69,10 @@ int main(int argc, char *argv[])
 	FILE *fkey, *fin, *fout;
 
 	char *p;
-	unsigned char IV[16];
-	unsigned char key[512];
-	unsigned char digest[32];
-	unsigned char buffer[1024];
+	uint8_t IV[16];
+	uint8_t key[512];
+	uint8_t digest[32];
+	uint8_t buffer[1024];
 
 	aes_context aes_ctx;
 	sha2_context sha_ctx;
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 
 			while (sscanf(p, "%02X", &n) > 0 &&
 			       keylen < (int)sizeof(key)) {
-				key[keylen++] = (unsigned char)n;
+				key[keylen++] = (uint8_t)n;
 				p += 2;
 			}
 		} else {
@@ -182,13 +182,13 @@ int main(int argc, char *argv[])
 		 * IV = SHA-256( filesize || filename )[0..15]
 		 */
 		for (i = 0; i < 8; i++)
-			buffer[i] = (unsigned char)(filesize >> (i << 3));
+			buffer[i] = (uint8_t)(filesize >> (i << 3));
 
 		p = argv[2];
 
 		sha2_starts(&sha_ctx, 0);
 		sha2_update(&sha_ctx, buffer, 8);
-		sha2_update(&sha_ctx, (unsigned char *)p, strlen(p));
+		sha2_update(&sha_ctx, (uint8_t *)p, strlen(p));
 		sha2_finish(&sha_ctx, digest);
 
 		memcpy(IV, digest, 16);
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 		 */
 		lastn = (int)(filesize & 0x0F);
 
-		IV[15] = (unsigned char)
+		IV[15] = (uint8_t)
 		    ((IV[15] & 0xF0) | lastn);
 
 		/*
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
 			}
 
 			for (i = 0; i < 16; i++)
-				buffer[i] = (unsigned char)(buffer[i] ^ IV[i]);
+				buffer[i] = (uint8_t)(buffer[i] ^ IV[i]);
 
 			aes_crypt_ecb(&aes_ctx, AES_ENCRYPT, buffer, buffer);
 			sha2_hmac_update(&sha_ctx, buffer, 16);
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (mode == MODE_DECRYPT) {
-		unsigned char tmp[16];
+		uint8_t tmp[16];
 
 		/*
 		 *  The encrypted file must be structured as follows:
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
 			aes_crypt_ecb(&aes_ctx, AES_DECRYPT, buffer, buffer);
 
 			for (i = 0; i < 16; i++)
-				buffer[i] = (unsigned char)(buffer[i] ^ IV[i]);
+				buffer[i] = (uint8_t)(buffer[i] ^ IV[i]);
 
 			memcpy(IV, tmp, 16);
 

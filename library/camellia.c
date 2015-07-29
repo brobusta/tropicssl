@@ -59,14 +59,14 @@
 #ifndef PUT_UINT32_BE
 #define PUT_UINT32_BE(n,b,i)								\
 	{													\
-		(b)[(i)	   ] = (unsigned char) ( (n) >> 24 );	\
-		(b)[(i) + 1] = (unsigned char) ( (n) >> 16 );	\
-		(b)[(i) + 2] = (unsigned char) ( (n) >>	 8 );	\
-		(b)[(i) + 3] = (unsigned char) ( (n)	   );	\
+		(b)[(i)	   ] = (uint8_t) ( (n) >> 24 );	\
+		(b)[(i) + 1] = (uint8_t) ( (n) >> 16 );	\
+		(b)[(i) + 2] = (uint8_t) ( (n) >>	 8 );	\
+		(b)[(i) + 3] = (uint8_t) ( (n)	   );	\
 	}
 #endif
 
-static const unsigned char SIGMA_CHARS[6][8] = {
+static const uint8_t SIGMA_CHARS[6][8] = {
 	{0xa0, 0x9e, 0x66, 0x7f, 0x3b, 0xcc, 0x90, 0x8b},
 	{0xb6, 0x7a, 0xe8, 0x58, 0x4c, 0xaa, 0x73, 0xb2},
 	{0xc6, 0xef, 0x37, 0x2f, 0xe9, 0x4f, 0x82, 0xbe},
@@ -77,7 +77,7 @@ static const unsigned char SIGMA_CHARS[6][8] = {
 
 #ifdef TROPICSSL_CAMELLIA_SMALL_MEMORY
 
-static const unsigned char FSb[256] = {
+static const uint8_t FSb[256] = {
 	112, 130, 44, 236, 179, 39, 192, 229, 228, 133, 87, 53, 234, 12, 174,
 	65,
 	35, 239, 107, 147, 69, 25, 165, 33, 237, 14, 79, 78, 29, 101, 146, 189,
@@ -105,13 +105,13 @@ static const unsigned char FSb[256] = {
 };
 
 #define SBOX1(n) FSb[(n)]
-#define SBOX2(n) (unsigned char)((FSb[(n)] >> 7 ^ FSb[(n)] << 1) & 0xff)
-#define SBOX3(n) (unsigned char)((FSb[(n)] >> 1 ^ FSb[(n)] << 7) & 0xff)
+#define SBOX2(n) (uint8_t)((FSb[(n)] >> 7 ^ FSb[(n)] << 1) & 0xff)
+#define SBOX3(n) (uint8_t)((FSb[(n)] >> 1 ^ FSb[(n)] << 7) & 0xff)
 #define SBOX4(n) FSb[((n) << 1 ^ (n) >> 7) &0xff]
 
 #else
 
-static const unsigned char FSb[256] = {
+static const uint8_t FSb[256] = {
 	112, 130, 44, 236, 179, 39, 192, 229, 228, 133, 87, 53, 234, 12, 174,
 	65,
 	35, 239, 107, 147, 69, 25, 165, 33, 237, 14, 79, 78, 29, 101, 146, 189,
@@ -138,7 +138,7 @@ static const unsigned char FSb[256] = {
 	158
 };
 
-static const unsigned char FSb2[256] = {
+static const uint8_t FSb2[256] = {
 	224, 5, 88, 217, 103, 78, 129, 203, 201, 11, 174, 106, 213, 24, 93, 130,
 	70, 223, 214, 39, 138, 50, 75, 66, 219, 28, 158, 156, 58, 202, 37, 123,
 	13, 113, 95, 31, 248, 215, 62, 157, 124, 96, 185, 190, 188, 139, 22, 52,
@@ -162,7 +162,7 @@ static const unsigned char FSb2[256] = {
 	128, 80, 167, 246, 119, 147, 134, 131, 42, 199, 91, 233, 238, 143, 1, 61
 };
 
-static const unsigned char FSb3[256] = {
+static const uint8_t FSb3[256] = {
 	56, 65, 22, 118, 217, 147, 96, 242, 114, 194, 171, 154, 117, 6, 87, 160,
 	145, 247, 181, 201, 162, 140, 210, 144, 246, 7, 167, 39, 142, 178, 73,
 	222,
@@ -188,7 +188,7 @@ static const unsigned char FSb3[256] = {
 	79
 };
 
-static const unsigned char FSb4[256] = {
+static const uint8_t FSb4[256] = {
 	112, 44, 179, 192, 228, 87, 234, 174, 35, 107, 69, 165, 237, 79, 29,
 	146,
 	134, 175, 124, 31, 62, 220, 94, 11, 166, 57, 213, 93, 217, 90, 81, 108,
@@ -221,7 +221,7 @@ static const unsigned char FSb4[256] = {
 
 #endif
 
-static const unsigned char shifts[2][4][4] = {
+static const uint8_t shifts[2][4][4] = {
 	{
 	 {1, 1, 1, 1},		/* KL */
 	 {0, 0, 0, 0},		/* KR */
@@ -346,13 +346,13 @@ void camellia_feistel(const uint32_t x[2], const uint32_t k[2],
 /*
  * Camellia key schedule (encryption)
  */
-void camellia_setkey_enc(camellia_context * ctx, const unsigned char *key,
+void camellia_setkey_enc(camellia_context * ctx, const uint8_t *key,
 			 unsigned int keysize)
 {
 	int idx;
 	size_t i;
 	uint32_t *RK;
-	unsigned char t[64];
+	uint8_t t[64];
 
 	RK = ctx->rk;
 
@@ -455,7 +455,7 @@ void camellia_setkey_enc(camellia_context * ctx, const unsigned char *key,
 /*
  * Camellia key schedule (decryption)
  */
-void camellia_setkey_dec(camellia_context * ctx, const unsigned char *key,
+void camellia_setkey_dec(camellia_context * ctx, const uint8_t *key,
 			 unsigned int keysize)
 {
 	int idx;
@@ -509,7 +509,7 @@ void camellia_setkey_dec(camellia_context * ctx, const unsigned char *key,
  */
 void camellia_crypt_ecb(camellia_context * ctx,
 			int mode,
-			const unsigned char input[16], unsigned char output[16])
+			const uint8_t input[16], uint8_t output[16])
 {
 	int NR;
 	uint32_t *RK, X[4];
@@ -567,11 +567,11 @@ void camellia_crypt_ecb(camellia_context * ctx,
 void camellia_crypt_cbc(camellia_context * ctx,
 			int mode,
 			size_t length,
-			unsigned char iv[16],
-			const unsigned char *input, unsigned char *output)
+			uint8_t iv[16],
+			const uint8_t *input, uint8_t *output)
 {
 	int i;
-	unsigned char temp[16];
+	uint8_t temp[16];
 
 	if (mode == CAMELLIA_DECRYPT) {
 		while (length > 0) {
@@ -579,7 +579,7 @@ void camellia_crypt_cbc(camellia_context * ctx,
 			camellia_crypt_ecb(ctx, mode, input, output);
 
 			for (i = 0; i < 16; i++)
-				output[i] = (unsigned char)(output[i] ^ iv[i]);
+				output[i] = (uint8_t)(output[i] ^ iv[i]);
 
 			memcpy(iv, temp, 16);
 
@@ -590,7 +590,7 @@ void camellia_crypt_cbc(camellia_context * ctx,
 	} else {
 		while (length > 0) {
 			for (i = 0; i < 16; i++)
-				output[i] = (unsigned char)(input[i] ^ iv[i]);
+				output[i] = (uint8_t)(input[i] ^ iv[i]);
 
 			camellia_crypt_ecb(ctx, mode, output, output);
 			memcpy(iv, output, 16);
@@ -609,8 +609,8 @@ void camellia_crypt_cfb128(camellia_context * ctx,
 			   int mode,
 			   size_t length,
 			   size_t *iv_off,
-			   unsigned char iv[16],
-			   const unsigned char *input, unsigned char *output)
+			   uint8_t iv[16],
+			   const uint8_t *input, uint8_t *output)
 {
 	int c;
 	size_t n = *iv_off;
@@ -622,8 +622,8 @@ void camellia_crypt_cfb128(camellia_context * ctx,
 						   iv);
 
 			c = *input++;
-			*output++ = (unsigned char)(c ^ iv[n]);
-			iv[n] = (unsigned char)c;
+			*output++ = (uint8_t)(c ^ iv[n]);
+			iv[n] = (uint8_t)c;
 
 			n = (n + 1) & 0x0F;
 		}
@@ -633,7 +633,7 @@ void camellia_crypt_cfb128(camellia_context * ctx,
 				camellia_crypt_ecb(ctx, CAMELLIA_ENCRYPT, iv,
 						   iv);
 
-			iv[n] = *output++ = (unsigned char)(iv[n] ^ *input++);
+			iv[n] = *output++ = (uint8_t)(iv[n] ^ *input++);
 
 			n = (n + 1) & 0x0F;
 		}
@@ -656,7 +656,7 @@ void camellia_crypt_cfb128(camellia_context * ctx,
  */
 #define CAMELLIA_TESTS_ECB	2
 
-static const unsigned char camellia_test_ecb_key[3][CAMELLIA_TESTS_ECB][32] = {
+static const uint8_t camellia_test_ecb_key[3][CAMELLIA_TESTS_ECB][32] = {
 	{
 	 {
 	  0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
@@ -689,7 +689,7 @@ static const unsigned char camellia_test_ecb_key[3][CAMELLIA_TESTS_ECB][32] = {
 	 },
 };
 
-static const unsigned char camellia_test_ecb_plain[CAMELLIA_TESTS_ECB][16] = {
+static const uint8_t camellia_test_ecb_plain[CAMELLIA_TESTS_ECB][16] = {
 	{
 	 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
 	 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10},
@@ -698,7 +698,7 @@ static const unsigned char camellia_test_ecb_plain[CAMELLIA_TESTS_ECB][16] = {
 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 };
 
-static const unsigned char camellia_test_ecb_cipher[3][CAMELLIA_TESTS_ECB][16] = {
+static const uint8_t camellia_test_ecb_cipher[3][CAMELLIA_TESTS_ECB][16] = {
 	{
 	 {
 	  0x67, 0x67, 0x31, 0x38, 0x54, 0x96, 0x69, 0x73,
@@ -727,7 +727,7 @@ static const unsigned char camellia_test_ecb_cipher[3][CAMELLIA_TESTS_ECB][16] =
 
 #define CAMELLIA_TESTS_CBC	3
 
-static const unsigned char camellia_test_cbc_key[3][32] = {
+static const uint8_t camellia_test_cbc_key[3][32] = {
 	{
 	 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6,
 	 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C}
@@ -744,14 +744,14 @@ static const unsigned char camellia_test_cbc_key[3][32] = {
 	 0x2D, 0x98, 0x10, 0xA3, 0x09, 0x14, 0xDF, 0xF4}
 };
 
-static const unsigned char camellia_test_cbc_iv[16] = {
+static const uint8_t camellia_test_cbc_iv[16] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 }
 
 ;
 
-static const unsigned char camellia_test_cbc_plain[CAMELLIA_TESTS_CBC][16] = {
+static const uint8_t camellia_test_cbc_plain[CAMELLIA_TESTS_CBC][16] = {
 	{
 	 0x6B, 0xC1, 0xBE, 0xE2, 0x2E, 0x40, 0x9F, 0x96,
 	 0xE9, 0x3D, 0x7E, 0x11, 0x73, 0x93, 0x17, 0x2A},
@@ -764,7 +764,7 @@ static const unsigned char camellia_test_cbc_plain[CAMELLIA_TESTS_CBC][16] = {
 
 };
 
-static const unsigned char camellia_test_cbc_cipher[3][CAMELLIA_TESTS_CBC][16] = {
+static const uint8_t camellia_test_cbc_cipher[3][CAMELLIA_TESTS_CBC][16] = {
 	{
 	 {
 	  0x16, 0x07, 0xCF, 0x49, 0x4B, 0x36, 0xBB, 0xF0,
@@ -806,11 +806,11 @@ static const unsigned char camellia_test_cbc_cipher[3][CAMELLIA_TESTS_CBC][16] =
 int camellia_self_test(int verbose)
 {
 	int i, j, u, v;
-	unsigned char key[32];
-	unsigned char buf[64];
-	unsigned char src[16];
-	unsigned char dst[16];
-	unsigned char iv[16];
+	uint8_t key[32];
+	uint8_t buf[64];
+	uint8_t src[16];
+	uint8_t dst[16];
+	uint8_t iv[16];
 	camellia_context ctx;
 
 	memset(key, 0, 32);

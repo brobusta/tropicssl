@@ -41,7 +41,7 @@
 
 #include <inttypes.h>
 
-static const unsigned char base64_enc_map[64] = {
+static const uint8_t base64_enc_map[64] = {
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
 	'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
 	'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
@@ -51,7 +51,7 @@ static const unsigned char base64_enc_map[64] = {
 	'8', '9', '+', '/'
 };
 
-static const unsigned char base64_dec_map[128] = {
+static const uint8_t base64_dec_map[128] = {
 	127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
 	127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
 	127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
@@ -70,11 +70,11 @@ static const unsigned char base64_dec_map[128] = {
 /*
  * Encode a buffer into base64 format
  */
-int base64_encode(unsigned char *dst, size_t *dlen, const unsigned char *src, size_t slen)
+int base64_encode(uint8_t *dst, size_t *dlen, const uint8_t *src, size_t slen)
 {
 	size_t i, n;
 	int C1, C2, C3;
-	unsigned char *p;
+	uint8_t *p;
 
 	if (slen == 0)
 		return (0);
@@ -134,11 +134,11 @@ int base64_encode(unsigned char *dst, size_t *dlen, const unsigned char *src, si
 /*
  * Decode a base64-formatted buffer
  */
-int base64_decode(unsigned char *dst, size_t *dlen, const unsigned char *src, size_t slen)
+int base64_decode(uint8_t *dst, size_t *dlen, const uint8_t *src, size_t slen)
 {
 	size_t i, n;
 	uint32_t j, x;
-	unsigned char *p;
+	uint8_t *p;
 
 	for (i = j = n = 0; i < slen; i++) {
 		if ((slen - i) >= 2 && src[i] == '\r' && src[i + 1] == '\n')
@@ -179,11 +179,11 @@ int base64_decode(unsigned char *dst, size_t *dlen, const unsigned char *src, si
 		if (++n == 4) {
 			n = 0;
 			if (j > 0)
-				*p++ = (unsigned char)(x >> 16);
+				*p++ = (uint8_t)(x >> 16);
 			if (j > 1)
-				*p++ = (unsigned char)(x >> 8);
+				*p++ = (uint8_t)(x >> 8);
 			if (j > 2)
-				*p++ = (unsigned char)(x);
+				*p++ = (uint8_t)(x);
 		}
 	}
 
@@ -197,7 +197,7 @@ int base64_decode(unsigned char *dst, size_t *dlen, const unsigned char *src, si
 #include <string.h>
 #include <stdio.h>
 
-static const unsigned char base64_test_dec[64] = {
+static const uint8_t base64_test_dec[64] = {
 	0x24, 0x48, 0x6E, 0x56, 0x87, 0x62, 0x5A, 0xBD,
 	0xBF, 0x17, 0xD9, 0xA2, 0xC4, 0x17, 0x1A, 0x01,
 	0x94, 0xED, 0x8F, 0x1E, 0x11, 0xB3, 0xD7, 0x09,
@@ -208,7 +208,7 @@ static const unsigned char base64_test_dec[64] = {
 	0xD1, 0x41, 0xBA, 0x95, 0x31, 0x5A, 0x0B, 0x97
 };
 
-static const unsigned char base64_test_enc[] =
+static const uint8_t base64_test_enc[] =
     "JEhuVodiWr2/F9mixBcaAZTtjx4Rs9cJDLbpEG8i7hPK"
     "swcFdsn6MWwINP+Nwmw4AEPpVJevUEvRQbqVMVoLlw==";
 
@@ -218,13 +218,13 @@ static const unsigned char base64_test_enc[] =
 int base64_self_test(int verbose)
 {
 	size_t len;
-	unsigned char *src, buffer[128];
+	uint8_t *src, buffer[128];
 
 	if (verbose != 0)
 		printf("  Base64 encoding test: ");
 
 	len = sizeof(buffer);
-	src = (unsigned char *)base64_test_dec;
+	src = (uint8_t *)base64_test_dec;
 
 	if (base64_encode(buffer, &len, src, 64) != 0 ||
 	    memcmp(base64_test_enc, buffer, 88) != 0) {
@@ -238,7 +238,7 @@ int base64_self_test(int verbose)
 		printf("passed\n  Base64 decoding test: ");
 
 	len = sizeof(buffer);
-	src = (unsigned char *)base64_test_enc;
+	src = (uint8_t *)base64_test_enc;
 
 	if (base64_decode(buffer, &len, src, 88) != 0 ||
 	    memcmp(base64_test_dec, buffer, 64) != 0) {

@@ -59,15 +59,15 @@
 /*
  * Key material generation
  */
-static int tls1_prf(unsigned char *secret, size_t slen, char *label,
-		    unsigned char *random, size_t rlen,
-		    unsigned char *dstbuf, size_t dlen)
+static int tls1_prf(uint8_t *secret, size_t slen, char *label,
+		    uint8_t *random, size_t rlen,
+		    uint8_t *dstbuf, size_t dlen)
 {
 	size_t nb, hs;
 	size_t i, j, k;
-	unsigned char *S1, *S2;
-	unsigned char tmp[128];
-	unsigned char h_i[20];
+	uint8_t *S1, *S2;
+	uint8_t tmp[128];
+	uint8_t h_i[20];
 
 	if (sizeof(tmp) < 20 + strlen(label) + rlen)
 		return (TROPICSSL_ERR_SSL_BAD_INPUT_DATA);
@@ -108,7 +108,7 @@ static int tls1_prf(unsigned char *secret, size_t slen, char *label,
 		k = (i + 20 > dlen) ? dlen % 20 : 20;
 
 		for (j = 0; j < k; j++)
-			dstbuf[i + j] = (unsigned char)(dstbuf[i + j] ^ h_i[j]);
+			dstbuf[i + j] = (uint8_t)(dstbuf[i + j] ^ h_i[j]);
 	}
 
 	memset(tmp, 0, sizeof(tmp));
@@ -122,12 +122,12 @@ int ssl_derive_keys(ssl_context * ssl)
 	size_t i;
 	md5_context md5;
 	sha1_context sha1;
-	unsigned char tmp[64];
-	unsigned char padding[16];
-	unsigned char sha1sum[20];
-	unsigned char keyblk[256];
-	unsigned char *key1;
-	unsigned char *key2;
+	uint8_t tmp[64];
+	uint8_t padding[16];
+	uint8_t sha1sum[20];
+	uint8_t keyblk[256];
+	uint8_t *key1;
+	uint8_t *key2;
 
 	SSL_DEBUG_MSG(2, ("=> derive keys"));
 
@@ -377,12 +377,12 @@ int ssl_derive_keys(ssl_context * ssl)
 	return (0);
 }
 
-void ssl_calc_verify(ssl_context * ssl, unsigned char hash[36])
+void ssl_calc_verify(ssl_context * ssl, uint8_t hash[36])
 {
 	md5_context md5;
 	sha1_context sha1;
-	unsigned char pad_1[48];
-	unsigned char pad_2[48];
+	uint8_t pad_1[48];
+	uint8_t pad_2[48];
 
 	SSL_DEBUG_MSG(2, ("=> calc verify"));
 
@@ -426,18 +426,18 @@ void ssl_calc_verify(ssl_context * ssl, unsigned char hash[36])
 /*
  * SSLv3.0 MAC functions
  */
-static void ssl_mac_md5(unsigned char *secret,
-			unsigned char *buf, size_t len,
-			unsigned char *ctr, int type)
+static void ssl_mac_md5(uint8_t *secret,
+			uint8_t *buf, size_t len,
+			uint8_t *ctr, int type)
 {
-	unsigned char header[11];
-	unsigned char padding[48];
+	uint8_t header[11];
+	uint8_t padding[48];
 	md5_context md5;
 
 	memcpy(header, ctr, 8);
-	header[8] = (unsigned char)type;
-	header[9] = (unsigned char)(len >> 8);
-	header[10] = (unsigned char)(len);
+	header[8] = (uint8_t)type;
+	header[9] = (uint8_t)(len >> 8);
+	header[10] = (uint8_t)(len);
 
 	memset(padding, 0x36, 48);
 	md5_starts(&md5);
@@ -455,18 +455,18 @@ static void ssl_mac_md5(unsigned char *secret,
 	md5_finish(&md5, buf + len);
 }
 
-static void ssl_mac_sha1(unsigned char *secret,
-			 unsigned char *buf, size_t len,
-			 unsigned char *ctr, int type)
+static void ssl_mac_sha1(uint8_t *secret,
+			 uint8_t *buf, size_t len,
+			 uint8_t *ctr, int type)
 {
-	unsigned char header[11];
-	unsigned char padding[40];
+	uint8_t header[11];
+	uint8_t padding[40];
 	sha1_context sha1;
 
 	memcpy(header, ctr, 8);
-	header[8] = (unsigned char)type;
-	header[9] = (unsigned char)(len >> 8);
-	header[10] = (unsigned char)(len);
+	header[8] = (uint8_t)type;
+	header[9] = (uint8_t)(len >> 8);
+	header[10] = (uint8_t)(len);
 
 	memset(padding, 0x36, 40);
 	sha1_starts(&sha1);
@@ -550,7 +550,7 @@ static int ssl_encrypt_buf(ssl_context * ssl)
 
 		for (i = 0; i <= padlen; i++)
 			ssl->out_msg[ssl->out_msglen + i] =
-			    (unsigned char)padlen;
+			    (uint8_t)padlen;
 
 		ssl->out_msglen += padlen + 1;
 
@@ -610,7 +610,7 @@ static int ssl_encrypt_buf(ssl_context * ssl)
 static int ssl_decrypt_buf(ssl_context * ssl)
 {
 	size_t i, padlen;
-	unsigned char tmp[20];
+	uint8_t tmp[20];
 
 	SSL_DEBUG_MSG(2, ("=> decrypt buf"));
 
@@ -715,8 +715,8 @@ static int ssl_decrypt_buf(ssl_context * ssl)
 	 */
 	ssl->in_msglen -= (ssl->maclen + padlen);
 
-	ssl->in_hdr[3] = (unsigned char)(ssl->in_msglen >> 8);
-	ssl->in_hdr[4] = (unsigned char)(ssl->in_msglen);
+	ssl->in_hdr[3] = (uint8_t)(ssl->in_msglen >> 8);
+	ssl->in_hdr[4] = (uint8_t)(ssl->in_msglen);
 
 	memcpy(tmp, ssl->in_msg + ssl->in_msglen, 20);
 
@@ -815,7 +815,7 @@ int ssl_fetch_input(ssl_context * ssl, size_t nb_want)
 int ssl_flush_output(ssl_context * ssl)
 {
 	int ret;
-	unsigned char *buf;
+	uint8_t *buf;
 
 	SSL_DEBUG_MSG(2, ("=> flush output"));
 
@@ -848,16 +848,16 @@ int ssl_write_record(ssl_context * ssl)
 
 	SSL_DEBUG_MSG(2, ("=> write record"));
 
-	ssl->out_hdr[0] = (unsigned char)ssl->out_msgtype;
-	ssl->out_hdr[1] = (unsigned char)ssl->major_ver;
-	ssl->out_hdr[2] = (unsigned char)ssl->minor_ver;
-	ssl->out_hdr[3] = (unsigned char)(len >> 8);
-	ssl->out_hdr[4] = (unsigned char)(len);
+	ssl->out_hdr[0] = (uint8_t)ssl->out_msgtype;
+	ssl->out_hdr[1] = (uint8_t)ssl->major_ver;
+	ssl->out_hdr[2] = (uint8_t)ssl->minor_ver;
+	ssl->out_hdr[3] = (uint8_t)(len >> 8);
+	ssl->out_hdr[4] = (uint8_t)(len);
 
 	if (ssl->out_msgtype == SSL_MSG_HANDSHAKE) {
-		ssl->out_msg[1] = (unsigned char)((len - 4) >> 16);
-		ssl->out_msg[2] = (unsigned char)((len - 4) >> 8);
-		ssl->out_msg[3] = (unsigned char)((len - 4));
+		ssl->out_msg[1] = (uint8_t)((len - 4) >> 16);
+		ssl->out_msg[2] = (uint8_t)((len - 4) >> 8);
+		ssl->out_msg[3] = (uint8_t)((len - 4));
 
 		md5_update(&ssl->fin_md5, ssl->out_msg, len);
 		sha1_update(&ssl->fin_sha1, ssl->out_msg, len);
@@ -870,8 +870,8 @@ int ssl_write_record(ssl_context * ssl)
 		}
 
 		len = ssl->out_msglen;
-		ssl->out_hdr[3] = (unsigned char)(len >> 8);
-		ssl->out_hdr[4] = (unsigned char)(len);
+		ssl->out_hdr[3] = (uint8_t)(len >> 8);
+		ssl->out_hdr[4] = (uint8_t)(len);
 	}
 
 	ssl->out_left = 5 + ssl->out_msglen;
@@ -1132,9 +1132,9 @@ int ssl_write_certificate(ssl_context * ssl)
 			return (TROPICSSL_ERR_SSL_CERTIFICATE_TOO_LARGE);
 		}
 
-		ssl->out_msg[i] = (unsigned char)(n >> 16);
-		ssl->out_msg[i + 1] = (unsigned char)(n >> 8);
-		ssl->out_msg[i + 2] = (unsigned char)(n);
+		ssl->out_msg[i] = (uint8_t)(n >> 16);
+		ssl->out_msg[i + 1] = (uint8_t)(n >> 8);
+		ssl->out_msg[i + 2] = (uint8_t)(n);
 
 		i += 3;
 		memcpy(ssl->out_msg + i, crt->raw.p, n);
@@ -1142,9 +1142,9 @@ int ssl_write_certificate(ssl_context * ssl)
 		crt = crt->next;
 	}
 
-	ssl->out_msg[4] = (unsigned char)((i - 7) >> 16);
-	ssl->out_msg[5] = (unsigned char)((i - 7) >> 8);
-	ssl->out_msg[6] = (unsigned char)((i - 7));
+	ssl->out_msg[4] = (uint8_t)((i - 7) >> 16);
+	ssl->out_msg[5] = (uint8_t)((i - 7) >> 8);
+	ssl->out_msg[6] = (uint8_t)((i - 7));
 
 	ssl->out_msglen = i;
 	ssl->out_msgtype = SSL_MSG_HANDSHAKE;
@@ -1349,14 +1349,14 @@ int ssl_parse_change_cipher_spec(ssl_context * ssl)
 	return (0);
 }
 
-static void ssl_calc_finished(ssl_context * ssl, unsigned char *buf, int from,
+static void ssl_calc_finished(ssl_context * ssl, uint8_t *buf, int from,
 			      md5_context * md5, sha1_context * sha1)
 {
 	int len = 12;
 	char *sender;
-	unsigned char padbuf[48];
-	unsigned char md5sum[16];
-	unsigned char sha1sum[20];
+	uint8_t padbuf[48];
+	uint8_t md5sum[16];
+	uint8_t sha1sum[20];
 
 	SSL_DEBUG_MSG(2, ("=> calc  finished"));
 
@@ -1373,10 +1373,10 @@ static void ssl_calc_finished(ssl_context * ssl, unsigned char *buf, int from,
 	 *               MD5( handshake ) + SHA1( handshake ) )[0..11]
 	 */
 
-	SSL_DEBUG_BUF(4, "finished  md5 state", (unsigned char *)
+	SSL_DEBUG_BUF(4, "finished  md5 state", (uint8_t *)
 		      md5->state, sizeof(md5->state));
 
-	SSL_DEBUG_BUF(4, "finished sha1 state", (unsigned char *)
+	SSL_DEBUG_BUF(4, "finished sha1 state", (uint8_t *)
 		      sha1->state, sizeof(sha1->state));
 
 	if (ssl->minor_ver == SSL_MINOR_VERSION_0) {
@@ -1385,12 +1385,12 @@ static void ssl_calc_finished(ssl_context * ssl, unsigned char *buf, int from,
 
 		memset(padbuf, 0x36, 48);
 
-		md5_update(md5, (unsigned char *)sender, 4);
+		md5_update(md5, (uint8_t *)sender, 4);
 		md5_update(md5, ssl->session->master, 48);
 		md5_update(md5, padbuf, 48);
 		md5_finish(md5, md5sum);
 
-		sha1_update(sha1, (unsigned char *)sender, 4);
+		sha1_update(sha1, (uint8_t *)sender, 4);
 		sha1_update(sha1, ssl->session->master, 48);
 		sha1_update(sha1, padbuf, 40);
 		sha1_finish(sha1, sha1sum);
@@ -1482,7 +1482,7 @@ int ssl_parse_finished(ssl_context * ssl)
 	unsigned int hash_len;
 	md5_context md5;
 	sha1_context sha1;
-	unsigned char buf[36];
+	uint8_t buf[36];
 
 	SSL_DEBUG_MSG(2, ("=> parse finished"));
 
@@ -1538,7 +1538,7 @@ int ssl_init(ssl_context * ssl)
 
 	memset(ssl, 0, sizeof(ssl_context));
 
-	ssl->in_ctr = (unsigned char *)malloc(len);
+	ssl->in_ctr = (uint8_t *)malloc(len);
 	ssl->in_hdr = ssl->in_ctr + 8;
 	ssl->in_msg = ssl->in_ctr + 13;
 
@@ -1547,7 +1547,7 @@ int ssl_init(ssl_context * ssl)
 		return (1);
 	}
 
-	ssl->out_ctr = (unsigned char *)malloc(len);
+	ssl->out_ctr = (uint8_t *)malloc(len);
 	ssl->out_hdr = ssl->out_ctr + 8;
 	ssl->out_msg = ssl->out_ctr + 13;
 
@@ -1596,8 +1596,8 @@ void ssl_set_dbg(ssl_context * ssl,
 }
 
 void ssl_set_bio(ssl_context * ssl,
-		 int (*f_recv) (void *, unsigned char *, size_t), void *p_recv,
-		 int (*f_send) (void *, unsigned char *, size_t), void *p_send)
+		 int (*f_recv) (void *, uint8_t *, size_t), void *p_recv,
+		 int (*f_send) (void *, uint8_t *, size_t), void *p_send)
 {
 	ssl->f_recv = f_recv;
 	ssl->f_send = f_send;
@@ -1661,9 +1661,9 @@ int ssl_set_hostname(ssl_context * ssl, const char *hostname)
 		return (TROPICSSL_ERR_SSL_BAD_INPUT_DATA);
 
 	ssl->hostname_len = strlen(hostname);
-	ssl->hostname = (unsigned char *)malloc(ssl->hostname_len + 1);
+	ssl->hostname = (uint8_t *)malloc(ssl->hostname_len + 1);
 
-	memcpy(ssl->hostname, (unsigned char *)hostname, ssl->hostname_len);
+	memcpy(ssl->hostname, (uint8_t *)hostname, ssl->hostname_len);
 
 	return (0);
 }
@@ -1787,7 +1787,7 @@ int ssl_handshake(ssl_context * ssl)
 /*
  * Receive application data decrypted from the SSL layer
  */
-int ssl_read(ssl_context * ssl, unsigned char *buf, size_t len)
+int ssl_read(ssl_context * ssl, uint8_t *buf, size_t len)
 {
 	int ret;
 	size_t n;
@@ -1847,7 +1847,7 @@ int ssl_read(ssl_context * ssl, unsigned char *buf, size_t len)
 /*
  * Send application data to be encrypted by the SSL layer
  */
-int ssl_write(ssl_context * ssl, const unsigned char *buf, size_t len)
+int ssl_write(ssl_context * ssl, const uint8_t *buf, size_t len)
 {
 	int ret;
 	size_t n;

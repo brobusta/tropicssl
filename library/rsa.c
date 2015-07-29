@@ -188,7 +188,7 @@ cleanup:
 /*
  * Do an RSA public key operation
  */
-int rsa_public(rsa_context * ctx, const unsigned char *input, unsigned char *output)
+int rsa_public(rsa_context * ctx, const uint8_t *input, uint8_t *output)
 {
 	int ret;
 	size_t olen;
@@ -220,7 +220,7 @@ cleanup:
 /*
  * Do an RSA private key operation
  */
-int rsa_private(rsa_context * ctx, const unsigned char *input, unsigned char *output)
+int rsa_private(rsa_context * ctx, const uint8_t *input, uint8_t *output)
 {
 	int ret;
 	size_t olen;
@@ -278,10 +278,10 @@ cleanup:
  */
 int rsa_pkcs1_encrypt(rsa_context * ctx,
 		      int mode, size_t ilen,
-		      const unsigned char *input, unsigned char *output)
+		      const uint8_t *input, uint8_t *output)
 {
 	size_t nb_pad, olen;
-	unsigned char *p = output;
+	uint8_t *p = output;
 
 	olen = ctx->len;
 
@@ -298,7 +298,7 @@ int rsa_pkcs1_encrypt(rsa_context * ctx,
 
 		while (nb_pad-- > 0) {
 			do {
-				*p = (unsigned char)rand();
+				*p = (uint8_t)rand();
 			} while (*p == 0);
 			p++;
 		}
@@ -321,13 +321,13 @@ int rsa_pkcs1_encrypt(rsa_context * ctx,
  */
 int rsa_pkcs1_decrypt(rsa_context * ctx,
 		      int mode, size_t *olen,
-		      const unsigned char *input,
-		      unsigned char *output, size_t output_max_len)
+		      const uint8_t *input,
+		      uint8_t *output, size_t output_max_len)
 {
 	int ret;
 	size_t ilen;
-	unsigned char *p;
-	unsigned char buf[512];
+	uint8_t *p;
+	uint8_t buf[512];
 
 	ilen = ctx->len;
 
@@ -377,10 +377,10 @@ int rsa_pkcs1_decrypt(rsa_context * ctx,
 int rsa_pkcs1_sign(rsa_context * ctx,
 		   int mode,
 		   int hash_id,
-		   unsigned int hashlen, const unsigned char *hash, unsigned char *sig)
+		   unsigned int hashlen, const uint8_t *hash, uint8_t *sig)
 {
 	size_t nb_pad, olen;
-	unsigned char *p = sig;
+	uint8_t *p = sig;
 
 	olen = ctx->len;
 
@@ -464,11 +464,11 @@ int rsa_pkcs1_sign(rsa_context * ctx,
 int rsa_pkcs1_verify(rsa_context * ctx,
 		     int mode,
 		     int hash_id,
-		     unsigned int hashlen, const unsigned char *hash, unsigned char *sig)
+		     unsigned int hashlen, const uint8_t *hash, uint8_t *sig)
 {
 	int ret, len, siglen;
-	unsigned char *p, c;
-	unsigned char buf[512];
+	uint8_t *p, c;
+	uint8_t buf[512];
 
 	siglen = ctx->len;
 
@@ -615,10 +615,10 @@ int rsa_self_test(int verbose)
 {
 	size_t len;
 	rsa_context rsa;
-	unsigned char sha1sum[20];
-	unsigned char rsa_plaintext[PT_LEN];
-	unsigned char rsa_decrypted[PT_LEN];
-	unsigned char rsa_ciphertext[KEY_LEN];
+	uint8_t sha1sum[20];
+	uint8_t rsa_plaintext[PT_LEN];
+	uint8_t rsa_decrypted[PT_LEN];
+	uint8_t rsa_ciphertext[KEY_LEN];
 
 	memset(&rsa, 0, sizeof(rsa_context));
 

@@ -36,6 +36,7 @@
 #define TROPICSSL_SSL_H
 
 #include <time.h>
+#include <inttypes.h>
 
 #include "tropicssl/net.h"
 #include "tropicssl/dhm.h"
@@ -173,8 +174,8 @@ struct _ssl_session {
 	time_t start;		/*!< starting time      */
 	int cipher;		/*!< chosen cipher      */
 	size_t length;		/*!< session id length  */
-	unsigned char id[32];	/*!< session identifier */
-	unsigned char master[48];	/*!< the master secret  */
+	uint8_t id[32];	/*!< session identifier */
+	uint8_t master[48];	/*!< the master secret  */
 	ssl_session *next;	/*!< next session entry */
 };
 
@@ -195,8 +196,8 @@ struct _ssl_context {
 	 */
 	int (*f_rng) (void *);
 	void (*f_dbg) (void *, int, const char *);
-	int (*f_recv) (void *, unsigned char *, size_t);
-	int (*f_send) (void *, unsigned char *, size_t);
+	int (*f_recv) (void *, uint8_t *, size_t);
+	int (*f_send) (void *, uint8_t *, size_t);
 
 	void *p_rng;		/*!< context for the RNG function     */
 	void *p_dbg;		/*!< context for the debug function   */
@@ -215,10 +216,10 @@ struct _ssl_context {
 	/*
 	 * Record layer (incoming data)
 	 */
-	unsigned char *in_ctr;	/*!< 64-bit incoming message counter  */
-	unsigned char *in_hdr;	/*!< 5-byte record header (in_ctr+8)  */
-	unsigned char *in_msg;	/*!< the message contents (in_hdr+5)  */
-	unsigned char *in_offt;	/*!< read offset in application data  */
+	uint8_t *in_ctr;	/*!< 64-bit incoming message counter  */
+	uint8_t *in_hdr;	/*!< 5-byte record header (in_ctr+8)  */
+	uint8_t *in_msg;	/*!< the message contents (in_hdr+5)  */
+	uint8_t *in_offt;	/*!< read offset in application data  */
 
 	int in_msgtype;			/*!< record header: message type      */
 	size_t in_msglen;		/*!< record header: message length    */
@@ -230,9 +231,9 @@ struct _ssl_context {
 	/*
 	 * Record layer (outgoing data)
 	 */
-	unsigned char *out_ctr;	/*!< 64-bit outgoing message counter  */
-	unsigned char *out_hdr;	/*!< 5-byte record header (out_ctr+8) */
-	unsigned char *out_msg;	/*!< the message contents (out_hdr+5) */
+	uint8_t *out_ctr;	/*!< 64-bit outgoing message counter  */
+	uint8_t *out_hdr;	/*!< 5-byte record header (out_ctr+8) */
+	uint8_t *out_msg;	/*!< the message contents (out_hdr+5) */
 
 	int out_msgtype;		/*!< record header: message type      */
 	size_t out_msglen;		/*!< record header: message length    */
@@ -267,14 +268,14 @@ struct _ssl_context {
 	size_t ivlen;		/*!<  IV length               */
 	size_t maclen;		/*!<  MAC length              */
 
-	unsigned char randbytes[64];	/*!<  random bytes            */
-	unsigned char premaster[256];	/*!<  premaster secret        */
+	uint8_t randbytes[64];	/*!<  random bytes            */
+	uint8_t premaster[256];	/*!<  premaster secret        */
 
-	unsigned char iv_enc[16];	/*!<  IV (encryption)         */
-	unsigned char iv_dec[16];	/*!<  IV (decryption)         */
+	uint8_t iv_enc[16];	/*!<  IV (encryption)         */
+	uint8_t iv_dec[16];	/*!<  IV (decryption)         */
 
-	unsigned char mac_enc[32];	/*!<  MAC (encryption)        */
-	unsigned char mac_dec[32];	/*!<  MAC (decryption)        */
+	uint8_t mac_enc[32];	/*!<  MAC (encryption)        */
+	uint8_t mac_dec[32];	/*!<  MAC (decryption)        */
 
 	uint32_t ctx_enc[128];	/*!<  encryption context      */
 	uint32_t ctx_dec[128];	/*!<  decryption context      */
@@ -282,7 +283,7 @@ struct _ssl_context {
 	/*
 	 * TLS extensions
 	 */
-	unsigned char *hostname;
+	uint8_t *hostname;
 	size_t hostname_len;
 };
 
@@ -357,8 +358,8 @@ extern "C" {
 	 * \param p_send   write parameter
 	 */
 	void ssl_set_bio(ssl_context * ssl,
-			 int (*f_recv) (void *, unsigned char *, size_t),
-			 void *p_recv, int (*f_send) (void *, unsigned char *,
+			 int (*f_recv) (void *, uint8_t *, size_t),
+			 void *p_recv, int (*f_send) (void *, uint8_t *,
 						      size_t), void *p_send);
 
 	/**
@@ -487,7 +488,7 @@ extern "C" {
 	 * \return         This function returns the number of bytes read,
 	 *                 or a negative error code.
 	 */
-	int ssl_read(ssl_context * ssl, unsigned char *buf, size_t len);
+	int ssl_read(ssl_context * ssl, uint8_t *buf, size_t len);
 
 	/**
 	 * \brief          Write exactly 'len' application data bytes
@@ -503,7 +504,7 @@ extern "C" {
 	 *                 it must be called later with the *same* arguments,
 	 *                 until it returns a positive value.
 	 */
-	int ssl_write(ssl_context * ssl, const unsigned char *buf, size_t len);
+	int ssl_write(ssl_context * ssl, const uint8_t *buf, size_t len);
 
 	/**
 	 * \brief          Notify the peer that the connection is being closed
@@ -522,7 +523,7 @@ extern "C" {
 	int ssl_handshake_server(ssl_context * ssl);
 
 	int ssl_derive_keys(ssl_context * ssl);
-	void ssl_calc_verify(ssl_context * ssl, unsigned char hash[36]);
+	void ssl_calc_verify(ssl_context * ssl, uint8_t hash[36]);
 
 	int ssl_read_record(ssl_context * ssl);
 	int ssl_fetch_input(ssl_context * ssl, size_t nb_want);

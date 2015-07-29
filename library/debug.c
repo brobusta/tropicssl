@@ -96,7 +96,7 @@ void debug_print_ret(const ssl_context * ssl, int level,
 
 void debug_print_buf(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text,
-		     unsigned char *buf, size_t len)
+		     uint8_t *buf, size_t len)
 {
 	char str[512];
 	size_t i, maxlen = sizeof(str) - 1;

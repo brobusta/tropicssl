@@ -274,7 +274,7 @@ void net_usleep(unsigned long usec)
 /*
  * Read at most 'len' characters
  */
-int net_recv(void *ctx, unsigned char *buf, size_t len)
+int net_recv(void *ctx, uint8_t *buf, size_t len)
 {
 	int ret = read(*((int *)ctx), buf, len);
 
@@ -305,7 +305,7 @@ int net_recv(void *ctx, unsigned char *buf, size_t len)
 /*
  * Write at most 'len' characters
  */
-int net_send(void *ctx, unsigned char *buf, size_t len)
+int net_send(void *ctx, uint8_t *buf, size_t len)
 {
 	int ret = write(*((int *)ctx), buf, len);
 

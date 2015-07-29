@@ -49,8 +49,8 @@ static int ssl_write_client_hello(ssl_context * ssl)
 {
 	int ret;
 	size_t i, n;
-	unsigned char *buf;
-	unsigned char *p;
+	uint8_t *buf;
+	uint8_t *p;
 	time_t t;
 
 	SSL_DEBUG_MSG(2, ("=> write client hello"));
@@ -71,22 +71,22 @@ static int ssl_write_client_hello(ssl_context * ssl)
 	buf = ssl->out_msg;
 	p = buf + 4;
 
-	*p++ = (unsigned char)ssl->max_major_ver;
-	*p++ = (unsigned char)ssl->max_minor_ver;
+	*p++ = (uint8_t)ssl->max_major_ver;
+	*p++ = (uint8_t)ssl->max_minor_ver;
 
 	SSL_DEBUG_MSG(3, ("client hello, max version: [%d:%d]",
 			  buf[4], buf[5]));
 
 	t = time(NULL);
-	*p++ = (unsigned char)(t >> 24);
-	*p++ = (unsigned char)(t >> 16);
-	*p++ = (unsigned char)(t >> 8);
-	*p++ = (unsigned char)(t);
+	*p++ = (uint8_t)(t >> 24);
+	*p++ = (uint8_t)(t >> 16);
+	*p++ = (uint8_t)(t >> 8);
+	*p++ = (uint8_t)(t);
 
 	SSL_DEBUG_MSG(3, ("client hello, current time: %lu", t));
 
 	for (i = 28; i > 0; i--)
-		*p++ = (unsigned char)ssl->f_rng(ssl->p_rng);
+		*p++ = (uint8_t)ssl->f_rng(ssl->p_rng);
 
 	memcpy(ssl->randbytes, buf + 6, 32);
 
@@ -106,7 +106,7 @@ static int ssl_write_client_hello(ssl_context * ssl)
 	    t - ssl->session->start > ssl->timeout)
 		n = 0;
 
-	*p++ = (unsigned char)n;
+	*p++ = (uint8_t)n;
 
 	for (i = 0; i < n; i++)
 		*p++ = ssl->session->id[i];
@@ -115,8 +115,8 @@ static int ssl_write_client_hello(ssl_context * ssl)
 	SSL_DEBUG_BUF(3, "client hello, session id", buf + 39, n);
 
 	for (n = 0; ssl->ciphers[n] != 0; n++) ;
-	*p++ = (unsigned char)(n >> 7);
-	*p++ = (unsigned char)(n << 1);
+	*p++ = (uint8_t)(n >> 7);
+	*p++ = (uint8_t)(n << 1);
 
 	SSL_DEBUG_MSG(3, ("client hello, got %d ciphers", n));
 
@@ -124,8 +124,8 @@ static int ssl_write_client_hello(ssl_context * ssl)
 		SSL_DEBUG_MSG(3, ("client hello, add cipher: %2d",
 				  ssl->ciphers[i]));
 
-		*p++ = (unsigned char)(ssl->ciphers[i] >> 8);
-		*p++ = (unsigned char)(ssl->ciphers[i]);
+		*p++ = (uint8_t)(ssl->ciphers[i] >> 8);
+		*p++ = (uint8_t)(ssl->ciphers[i]);
 	}
 
 	SSL_DEBUG_MSG(3, ("client hello, compress len.: %d", 1));
@@ -138,21 +138,21 @@ static int ssl_write_client_hello(ssl_context * ssl)
 		SSL_DEBUG_MSG(3, ("client hello, server name extension: %s",
 				  ssl->hostname));
 
-		*p++ = (unsigned char)(((ssl->hostname_len + 9) >> 8) & 0xFF);
-		*p++ = (unsigned char)(((ssl->hostname_len + 9)) & 0xFF);
+		*p++ = (uint8_t)(((ssl->hostname_len + 9) >> 8) & 0xFF);
+		*p++ = (uint8_t)(((ssl->hostname_len + 9)) & 0xFF);
 
-		*p++ = (unsigned char)((TLS_EXT_SERVERNAME >> 8) & 0xFF);
-		*p++ = (unsigned char)((TLS_EXT_SERVERNAME) & 0xFF);
+		*p++ = (uint8_t)((TLS_EXT_SERVERNAME >> 8) & 0xFF);
+		*p++ = (uint8_t)((TLS_EXT_SERVERNAME) & 0xFF);
 
-		*p++ = (unsigned char)(((ssl->hostname_len + 5) >> 8) & 0xFF);
-		*p++ = (unsigned char)(((ssl->hostname_len + 5)) & 0xFF);
+		*p++ = (uint8_t)(((ssl->hostname_len + 5) >> 8) & 0xFF);
+		*p++ = (uint8_t)(((ssl->hostname_len + 5)) & 0xFF);
 
-		*p++ = (unsigned char)(((ssl->hostname_len + 3) >> 8) & 0xFF);
-		*p++ = (unsigned char)(((ssl->hostname_len + 3)) & 0xFF);
+		*p++ = (uint8_t)(((ssl->hostname_len + 3) >> 8) & 0xFF);
+		*p++ = (uint8_t)(((ssl->hostname_len + 3)) & 0xFF);
 
-		*p++ = (unsigned char)((TLS_EXT_SERVERNAME_HOSTNAME) & 0xFF);
-		*p++ = (unsigned char)((ssl->hostname_len >> 8) & 0xFF);
-		*p++ = (unsigned char)((ssl->hostname_len) & 0xFF);
+		*p++ = (uint8_t)((TLS_EXT_SERVERNAME_HOSTNAME) & 0xFF);
+		*p++ = (uint8_t)((ssl->hostname_len >> 8) & 0xFF);
+		*p++ = (uint8_t)((ssl->hostname_len) & 0xFF);
 
 		memcpy(p, ssl->hostname, ssl->hostname_len);
 
@@ -181,7 +181,7 @@ static int ssl_parse_server_hello(ssl_context * ssl)
 	int ret, i;
 	size_t n;
 	int ext_len;
-	unsigned char *buf;
+	uint8_t *buf;
 
 	SSL_DEBUG_MSG(2, ("=> parse server hello"));
 
@@ -308,8 +308,8 @@ static int ssl_parse_server_key_exchange(ssl_context * ssl)
 {
 	int ret;
 	size_t n;
-	unsigned char *p, *end;
-	unsigned char hash[36];
+	uint8_t *p, *end;
+	uint8_t hash[36];
 	md5_context md5;
 	sha1_context sha1;
 
@@ -503,8 +503,8 @@ static int ssl_write_client_key_exchange(ssl_context * ssl)
 		 */
 		n = ssl->dhm_ctx.len;
 
-		ssl->out_msg[4] = (unsigned char)(n >> 8);
-		ssl->out_msg[5] = (unsigned char)(n);
+		ssl->out_msg[4] = (uint8_t)(n >> 8);
+		ssl->out_msg[5] = (uint8_t)(n);
 		i = 6;
 
 		ret = dhm_make_public(&ssl->dhm_ctx, 256,
@@ -533,21 +533,21 @@ static int ssl_write_client_key_exchange(ssl_context * ssl)
 		/*
 		 * RSA key exchange -- send rsa_public(pkcs1 v1.5(premaster))
 		 */
-		ssl->premaster[0] = (unsigned char)ssl->max_major_ver;
-		ssl->premaster[1] = (unsigned char)ssl->max_minor_ver;
+		ssl->premaster[0] = (uint8_t)ssl->max_major_ver;
+		ssl->premaster[1] = (uint8_t)ssl->max_minor_ver;
 		ssl->pmslen = 48;
 
 		for (i = 2; i < ssl->pmslen; i++)
 			ssl->premaster[i] =
-			    (unsigned char)ssl->f_rng(ssl->p_rng);
+			    (uint8_t)ssl->f_rng(ssl->p_rng);
 
 		i = 4;
 		n = ssl->peer_cert->rsa.len;
 
 		if (ssl->minor_ver != SSL_MINOR_VERSION_0) {
 			i += 2;
-			ssl->out_msg[4] = (unsigned char)(n >> 8);
-			ssl->out_msg[5] = (unsigned char)(n);
+			ssl->out_msg[4] = (uint8_t)(n >> 8);
+			ssl->out_msg[5] = (uint8_t)(n);
 		}
 
 		ret = rsa_pkcs1_encrypt(&ssl->peer_cert->rsa, RSA_PUBLIC,
@@ -581,7 +581,7 @@ static int ssl_write_certificate_verify(ssl_context * ssl)
 {
 	int ret;
 	size_t n;
-	unsigned char hash[36];
+	uint8_t hash[36];
 
 	SSL_DEBUG_MSG(2, ("=> write certificate verify"));
 
@@ -602,8 +602,8 @@ static int ssl_write_certificate_verify(ssl_context * ssl)
 	ssl_calc_verify(ssl, hash);
 
 	n = ssl->rsa_key->len;
-	ssl->out_msg[4] = (unsigned char)(n >> 8);
-	ssl->out_msg[5] = (unsigned char)(n);
+	ssl->out_msg[4] = (uint8_t)(n >> 8);
+	ssl->out_msg[5] = (uint8_t)(n);
 
 	if ((ret = rsa_pkcs1_sign(ssl->rsa_key, RSA_PRIVATE, RSA_RAW,
 				  36, hash, ssl->out_msg + 6)) != 0) {

@@ -478,7 +478,7 @@ cleanup:
 /*
  * Import X from unsigned binary data, big endian
  */
-int mpi_read_binary(mpi * X, const unsigned char *buf, size_t buflen)
+int mpi_read_binary(mpi * X, const uint8_t *buf, size_t buflen)
 {
 	int ret;
 	size_t i, j, n;
@@ -501,7 +501,7 @@ cleanup:
 /*
  * Export X into unsigned binary data, big endian
  */
-int mpi_write_binary(const mpi * X, unsigned char *buf, size_t buflen)
+int mpi_write_binary(const mpi * X, uint8_t *buf, size_t buflen)
 {
 	size_t i, j, n;
 
@@ -513,7 +513,7 @@ int mpi_write_binary(const mpi * X, unsigned char *buf, size_t buflen)
 	memset(buf, 0, buflen);
 
 	for (i = buflen - 1, j = 0; n > 0; i--, j++, n--)
-		buf[i] = (unsigned char)(X->p[j / ciL] >> ((j % ciL) << 3));
+		buf[i] = (uint8_t)(X->p[j / ciL] >> ((j % ciL) << 3));
 
 	return (TROPICSSL_ERR_MPI_OKAY);
 }
@@ -1529,14 +1529,14 @@ int mpi_fill_random(mpi * X, size_t size, int (*f_rng)(void *), void *p_rng)
 {
     int ret;
     size_t k;
-    unsigned char *p;
+    uint8_t *p;
 
     MPI_CHK(mpi_grow(X, size));
     MPI_CHK(mpi_lset(X, 0));
 
-    p = (unsigned char *) X->p;
+    p = (uint8_t *) X->p;
     for (k = 0; k < X->n * ciL; k++)
-        *p++ = (unsigned char) f_rng(p_rng);
+        *p++ = (uint8_t) f_rng(p_rng);
 
 cleanup:
     return (ret);

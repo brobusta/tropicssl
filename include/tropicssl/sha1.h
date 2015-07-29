@@ -44,10 +44,10 @@
 typedef struct {
 	uint32_t total[2];	/*!< number of bytes processed  */
 	uint32_t state[5];	/*!< intermediate digest state  */
-	unsigned char buffer[64];	/*!< data block being processed */
+	uint8_t buffer[64];	/*!< data block being processed */
 
-	unsigned char ipad[64];	/*!< HMAC: inner padding        */
-	unsigned char opad[64];	/*!< HMAC: outer padding        */
+	uint8_t ipad[64];	/*!< HMAC: inner padding        */
+	uint8_t opad[64];	/*!< HMAC: outer padding        */
 } sha1_context;
 
 #ifdef __cplusplus
@@ -68,7 +68,7 @@ extern "C" {
 	 * \param input    buffer holding the  data
 	 * \param ilen     length of the input data
 	 */
-	void sha1_update(sha1_context * ctx, const unsigned char *input, size_t ilen);
+	void sha1_update(sha1_context * ctx, const uint8_t *input, size_t ilen);
 
 	/**
 	 * \brief          SHA-1 final digest
@@ -76,7 +76,7 @@ extern "C" {
 	 * \param ctx      SHA-1 context
 	 * \param output   SHA-1 checksum result
 	 */
-	void sha1_finish(sha1_context * ctx, unsigned char output[20]);
+	void sha1_finish(sha1_context * ctx, uint8_t output[20]);
 
 	/**
 	 * \brief          Output = SHA-1( input buffer )
@@ -85,7 +85,7 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 * \param output   SHA-1 checksum result
 	 */
-	void sha1(const unsigned char *input, size_t ilen, unsigned char output[20]);
+	void sha1(const uint8_t *input, size_t ilen, uint8_t output[20]);
 
 	/**
 	 * \brief          Output = SHA-1( file contents )
@@ -96,7 +96,7 @@ extern "C" {
 	 * \return         0 if successful, 1 if fopen failed,
 	 *                 or 2 if fread failed
 	 */
-	int sha1_file(const char *path, unsigned char output[20]);
+	int sha1_file(const char *path, uint8_t output[20]);
 
 	/**
 	 * \brief          SHA-1 HMAC context setup
@@ -105,7 +105,7 @@ extern "C" {
 	 * \param key      HMAC secret key
 	 * \param keylen   length of the HMAC key
 	 */
-	void sha1_hmac_starts(sha1_context * ctx, const unsigned char *key,
+	void sha1_hmac_starts(sha1_context * ctx, const uint8_t *key,
 			      size_t keylen);
 
 	/**
@@ -115,7 +115,7 @@ extern "C" {
 	 * \param input    buffer holding the  data
 	 * \param ilen     length of the input data
 	 */
-	void sha1_hmac_update(sha1_context * ctx, const unsigned char *input,
+	void sha1_hmac_update(sha1_context * ctx, const uint8_t *input,
 			      size_t ilen);
 
 	/**
@@ -124,7 +124,7 @@ extern "C" {
 	 * \param ctx      HMAC context
 	 * \param output   SHA-1 HMAC checksum result
 	 */
-	void sha1_hmac_finish(sha1_context * ctx, unsigned char output[20]);
+	void sha1_hmac_finish(sha1_context * ctx, uint8_t output[20]);
 
 	/**
 	 * \brief          Output = HMAC-SHA-1( hmac key, input buffer )
@@ -135,9 +135,9 @@ extern "C" {
 	 * \param ilen     length of the input data
 	 * \param output   HMAC-SHA-1 result
 	 */
-	void sha1_hmac(const unsigned char *key, size_t keylen,
-		       const unsigned char *input, size_t ilen,
-		       unsigned char output[20]);
+	void sha1_hmac(const uint8_t *key, size_t keylen,
+		       const uint8_t *input, size_t ilen,
+		       uint8_t output[20]);
 
 	/**
 	 * \brief          Checkup routine
