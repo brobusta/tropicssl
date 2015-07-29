@@ -139,7 +139,7 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text, const mpi * X)
 {
 	char str[512];
-	int j, k, maxlen = sizeof(str) - 1;
+	int j, k, maxlen = sizeof(str) - 1, zeros = 1;
 	size_t i, n;
 
 	if (ssl->f_dbg == NULL || X == NULL)
@@ -149,14 +149,27 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 		if (X->p[n] != 0)
 			break;
 
-	snprintf(str, maxlen, "%s(%04d): value of '%s' (%d bits) is:\n",
-		 file, line, text, (int) ((n + 1) * sizeof(t_uint)) << 3);
+	for (j = (sizeof(t_uint) << 3) - 1; j >= 0; j--)
+		if (((X->p[n] >> j) & 1) != 0)
+			break;
+
+	snprintf(str, maxlen, "%s(%04d): value of '%s' (%d bits) is:\n", file,
+			line, text, (int) ((n * (sizeof(t_uint) << 3)) + j + 1));
 
 	str[maxlen] = '\0';
 	ssl->f_dbg(ssl->p_dbg, level, str);
 
-	for (i = n, j = 0; i >= 0; i--, j++) {
-		if (j % (16 / sizeof(t_uint)) == 0) {
+	for (i = n + 1, j = 0; i > 0; i--) {
+		if (zeros && X->p[i - 1] == 0)
+			continue;
+
+		for (k = sizeof(t_uint) - 1; k >= 0; k--) {
+			if (zeros && ((X->p[i - 1] >> (k << 3)) & 0xFF) == 0)
+				continue;
+			else
+				zeros = 0;
+
+			if (j % 16 == 0) {
 			if (j > 0)
 				ssl->f_dbg(ssl->p_dbg, level, "\n");
 
@@ -166,13 +179,22 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 			ssl->f_dbg(ssl->p_dbg, level, str);
 		}
 
-		for (k = sizeof(t_uint) - 1; k >= 0; k--) {
-			snprintf(str, maxlen, " %02x", (unsigned int)
-				 (X->p[i] >> (k << 3)) & 0xFF);
+			snprintf(str, maxlen, " %02x",
+					(unsigned int)(X->p[i - 1] >> (k << 3))
+							& 0xFF);
 
 			str[maxlen] = '\0';
 			ssl->f_dbg(ssl->p_dbg, level, str);
+			j++;
 		}
+	}
+
+	if (zeros == 1) {
+		snprintf(str, maxlen, "%s(%04d): ", file, line);
+
+		str[maxlen] = '\0';
+		ssl->f_dbg(ssl->p_dbg, level, str);
+		ssl->f_dbg(ssl->p_dbg, level, " 00");
 	}
 
 	ssl->f_dbg(ssl->p_dbg, level, "\n");
@@ -181,7 +203,7 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 void debug_print_crt(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text, const x509_cert * crt)
 {
-	char str[512], prefix[64], *p;
+	char str[1024], prefix[64], *p;
 	int i = 0, maxlen = sizeof(prefix) - 1;
 
 	if (ssl->f_dbg == NULL || crt == NULL)
