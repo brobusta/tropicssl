@@ -99,17 +99,17 @@
 /*
  * Supported ciphersuites
  */
-#define SSL_RSA_RC4_128_MD5              4
-#define SSL_RSA_RC4_128_SHA              5
-#define SSL_RSA_DES_168_SHA             10
-#define SSL_EDH_RSA_DES_168_SHA         22
-#define SSL_RSA_AES_128_SHA             47
-#define SSL_RSA_AES_256_SHA             53
-#define SSL_EDH_RSA_AES_256_SHA         57
+#define TLS_RSA_WITH_RC4_128_MD5                    0x04
+#define TLS_RSA_WITH_RC4_128_SHA                    0x05
+#define TLS_RSA_WITH_3DES_EDE_CBC_SHA               0x0A
+#define TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA           0x16
+#define TLS_RSA_WITH_AES_128_CBC_SHA                0x2F
+#define TLS_RSA_WITH_AES_256_CBC_SHA                0x35
+#define TLS_DHE_RSA_WITH_AES_256_CBC_SHA            0x39
 
-#define SSL_RSA_CAMELLIA_128_SHA	0x41
-#define SSL_RSA_CAMELLIA_256_SHA	0x84
-#define SSL_EDH_RSA_CAMELLIA_256_SHA	0x88
+#define TLS_RSA_WITH_CAMELLIA_128_CBC_SHA           0x41
+#define TLS_RSA_WITH_CAMELLIA_256_CBC_SHA           0x84
+#define TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA       0x88
 
 /*
  * Message, alert and handshake types

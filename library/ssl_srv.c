@@ -504,9 +504,9 @@ static int ssl_write_server_key_exchange(ssl_context * ssl)
 
 	SSL_DEBUG_MSG(2, ("=> write server key exchange"));
 
-	if (ssl->session->cipher != SSL_EDH_RSA_DES_168_SHA &&
-	    ssl->session->cipher != SSL_EDH_RSA_AES_256_SHA &&
-	    ssl->session->cipher != SSL_EDH_RSA_CAMELLIA_256_SHA) {
+	if (ssl->session->cipher != TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA &&
+	    ssl->session->cipher != TLS_DHE_RSA_WITH_AES_256_CBC_SHA &&
+	    ssl->session->cipher != TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA) {
 		SSL_DEBUG_MSG(2, ("<= skip write server key exchange"));
 		ssl->state++;
 		return (0);
@@ -633,9 +633,9 @@ static int ssl_parse_client_key_exchange(ssl_context * ssl)
 		return (TROPICSSL_ERR_SSL_BAD_HS_CLIENT_KEY_EXCHANGE);
 	}
 
-	if (ssl->session->cipher == SSL_EDH_RSA_DES_168_SHA ||
-	    ssl->session->cipher == SSL_EDH_RSA_AES_256_SHA ||
-	    ssl->session->cipher == SSL_EDH_RSA_CAMELLIA_256_SHA) {
+	if (ssl->session->cipher == TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA ||
+	    ssl->session->cipher == TLS_DHE_RSA_WITH_AES_256_CBC_SHA ||
+	    ssl->session->cipher == TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA) {
 #if !defined(TROPICSSL_DHM_C)
 		SSL_DEBUG_MSG(1, ("support for dhm is not available"));
 		return (TROPICSSL_ERR_SSL_FEATURE_UNAVAILABLE);
