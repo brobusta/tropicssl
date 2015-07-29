@@ -35,10 +35,14 @@
 #ifndef TROPICSSL_BIGNUM_H
 #define TROPICSSL_BIGNUM_H
 
+#if defined(TROPICSSL_SELF_TEST)
 #include <stdio.h>
+#endif
+
 #include <string.h>
 #include <inttypes.h>
 
+#define TROPICSSL_ERR_MPI_OKAY								0
 #define TROPICSSL_ERR_MPI_FILE_IO_ERROR                     -0x0002
 #define TROPICSSL_ERR_MPI_BAD_INPUT_DATA                    -0x0004
 #define TROPICSSL_ERR_MPI_INVALID_CHARACTER                 -0x0006
@@ -46,8 +50,14 @@
 #define TROPICSSL_ERR_MPI_NEGATIVE_VALUE                    -0x000A
 #define TROPICSSL_ERR_MPI_DIVISION_BY_ZERO                  -0x000C
 #define TROPICSSL_ERR_MPI_NOT_ACCEPTABLE                    -0x000E
+#define TROPICSSL_ERR_MPI_MALLOC_FAILED                     -0x0010
 
 #define MPI_CHK(f) if( ( ret = f ) != 0 ) goto cleanup
+
+/*
+ * Maximum size MPIs are allowed to grow to in number of limbs.
+ */
+#define TROPICSSL_MPI_MAX_LIMBS                             10000
 
 /*
  * Define the base integer type, architecture-wise
@@ -105,16 +115,16 @@ extern "C" {
 	/**
 	 * \brief          Enlarge to the specified number of limbs
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_grow(mpi * X, size_t nblimbs);
 
 	/**
 	 * \brief          Copy the contents of Y into X
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_copy(mpi * X, const mpi * Y);
 
@@ -126,8 +136,8 @@ extern "C" {
 	/**
 	 * \brief          Set value from integer
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_lset(mpi * X, t_sint z);
 
@@ -153,7 +163,7 @@ extern "C" {
 	 * \param radix    input numeric base
 	 * \param s        null-terminated string buffer
 	 *
-	 * \return         0 if successful, or an TROPICSSL_ERR_MPI_XXX error code
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful, or an TROPICSSL_ERR_MPI_XXX error code
 	 */
 	int mpi_read_string(mpi * X, int radix, const char *s);
 
@@ -165,7 +175,7 @@ extern "C" {
 	 * \param s        string buffer
 	 * \param slen     string buffer size
 	 *
-	 * \return         0 if successful, or an TROPICSSL_ERR_MPI_XXX error code
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful, or an TROPICSSL_ERR_MPI_XXX error code
 	 *
 	 * \note           Call this function with *slen = 0 to obtain the
 	 *                 minimum required buffer size in *slen.
@@ -179,7 +189,7 @@ extern "C" {
 	 * \param radix    input numeric base
 	 * \param fin      input file handle
 	 *
-	 * \return         0 if successful, or an TROPICSSL_ERR_MPI_XXX error code
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful, or an TROPICSSL_ERR_MPI_XXX error code
 	 */
 	int mpi_read_file(mpi * X, int radix, FILE * fin);
 
@@ -191,7 +201,7 @@ extern "C" {
 	 * \param radix    output numeric base
 	 * \param fout     output file handle
 	 *
-	 * \return         0 if successful, or an TROPICSSL_ERR_MPI_XXX error code
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful, or an TROPICSSL_ERR_MPI_XXX error code
 	 *
 	 * \note           Set fout == NULL to print X on the console.
 	 */
@@ -204,8 +214,8 @@ extern "C" {
 	 * \param buf      input buffer
 	 * \param buflen   input buffer size
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_read_binary(mpi * X, const unsigned char *buf, size_t buflen);
 
@@ -216,7 +226,7 @@ extern "C" {
 	 * \param buf      output buffer
 	 * \param buflen   output buffer size
 	 *
-	 * \return         0 if successful,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
 	 *                 TROPICSSL_ERR_MPI_BUFFER_TOO_SMALL if buf isn't large enough
 	 *
 	 * \note           Call this function with *buflen = 0 to obtain the
@@ -227,16 +237,16 @@ extern "C" {
 	/**
 	 * \brief          Left-shift: X <<= count
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_shift_l(mpi * X, size_t count);
 
 	/**
 	 * \brief          Right-shift: X >>= count
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_shift_r(mpi * X, size_t count);
 
@@ -270,15 +280,15 @@ extern "C" {
 	/**
 	 * \brief          Unsigned addition: X = |A| + |B|
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_add_abs(mpi * X, const mpi * A, const mpi * B);
 
 	/**
 	 * \brief          Unsigned substraction: X = |A| - |B|
 	 *
-	 * \return         0 if successful,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
 	 *                 TROPICSSL_ERR_MPI_NEGATIVE_VALUE if B is greater than A
 	 */
 	int mpi_sub_abs(mpi * X, const mpi * A, const mpi * B);
@@ -286,56 +296,56 @@ extern "C" {
 	/**
 	 * \brief          Signed addition: X = A + B
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_add_mpi(mpi * X, const mpi * A, const mpi * B);
 
 	/**
 	 * \brief          Signed substraction: X = A - B
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_sub_mpi(mpi * X, const mpi * A, const mpi * B);
 
 	/**
 	 * \brief          Signed addition: X = A + b
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_add_int(mpi *X, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Signed substraction: X = A - b
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_sub_int(mpi *X, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Baseline multiplication: X = A * B
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_mul_mpi(mpi * X, const mpi * A, const mpi * B);
 
 	/**
 	 * \brief          Baseline multiplication: X = A * b
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_mul_int(mpi * X, const mpi * A, t_sint b);
 
 	/**
 	 * \brief          Division by mpi: A = Q * B + R
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if B == 0
 	 *
 	 * \note           Either Q or R can be NULL.
@@ -345,8 +355,8 @@ extern "C" {
 	/**
 	 * \brief          Division by int: A = Q * b + R
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if b == 0
 	 *
 	 * \note           Either Q or R can be NULL.
@@ -356,8 +366,8 @@ extern "C" {
 	/**
 	 * \brief          Modulo: R = A mod B
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if B == 0
 	 *                 TROPICSSL_ERR_MPI_NEGATIVE_VALUE if B < 0
 	 */
@@ -366,8 +376,8 @@ extern "C" {
 	/**
 	 * \brief          Modulo: r = A mod b
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_DIVISION_BY_ZERO if b == 0
 	 *                 TROPICSSL_ERR_MPI_NEGATIVE_VALUE if b < 0
 	 */
@@ -376,8 +386,8 @@ extern "C" {
 	/**
 	 * \brief          Sliding-window exponentiation: X = A^E mod N
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_BAD_INPUT_DATA if N is negative or even
 	 *
 	 * \note           _RR is used to avoid re-computing R*R mod N across
@@ -387,18 +397,31 @@ extern "C" {
 	int mpi_exp_mod(mpi * X, const mpi * A, const mpi * E, const mpi * N, mpi * _RR);
 
 	/**
+	 * \brief          Fill an MPI X with size bytes of random
+	 *
+	 * \param X        Destination MPI
+	 * \param size     Size in bytes
+	 * \param f_rng    RNG function
+	 * \param p_rng    RNG parameter
+	 *
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
+	 */
+	int mpi_fill_random(mpi * X, size_t size, int (*f_rng)(void *), void *p_rng);
+
+	/**
 	 * \brief          Greatest common divisor: G = gcd(A, B)
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed
 	 */
 	int mpi_gcd(mpi * G, const mpi * A, const mpi * B);
 
 	/**
 	 * \brief          Modular inverse: X = A^-1 mod N
 	 *
-	 * \return         0 if successful,
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful,
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_BAD_INPUT_DATA if N is negative or nil
 	 *                 TROPICSSL_ERR_MPI_NOT_ACCEPTABLE if A has no inverse mod N
 	 */
@@ -407,8 +430,8 @@ extern "C" {
 	/**
 	 * \brief          Miller-Rabin primality test
 	 *
-	 * \return         0 if successful (probably prime),
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful (probably prime),
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_NOT_ACCEPTABLE if X is not prime
 	 */
 	int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng);
@@ -422,8 +445,8 @@ extern "C" {
 	 * \param f_rng    RNG function
 	 * \param p_rng    RNG parameter
 	 *
-	 * \return         0 if successful (probably prime),
-	 *                 1 if memory allocation failed,
+	 * \return         TROPICSSL_ERR_MPI_OKAY if successful (probably prime),
+	 *                 TROPICSSL_ERR_MPI_MALLOC_FAILED if memory allocation failed,
 	 *                 TROPICSSL_ERR_MPI_BAD_INPUT_DATA if nbits is < 3
 	 */
 	int mpi_gen_prime(mpi * X, size_t nbits, int dh_flag,

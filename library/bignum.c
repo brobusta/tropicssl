@@ -114,9 +114,12 @@ int mpi_grow(mpi * X, size_t nblimbs)
 {
 	t_uint *p;
 
+	if (nblimbs > TROPICSSL_MPI_MAX_LIMBS)
+		return (TROPICSSL_ERR_MPI_MALLOC_FAILED);
+
 	if (X->n < nblimbs) {
 		if ((p = (t_uint *) malloc(nblimbs * ciL)) == NULL)
-			return (1);
+			return (TROPICSSL_ERR_MPI_MALLOC_FAILED);
 
 		memset(p, 0, nblimbs * ciL);
 
@@ -130,7 +133,7 @@ int mpi_grow(mpi * X, size_t nblimbs)
 		X->p = p;
 	}
 
-	return (0);
+	return (TROPICSSL_ERR_MPI_OKAY);
 }
 
 /*
@@ -142,7 +145,7 @@ int mpi_copy(mpi * X, const mpi * Y)
 	size_t i;
 
 	if (X == Y)
-		return (0);
+		return (TROPICSSL_ERR_MPI_OKAY);
 
 	for (i = Y->n - 1; i > 0; i--)
 		if (Y->p[i] != 0)
@@ -203,7 +206,7 @@ size_t mpi_lsb(const mpi * X)
 			if (((X->p[i] >> j) & 1) != 0)
 				return (count);
 
-	return (0);
+	return (TROPICSSL_ERR_MPI_OKAY);
 }
 
 /*
@@ -217,11 +220,11 @@ size_t mpi_msb(const mpi * X)
 		if (X->p[i] != 0)
 			break;
 
-	for (j = biL - 1; j >= 0; j--)
-		if (((X->p[i] >> j) & 1) != 0)
+	for (j = biL; j > 0; j--)
+		if (((X->p[i] >> (j - 1)) & 1) != 0)
 			break;
 
-	return ((i * biL) + j + 1);
+	return ((i * biL) + j);
 }
 
 /*
@@ -249,7 +252,7 @@ static int mpi_get_digit(t_uint * d, int radix, char c)
 	if (*d >= (t_uint) radix)
 		return (TROPICSSL_ERR_MPI_INVALID_CHARACTER);
 
-	return (0);
+	return (TROPICSSL_ERR_MPI_OKAY);
 }
 
 /*
@@ -258,7 +261,7 @@ static int mpi_get_digit(t_uint * d, int radix, char c)
 int mpi_read_string(mpi * X, int radix, const char *s)
 {
 	int ret;
-	size_t i, j, n;
+	size_t i, j, n, slen;
 	t_uint d;
 	mpi T;
 
@@ -267,25 +270,26 @@ int mpi_read_string(mpi * X, int radix, const char *s)
 
 	mpi_init(&T, NULL);
 
+	slen = strlen(s);
 	if (radix == 16) {
-		n = BITS_TO_LIMBS(strlen(s) << 2);
+		n = BITS_TO_LIMBS(slen << 2);
 
 		MPI_CHK(mpi_grow(X, n));
 		MPI_CHK(mpi_lset(X, 0));
 
-		for (i = strlen(s) - 1, j = 0; i >= 0; i--, j++) {
-			if (i == 0 && s[i] == '-') {
+		for (i = slen, j = 0; i > 0; i--, j++) {
+			if (i == 1 && s[i - 1] == '-') {
 				X->s = -1;
 				break;
 			}
 
-			MPI_CHK(mpi_get_digit(&d, radix, s[i]));
+			MPI_CHK(mpi_get_digit(&d, radix, s[i - 1]));
 			X->p[j / (2 * ciL)] |= d << ((j % (2 * ciL)) << 2);
 		}
 	} else {
 		MPI_CHK(mpi_lset(X, 0));
 
-		for (i = 0; i < strlen(s); i++) {
+		for (i = 0; i < slen; i++) {
 			if (i == 0 && s[i] == '-') {
 				X->s = -1;
 				continue;
@@ -294,8 +298,8 @@ int mpi_read_string(mpi * X, int radix, const char *s)
 			MPI_CHK(mpi_get_digit(&d, radix, s[i]));
 			MPI_CHK(mpi_mul_int(&T, X, radix));
 
-			if(X->s == 1) {
-				MPI_CHK(mpi_add_int(X, &T, d));
+			if (X->s == 1) {
+			    MPI_CHK(mpi_add_int(X, &T, d));
 			} else {
 				MPI_CHK(mpi_sub_int(X, &T, d));
 			}
@@ -371,11 +375,11 @@ int mpi_write_string(const mpi * X, int radix, char *s, size_t *slen)
 		int c;
 		size_t i, j, k;
 
-		for (i = X->n - 1, k = 0; i >= 0; i--) {
-			for (j = ciL - 1; j >= 0; j--) {
-				c = (X->p[i] >> (j << 3)) & 0xFF;
+		for (i = X->n, k = 0; i > 0; i--) {
+			for (j = ciL; j > 0; j--) {
+				c = (X->p[i - 1] >> ((j - 1) << 3)) & 0xFF;
 
-				if (c == 0 && k == 0 && (i + j) != 0)
+				if (c == 0 && k == 0 && (i + j + 3) != 0)
 					continue;
 
 				p += sprintf(p, "%02X", c);
@@ -486,8 +490,8 @@ int mpi_read_binary(mpi * X, const unsigned char *buf, size_t buflen)
 	MPI_CHK(mpi_grow(X, CHARS_TO_LIMBS(buflen - n)));
 	MPI_CHK(mpi_lset(X, 0));
 
-	for (i = buflen - 1, j = 0; i >= n; i--, j++)
-		X->p[j / ciL] |= ((t_uint) buf[i]) << ((j % ciL) << 3);
+	for (i = buflen, j = 0; i > n; i--, j++)
+		X->p[j / ciL] |= ((t_uint)buf[i - 1]) << ((j % ciL) << 3);
 
 cleanup:
 
@@ -511,7 +515,7 @@ int mpi_write_binary(const mpi * X, unsigned char *buf, size_t buflen)
 	for (i = buflen - 1, j = 0; n > 0; i--, j++, n--)
 		buf[i] = (unsigned char)(X->p[j / ciL] >> ((j % ciL) << 3));
 
-	return (0);
+	return (TROPICSSL_ERR_MPI_OKAY);
 }
 
 /*
@@ -537,11 +541,11 @@ int mpi_shift_l(mpi * X, size_t count)
 	 * shift by count / limb_size
 	 */
 	if (v0 > 0) {
-		for (i = X->n - 1; i >= v0; i--)
-			X->p[i] = X->p[i - v0];
+		for (i = X->n; i > v0; i--)
+			X->p[i - 1] = X->p[i - v0 - 1];
 
-		for (; i >= 0; i--)
-			X->p[i] = 0;
+		for (; i > 0; i--)
+			X->p[i - 1] = 0;
 	}
 
 	/*
@@ -587,15 +591,15 @@ int mpi_shift_r(mpi * X, size_t count)
 	 * shift by count % limb_size
 	 */
 	if (v1 > 0) {
-		for (i = X->n - 1; i >= 0; i--) {
-			r1 = X->p[i] << (biL - v1);
-			X->p[i] >>= v1;
-			X->p[i] |= r0;
+		for (i = X->n; i > 0; i--) {
+			r1 = X->p[i - 1] << (biL - v1);
+			X->p[i - 1] >>= v1;
+			X->p[i - 1] |= r0;
 			r0 = r1;
 		}
 	}
 
-	return (0);
+	return (TROPICSSL_ERR_MPI_OKAY);
 }
 
 /*
@@ -605,15 +609,15 @@ int mpi_cmp_abs(const mpi * X, const mpi * Y)
 {
 	size_t i, j;
 
-	for (i = X->n - 1; i >= 0; i--)
-		if (X->p[i] != 0)
+	for (i = X->n; i > 0; i--)
+		if (X->p[i - 1] != 0)
 			break;
 
-	for (j = Y->n - 1; j >= 0; j--)
-		if (Y->p[j] != 0)
+	for (j = Y->n; j > 0; j--)
+		if (Y->p[j - 1] != 0)
 			break;
 
-	if (i < 0 && j < 0)
+	if (i == 0 && j == 0)
 		return (0);
 
 	if (i > j)
@@ -621,10 +625,10 @@ int mpi_cmp_abs(const mpi * X, const mpi * Y)
 	if (j > i)
 		return (-1);
 
-	for (; i >= 0; i--) {
-		if (X->p[i] > Y->p[i])
+	for (; i > 0; i--) {
+		if (X->p[i - 1] > Y->p[i - 1])
 			return (1);
-		if (X->p[i] < Y->p[i])
+		if (X->p[i - 1] < Y->p[i - 1])
 			return (-1);
 	}
 
@@ -638,31 +642,31 @@ int mpi_cmp_mpi(const mpi * X, const mpi * Y)
 {
 	size_t i, j;
 
-	for (i = X->n - 1; i >= 0; i--)
-		if (X->p[i] != 0)
+	for (i = X->n; i > 0; i--)
+		if (X->p[i - 1] != 0)
 			break;
 
-	for (j = Y->n - 1; j >= 0; j--)
-		if (Y->p[j] != 0)
+	for (j = Y->n; j > 0; j--)
+		if (Y->p[j - 1] != 0)
 			break;
 
-	if (i < 0 && j < 0)
+	if (i == 0 && j == 0)
 		return (0);
 
 	if (i > j)
 		return (X->s);
 	if (j > i)
-		return (-X->s);
+		return (-Y->s);
 
 	if (X->s > 0 && Y->s < 0)
 		return (1);
 	if (Y->s > 0 && X->s < 0)
 		return (-1);
 
-	for (; i >= 0; i--) {
-		if (X->p[i] > Y->p[i])
+	for (; i > 0; i--) {
+		if (X->p[i - 1] > Y->p[i - 1])
 			return (X->s);
-		if (X->p[i] < Y->p[i])
+		if (X->p[i - 1] < Y->p[i - 1])
 			return (-X->s);
 	}
 
@@ -705,17 +709,17 @@ int mpi_add_abs(mpi * X, const mpi * A, const mpi * B)
 
 	X->s = 1;
 
-	for (j = B->n - 1; j >= 0; j--)
-		if (B->p[j] != 0)
+	for (j = B->n; j > 0; j--)
+		if (B->p[j - 1] != 0)
 			break;
 
-	MPI_CHK(mpi_grow(X, j + 1));
+	MPI_CHK(mpi_grow(X, j));
 
 	o = B->p;
 	p = X->p;
 	c = 0;
 
-	for (i = 0; i <= j; i++, o++, p++) {
+	for (i = 0; i < j; i++, o++, p++) {
 		*p += c;
 		c = (*p < c);
 		*p += *o;
@@ -731,6 +735,7 @@ int mpi_add_abs(mpi * X, const mpi * A, const mpi * B)
 		*p += c;
 		c = (*p < c);
 		i++;
+		p++;
 	}
 
 cleanup:
@@ -788,11 +793,11 @@ int mpi_sub_abs(mpi * X, const mpi * A, const mpi * B)
 
 	ret = 0;
 
-	for (n = B->n - 1; n >= 0; n--)
-		if (B->p[n] != 0)
+	for (n = B->n; n > 0; n--)
+		if (B->p[n - 1] != 0)
 			break;
 
-	mpi_sub_hlp(n + 1, B->p, X->p);
+	mpi_sub_hlp(n, B->p, X->p);
 
 cleanup:
 
@@ -945,19 +950,19 @@ int mpi_mul_mpi(mpi * X, const mpi * A, const mpi * B)
 		B = &TB;
 	}
 
-	for (i = A->n - 1; i >= 0; i--)
-		if (A->p[i] != 0)
+	for (i = A->n; i > 0; i--)
+		if (A->p[i - 1] != 0)
 			break;
 
-	for (j = B->n - 1; j >= 0; j--)
-		if (B->p[j] != 0)
+	for (j = B->n; j > 0; j--)
+		if (B->p[j - 1] != 0)
 			break;
 
-	MPI_CHK(mpi_grow(X, i + j + 2));
+	MPI_CHK(mpi_grow(X, i + j));
 	MPI_CHK(mpi_lset(X, 0));
 
-	for (i++; j >= 0; j--)
-		mpi_mul_hlp(i, A->p, X->p + j, B->p[j]);
+	for (i++; j > 0; j--)
+		mpi_mul_hlp(i - 1, A->p, X->p + j - 1, B->p[j - 1]);
 
 	X->s = A->s * B->s;
 
@@ -1003,7 +1008,7 @@ int mpi_div_mpi(mpi * Q, mpi * R, const mpi * A, const mpi * B)
 			MPI_CHK(mpi_lset(Q, 0));
 		if (R != NULL)
 			MPI_CHK(mpi_copy(R, A));
-		return (0);
+		return (TROPICSSL_ERR_MPI_OKAY);
 	}
 
 	MPI_CHK(mpi_copy(&X, A));
@@ -1025,7 +1030,7 @@ int mpi_div_mpi(mpi * Q, mpi * R, const mpi * A, const mpi * B)
 
 	n = X.n - 1;
 	t = Y.n - 1;
-	mpi_shift_l(&Y, biL * (n - t));
+	MPI_CHK(mpi_shift_l(&Y, biL * (n - t)));
 
 	while (mpi_cmp_mpi(&X, &Y) >= 0) {
 		Z.p[n - t]++;
@@ -1163,8 +1168,9 @@ int mpi_mod_mpi(mpi * R, const mpi * A, const mpi * B)
 {
 	int ret;
 
-	if(mpi_cmp_int(B, 0) < 0)
+	if (mpi_cmp_int(B, 0) < 0) {
 		return (TROPICSSL_ERR_MPI_NEGATIVE_VALUE);
+	}
 
 	MPI_CHK(mpi_div_mpi(NULL, R, A, B));
 
@@ -1198,19 +1204,19 @@ int mpi_mod_int(t_uint * r, const mpi * A, t_sint b)
 	 */
 	if (b == 1) {
 		*r = 0;
-		return (0);
+		return (TROPICSSL_ERR_MPI_OKAY);
 	}
 
 	if (b == 2) {
 		*r = A->p[0] & 1;
-		return (0);
+		return (TROPICSSL_ERR_MPI_OKAY);
 	}
 
 	/*
 	 * general case
 	 */
-	for (i = A->n - 1, y = 0; i >= 0; i--) {
-		x = A->p[i];
+	for (i = A->n, y = 0; i > 0; i--) {
+		x = A->p[i - 1];
 		y = (y << biH) | (x >> biH);
 		z = y / b;
 		y -= z * b;
@@ -1221,12 +1227,13 @@ int mpi_mod_int(t_uint * r, const mpi * A, t_sint b)
 		y -= z * b;
 	}
 
-	if(A->s < 0 && y != 0)
+	if (A->s < 0 && y != 0) {
 		y = b - y;
+	}
 
 	*r = y;
 
-	return (0);
+	return (TROPICSSL_ERR_MPI_OKAY);
 }
 
 /*
@@ -1463,10 +1470,9 @@ cleanup:
 	for (i = (1 << (wsize - 1)); i < (1 << wsize); i++)
 		mpi_free(&W[i], NULL);
 
-	if (_RR != NULL)
-		mpi_free(&W[1], &T, NULL);
-	else
-		mpi_free(&W[1], &T, &RR, NULL);
+	mpi_free(&W[1], &T, NULL);
+	if (_RR == NULL)
+		mpi_free(&RR, NULL);
 
 	return (ret);
 }
@@ -1517,6 +1523,23 @@ cleanup:
 	mpi_free(&TB, &TA, &TG, NULL);
 
 	return (ret);
+}
+
+int mpi_fill_random(mpi * X, size_t size, int (*f_rng)(void *), void *p_rng)
+{
+    int ret;
+    size_t k;
+    unsigned char *p;
+
+    MPI_CHK(mpi_grow(X, size));
+    MPI_CHK(mpi_lset(X, 0));
+
+    p = (unsigned char *) X->p;
+    for (k = 0; k < X->n * ciL; k++)
+        *p++ = (unsigned char) f_rng(p_rng);
+
+cleanup:
+    return (ret);
 }
 
 #if defined(TROPICSSL_GENPRIME)
@@ -1634,13 +1657,14 @@ int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng)
 	int ret, xs;
 	size_t i, j, n, s;
 	mpi W, R, T, A, RR;
-	unsigned char *p;
 
-	if(mpi_cmp_int(X, 0) == 0 || mpi_cmp_int(X, 1) == 0)
-        return(TROPICSSL_ERR_MPI_NOT_ACCEPTABLE);
+	if (mpi_cmp_int(X, 0) == 0 || mpi_cmp_int(X, 1) == 0) {
+		return (TROPICSSL_ERR_MPI_NOT_ACCEPTABLE);
+	}
 
-	if (mpi_cmp_int(X, 2) == 0)
-		return (0);
+	if (mpi_cmp_int(X, 2) == 0) {
+		return (TROPICSSL_ERR_MPI_OKAY);
+	}
 
 	mpi_init(&W, &R, &T, &A, &RR, NULL);
 
@@ -1657,7 +1681,7 @@ int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng)
 		t_uint r;
 
 		if (mpi_cmp_int(X, small_prime[i]) <= 0)
-			return (0);
+			return (TROPICSSL_ERR_MPI_OKAY);
 
 		MPI_CHK(mpi_mod_int(&r, X, small_prime[i]));
 
@@ -1667,10 +1691,10 @@ int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng)
 
 	/*
 	 * W = |X| - 1
-	 * R = W >> lsb( W )
+	 * R = W >> lsb(W)
 	 */
-	s = mpi_lsb(&W);
 	MPI_CHK(mpi_sub_int(&W, X, 1));
+	s = mpi_lsb(&W);
 	MPI_CHK(mpi_copy(&R, &W));
 	MPI_CHK(mpi_shift_r(&R, s));
 
@@ -1686,14 +1710,13 @@ int mpi_is_prime(mpi * X, int (*f_rng) (void *), void *p_rng)
 		/*
 		 * pick a random A, 1 < A < |X| - 1
 		 */
-		MPI_CHK(mpi_grow(&A, X->n));
+		mpi_fill_random(&A, X->n, f_rng, p_rng);
 
-		p = (unsigned char *)A.p;
-		for (j = 0; j < A.n * ciL; j++)
-			*p++ = (unsigned char)f_rng(p_rng);
+		if (mpi_cmp_mpi(&A, &W) >= 0) {
+		    j = mpi_msb(&A) - mpi_msb(&W);
+		    MPI_CHK(mpi_shift_r(&A, j + 1));
+		}
 
-		j = mpi_msb(&A) - mpi_msb(&W);
-		MPI_CHK(mpi_shift_r(&A, j + 1));
 		A.p[0] |= 3;
 
 		/*
@@ -1744,7 +1767,6 @@ int mpi_gen_prime(mpi * X, size_t nbits, int dh_flag,
 {
 	int ret;
 	size_t k, n;
-	unsigned char *p;
 	mpi Y;
 
 	if (nbits < 3)
@@ -1757,9 +1779,7 @@ int mpi_gen_prime(mpi * X, size_t nbits, int dh_flag,
 	MPI_CHK(mpi_grow(X, n));
 	MPI_CHK(mpi_lset(X, 0));
 
-	p = (unsigned char *)X->p;
-	for (k = 0; k < X->n * ciL; k++)
-		*p++ = (unsigned char)f_rng(p_rng);
+	mpi_fill_random(X, n, f_rng, p_rng);
 
 	k = mpi_msb(X);
 	if (k < nbits)
@@ -1910,6 +1930,7 @@ int mpi_self_test(int verbose)
 	if (verbose != 0)
 		printf("passed\n");
 
+#if defined(TROPICSSL_GENPRIME)
 	MPI_CHK(mpi_inv_mod(&X, &A, &N));
 
 	MPI_CHK(mpi_read_string(&U, 16,
@@ -1929,6 +1950,7 @@ int mpi_self_test(int verbose)
 
 	if (verbose != 0)
 		printf("passed\n");
+#endif
 
 	if (verbose != 0)
 		printf("  MPI test #5 (simple gcd): ");
