@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_SHA2_H
 #define TROPICSSL_SHA2_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_SHA2)
 #include <string.h>
 #include <inttypes.h>
 
@@ -91,6 +94,7 @@ extern "C" {
 	void sha2(const uint8_t *input, size_t ilen,
 		  uint8_t output[32], int is224);
 
+#if defined(TROPICSSL_FS_IO)
 	/**
 	 * \brief          Output = SHA-256( file contents )
 	 *
@@ -102,6 +106,7 @@ extern "C" {
 	 *                 or 2 if fread failed
 	 */
 	int sha2_file(const char *path, uint8_t output[32], int is224);
+#endif
 
 	/**
 	 * \brief          SHA-256 HMAC context setup
@@ -146,14 +151,18 @@ extern "C" {
 		       const uint8_t *input, size_t ilen,
 		       uint8_t output[32], int is224);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int sha2_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_SHA2 */
 #endif				/* sha2.h */

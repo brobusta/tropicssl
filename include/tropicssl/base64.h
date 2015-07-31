@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_BASE64_H
 #define TROPICSSL_BASE64_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_BASE64)
 #include <string.h>
 #include <inttypes.h>
 
@@ -82,14 +85,18 @@ extern "C" {
 	int base64_decode(uint8_t *dst, size_t *dlen,
 			  const uint8_t *src, size_t slen);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int base64_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_BASE64 */
 #endif				/* base64.h */

@@ -33,6 +33,9 @@
 #ifndef TROPICSSL_XTEA_H
 #define TROPICSSL_XTEA_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_XTEA)
 #include <inttypes.h>
 
 #define XTEA_ENCRYPT     1
@@ -69,14 +72,18 @@ extern "C" {
 			int mode,
 			const uint8_t input[8], uint8_t output[8]);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/*
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int xtea_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_XTEA */
 #endif				/* xtea.h */

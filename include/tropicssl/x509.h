@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_X509_H
 #define TROPICSSL_X509_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_X509_PARSE)
 #include "tropicssl/rsa.h"
 
 #define TROPICSSL_ERR_ASN1_OUT_OF_DATA                      -0x0014
@@ -217,6 +220,7 @@ extern "C" {
 	 */
 	int x509parse_crt(x509_cert * crt, const uint8_t *buf, size_t buflen);
 
+#if defined(TROPICSSL_FS_IO)
 	/**
 	 * \brief          Load one or more certificates and add them
 	 *                 to the chained list
@@ -227,6 +231,7 @@ extern "C" {
 	 * \return         0 if successful, or a specific X509 error code
 	 */
 	int x509parse_crtfile(x509_cert * crt, const char *path);
+#endif
 
 	/**
 	 * \brief          Parse a private RSA key
@@ -243,6 +248,7 @@ extern "C" {
 			  const uint8_t *key, size_t keylen,
 			  const uint8_t *pwd, size_t pwdlen);
 
+#if defined(TROPICSSL_FS_IO)
 	/**
 	 * \brief          Load and parse a private RSA key
 	 *
@@ -253,6 +259,7 @@ extern "C" {
 	 * \return         0 if successful, or a specific X509 error code
 	 */
 	int x509parse_keyfile(rsa_context * rsa, const char *path, const char *password);
+#endif
 
 	/**
 	 * \brief          Store the certificate DN in printable form into buf;
@@ -299,14 +306,18 @@ extern "C" {
 	 */
 	void x509_free(x509_cert * crt);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int x509_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_X509_PARSE */
 #endif				/* x509.h */

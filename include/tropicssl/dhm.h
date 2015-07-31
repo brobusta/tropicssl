@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_DHM_H
 #define TROPICSSL_DHM_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_DHM)
 #include "tropicssl/bignum.h"
 
 #define TROPICSSL_ERR_DHM_BAD_INPUT_DATA                    -0x0480
@@ -135,14 +138,18 @@ extern "C" {
 	 */
 	void dhm_free(dhm_context * ctx);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int dhm_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_DHM */
 #endif

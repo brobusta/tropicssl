@@ -45,7 +45,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_HAVEGE_C)
+#if defined(TROPICSSL_HAVEGE)
 
 #include "tropicssl/havege.h"
 #include "tropicssl/timing.h"

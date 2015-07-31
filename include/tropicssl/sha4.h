@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_SHA4_H
 #define TROPICSSL_SHA4_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_SHA4)
 #if defined(_MSC_VER) || defined(__WATCOMC__)
 #define UL64(x) x##ui64
 #define int64 __int64
@@ -98,6 +101,7 @@ extern "C" {
 	void sha4(const uint8_t *input, size_t ilen,
 		  uint8_t output[64], int is384);
 
+#if defined(TROPICSSL_FS_IO)
 	/**
 	 * \brief          Output = SHA-512( file contents )
 	 *
@@ -109,6 +113,7 @@ extern "C" {
 	 *                 or 2 if fread failed
 	 */
 	int sha4_file(const char *path, uint8_t output[64], int is384);
+#endif
 
 	/**
 	 * \brief          SHA-512 HMAC context setup
@@ -153,14 +158,18 @@ extern "C" {
 		       const uint8_t *input, size_t ilen,
 		       uint8_t output[64], int is384);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int sha4_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_SHA4 */
 #endif				/* sha4.h */

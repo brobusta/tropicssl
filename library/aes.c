@@ -41,7 +41,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 
 #include "tropicssl/aes.h"
 

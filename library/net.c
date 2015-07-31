@@ -35,7 +35,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_NET_C)
+#if defined(TROPICSSL_NET)
 
 #include "tropicssl/net.h"
 

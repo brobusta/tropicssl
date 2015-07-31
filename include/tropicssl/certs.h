@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_CERTS_H
 #define TROPICSSL_CERTS_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_CERTS)
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,4 +53,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_CERTS */
 #endif				/* certs.h */

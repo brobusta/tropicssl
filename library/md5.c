@@ -40,7 +40,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_MD5_C)
+#if defined(TROPICSSL_MD5)
 
 #include "tropicssl/md5.h"
 
@@ -294,6 +294,7 @@ void md5(const uint8_t *input, size_t ilen, uint8_t output[16])
 	memset(&ctx, 0, sizeof(md5_context));
 }
 
+#if defined(TROPICSSL_FS_IO)
 /*
  * output = MD5( file contents )
  */
@@ -324,6 +325,7 @@ int md5_file(const char *path, uint8_t output[16])
 	fclose(f);
 	return (0);
 }
+#endif
 
 /*
  * MD5 HMAC context setup

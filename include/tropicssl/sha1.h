@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_SHA1_H
 #define TROPICSSL_SHA1_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_SHA1)
 #include <string.h>
 #include <inttypes.h>
 
@@ -87,6 +90,7 @@ extern "C" {
 	 */
 	void sha1(const uint8_t *input, size_t ilen, uint8_t output[20]);
 
+#if defined(TROPICSSL_FS_IO)
 	/**
 	 * \brief          Output = SHA-1( file contents )
 	 *
@@ -97,6 +101,7 @@ extern "C" {
 	 *                 or 2 if fread failed
 	 */
 	int sha1_file(const char *path, uint8_t output[20]);
+#endif
 
 	/**
 	 * \brief          SHA-1 HMAC context setup
@@ -139,14 +144,18 @@ extern "C" {
 		       const uint8_t *input, size_t ilen,
 		       uint8_t output[20]);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int sha1_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_SHA1 */
 #endif				/* sha1.h */

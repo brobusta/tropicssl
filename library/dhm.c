@@ -40,7 +40,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_DHM_C)
+#if defined(TROPICSSL_DHM)
 
 #include "tropicssl/dhm.h"
 

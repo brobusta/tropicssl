@@ -511,7 +511,7 @@ static int ssl_write_server_key_exchange(ssl_context * ssl)
 		ssl->state++;
 		return (0);
 	}
-#if !defined(TROPICSSL_DHM_C)
+#if !defined(TROPICSSL_DHM)
 	SSL_DEBUG_MSG(1, ("support for dhm is not available"));
 	return (TROPICSSL_ERR_SSL_FEATURE_UNAVAILABLE);
 #else
@@ -636,7 +636,7 @@ static int ssl_parse_client_key_exchange(ssl_context * ssl)
 	if (ssl->session->cipher == TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA ||
 	    ssl->session->cipher == TLS_DHE_RSA_WITH_AES_256_CBC_SHA ||
 	    ssl->session->cipher == TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA) {
-#if !defined(TROPICSSL_DHM_C)
+#if !defined(TROPICSSL_DHM)
 		SSL_DEBUG_MSG(1, ("support for dhm is not available"));
 		return (TROPICSSL_ERR_SSL_FEATURE_UNAVAILABLE);
 #else

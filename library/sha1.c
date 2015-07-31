@@ -40,7 +40,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_SHA1_C)
+#if defined(TROPICSSL_SHA1)
 
 #include "tropicssl/sha1.h"
 
@@ -329,6 +329,7 @@ void sha1(const uint8_t *input, size_t ilen, uint8_t output[20])
 	memset(&ctx, 0, sizeof(sha1_context));
 }
 
+#if defined(TROPICSSL_FS_IO)
 /*
  * output = SHA-1( file contents )
  */
@@ -359,6 +360,7 @@ int sha1_file(const char *path, uint8_t output[20])
 	fclose(f);
 	return (0);
 }
+#endif
 
 /*
  * SHA-1 HMAC context setup

@@ -46,7 +46,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_X509_PARSE_C)
+#if defined(TROPICSSL_X509_PARSE)
 
 #include "tropicssl/x509.h"
 #include "tropicssl/base64.h"
@@ -944,6 +944,7 @@ int x509parse_crt(x509_cert * chain, const uint8_t *buf, size_t buflen)
 	return (0);
 }
 
+#if defined(TROPICSSL_FS_IO)
 /*
  * Load one or more certificates and add them to the chained list
  */
@@ -980,8 +981,9 @@ int x509parse_crtfile(x509_cert * chain, const char *path)
 
 	return (ret);
 }
+#endif
 
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 /*
  * Read a 16-byte hex string and convert it to binary
  */
@@ -1081,7 +1083,7 @@ int x509parse_key(rsa_context * rsa, const uint8_t *key, size_t keylen,
 		enc = 0;
 
 		if (memcmp(s1, "Proc-Type: 4,ENCRYPTED", 22) == 0) {
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 			enc++;
 
 			s1 += 22;
@@ -1128,7 +1130,7 @@ int x509parse_key(rsa_context * rsa, const uint8_t *key, size_t keylen,
 		keylen = len;
 
 		if (enc != 0) {
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 			if (pwd == NULL) {
 				free(buf);
 				return
@@ -1237,6 +1239,7 @@ int x509parse_key(rsa_context * rsa, const uint8_t *key, size_t keylen,
 	return (0);
 }
 
+#if defined(TROPICSSL_FS_IO)
 /*
  * Load and parse a private RSA key
  */
@@ -1277,6 +1280,7 @@ int x509parse_keyfile(rsa_context * rsa, const char *path, const char *pwd)
 
 	return (ret);
 }
+#endif
 
 #if defined _MSC_VER && !defined snprintf
 #define snprintf _snprintf

@@ -43,7 +43,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_BIGNUM_C)
+#if defined(TROPICSSL_BIGNUM)
 
 #include "tropicssl/bignum.h"
 #include "tropicssl/bn_mul.h"
@@ -406,6 +406,7 @@ cleanup:
 	return (ret);
 }
 
+#if defined(TROPICSSL_FS_IO)
 /*
  * Read X from an opened file
  */
@@ -474,6 +475,7 @@ cleanup:
 
 	return (ret);
 }
+#endif
 
 /*
  * Import X from unsigned binary data, big endian

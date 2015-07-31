@@ -40,7 +40,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 
 #include "tropicssl/arc4.h"
 

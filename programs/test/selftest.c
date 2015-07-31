@@ -66,67 +66,67 @@ int main(int argc, char *argv[])
 		printf("\n");
 	}
 
-#if defined(TROPICSSL_MD5_C)
+#if defined(TROPICSSL_MD5)
 	if ((ret = md5_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_SHA1_C)
+#if defined(TROPICSSL_SHA1)
 	if ((ret = sha1_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_SHA2_C)
+#if defined(TROPICSSL_SHA2)
 	if ((ret = sha2_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_SHA4_C)
+#if defined(TROPICSSL_SHA4)
 	if ((ret = sha4_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 	if ((ret = arc4_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	if ((ret = des_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 	if ((ret = aes_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_BASE64_C)
+#if defined(TROPICSSL_BASE64)
 	if ((ret = base64_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_BIGNUM_C)
+#if defined(TROPICSSL_BIGNUM)
 	if ((ret = mpi_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_RSA_C)
+#if defined(TROPICSSL_RSA)
 	if ((ret = rsa_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_X509_C)
+#if defined(TROPICSSL_X509_PARSE)
 	if ((ret = x509_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_XTEA_C)
+#if defined(TROPICSSL_XTEA)
 	if ((ret = xtea_self_test(v)) != 0)
 		return (ret);
 #endif
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	if ((ret = camellia_self_test(v)) != 0)
 		return (ret);
 #endif

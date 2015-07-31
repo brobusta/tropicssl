@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_ARC4_H
 #define TROPICSSL_ARC4_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_ARC4)
 #include <inttypes.h>
 
 /**
@@ -68,14 +71,18 @@ extern "C" {
 	 */
 	void arc4_crypt(arc4_context * ctx, uint8_t *buf, int buflen);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/*
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int arc4_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_ARC4 */
 #endif				/* arc4.h */

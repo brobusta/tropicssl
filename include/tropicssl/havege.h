@@ -35,6 +35,10 @@
 #ifndef TROPICSSL_HAVEGE_H
 #define TROPICSSL_HAVEGE_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_HAVEGE)
+
 #define COLLECT_SIZE 1024
 
 /**
@@ -69,4 +73,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+#endif              /* TROPICSSL_HAVEGE */
 #endif				/* havege.h */

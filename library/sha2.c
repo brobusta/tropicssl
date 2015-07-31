@@ -40,7 +40,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_SHA2_C)
+#if defined(TROPICSSL_SHA2)
 
 #include "tropicssl/sha2.h"
 
@@ -327,6 +327,7 @@ void sha2(const uint8_t *input, size_t ilen, uint8_t output[32], int is224)
 	memset(&ctx, 0, sizeof(sha2_context));
 }
 
+#if defined(TROPICSSL_FS_IO)
 /*
  * output = SHA-256( file contents )
  */
@@ -357,6 +358,7 @@ int sha2_file(const char *path, uint8_t output[32], int is224)
 	fclose(f);
 	return (0);
 }
+#endif
 
 /*
  * SHA-256 HMAC context setup

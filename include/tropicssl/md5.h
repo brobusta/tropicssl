@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_MD5_H
 #define TROPICSSL_MD5_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_MD5)
 #include <string.h>
 #include <inttypes.h>
 /**
@@ -86,6 +89,7 @@ extern "C" {
 	 */
 	void md5(const uint8_t *input, size_t ilen, uint8_t output[16]);
 
+#if defined(TROPICSSL_FS_IO)
 	/**
 	 * \brief          Output = MD5( file contents )
 	 *
@@ -96,6 +100,7 @@ extern "C" {
 	 *                 or 2 if fread failed
 	 */
 	int md5_file(const char *path, uint8_t output[16]);
+#endif
 
 	/**
 	 * \brief          MD5 HMAC context setup
@@ -135,14 +140,18 @@ extern "C" {
 	void md5_hmac(const uint8_t *key, size_t keylen,
 		      const uint8_t *input, size_t ilen, uint8_t output[16]);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int md5_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_MD5 */
 #endif				/* md5.h */

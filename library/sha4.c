@@ -40,7 +40,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_SHA4_C)
+#if defined(TROPICSSL_SHA4)
 
 #include "tropicssl/sha4.h"
 
@@ -326,6 +326,7 @@ void sha4(const uint8_t *input, size_t ilen, uint8_t output[64], int is384)
 	memset(&ctx, 0, sizeof(sha4_context));
 }
 
+#if defined(TROPICSSL_FS_IO)
 /*
  * output = SHA-512( file contents )
  */
@@ -356,6 +357,7 @@ int sha4_file(const char *path, uint8_t output[64], int is384)
 	fclose(f);
 	return (0);
 }
+#endif
 
 /*
  * SHA-512 HMAC context setup

@@ -35,7 +35,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_BASE64_C)
+#if defined(TROPICSSL_BASE64)
 
 #include "tropicssl/base64.h"
 
@@ -194,7 +194,6 @@ int base64_decode(uint8_t *dst, size_t *dlen, const uint8_t *src, size_t slen)
 
 #if defined(TROPICSSL_SELF_TEST)
 
-#include <string.h>
 #include <stdio.h>
 
 static const uint8_t base64_test_dec[64] = {

@@ -225,7 +225,7 @@ int ssl_derive_keys(ssl_context * ssl)
 	 * Determine the appropriate key, IV and MAC length.
 	 */
 	switch (ssl->session->cipher) {
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 	case TLS_RSA_WITH_RC4_128_MD5:
 		ssl->keylen = 16;
 		ssl->minlen = 16;
@@ -241,7 +241,7 @@ int ssl_derive_keys(ssl_context * ssl)
 		break;
 #endif
 
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	case TLS_RSA_WITH_3DES_EDE_CBC_SHA:
 	case TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA:
 		ssl->keylen = 24;
@@ -251,7 +251,7 @@ int ssl_derive_keys(ssl_context * ssl)
 		break;
 #endif
 
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 	case TLS_RSA_WITH_AES_128_CBC_SHA:
 		ssl->keylen = 16;
 		ssl->minlen = 32;
@@ -268,7 +268,7 @@ int ssl_derive_keys(ssl_context * ssl)
 		break;
 #endif
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	case TLS_RSA_WITH_CAMELLIA_128_CBC_SHA:
 		ssl->keylen = 16;
 		ssl->minlen = 32;
@@ -320,7 +320,7 @@ int ssl_derive_keys(ssl_context * ssl)
 	}
 
 	switch (ssl->session->cipher) {
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 	case TLS_RSA_WITH_RC4_128_MD5:
 	case TLS_RSA_WITH_RC4_128_SHA:
 		arc4_setup((arc4_context *) ssl->ctx_enc, key1, ssl->keylen);
@@ -328,7 +328,7 @@ int ssl_derive_keys(ssl_context * ssl)
 		break;
 #endif
 
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	case TLS_RSA_WITH_3DES_EDE_CBC_SHA:
 	case TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA:
 		des3_set3key_enc((des3_context *) ssl->ctx_enc, key1);
@@ -336,7 +336,7 @@ int ssl_derive_keys(ssl_context * ssl)
 		break;
 #endif
 
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 	case TLS_RSA_WITH_AES_128_CBC_SHA:
 		aes_setkey_enc((aes_context *) ssl->ctx_enc, key1, 128);
 		aes_setkey_dec((aes_context *) ssl->ctx_dec, key2, 128);
@@ -349,7 +349,7 @@ int ssl_derive_keys(ssl_context * ssl)
 		break;
 #endif
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	case TLS_RSA_WITH_CAMELLIA_128_CBC_SHA:
 		camellia_setkey_enc((camellia_context *) ssl->ctx_enc, key1,
 				    128);
@@ -528,7 +528,7 @@ static int ssl_encrypt_buf(ssl_context * ssl)
 			break;
 
 	if (ssl->ivlen == 0) {
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 		padlen = 0;
 
 		SSL_DEBUG_MSG(3, ("before encrypt: msglen = %d, "
@@ -563,7 +563,7 @@ static int ssl_encrypt_buf(ssl_context * ssl)
 
 		switch (ssl->ivlen) {
 		case 8:
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 			des3_crypt_cbc((des3_context *) ssl->ctx_enc,
 				       DES_ENCRYPT, ssl->out_msglen,
 				       ssl->iv_enc, ssl->out_msg, ssl->out_msg);
@@ -571,7 +571,7 @@ static int ssl_encrypt_buf(ssl_context * ssl)
 #endif
 
 		case 16:
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 			if (ssl->session->cipher == TLS_RSA_WITH_AES_128_CBC_SHA ||
 			    ssl->session->cipher == TLS_RSA_WITH_AES_256_CBC_SHA ||
 			    ssl->session->cipher == TLS_DHE_RSA_WITH_AES_256_CBC_SHA) {
@@ -583,7 +583,7 @@ static int ssl_encrypt_buf(ssl_context * ssl)
 			}
 #endif
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 			if (ssl->session->cipher == TLS_RSA_WITH_CAMELLIA_128_CBC_SHA ||
 			    ssl->session->cipher == TLS_RSA_WITH_CAMELLIA_256_CBC_SHA ||
 			    ssl->session->cipher ==
@@ -621,7 +621,7 @@ static int ssl_decrypt_buf(ssl_context * ssl)
 	}
 
 	if (ssl->ivlen == 0) {
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 		padlen = 0;
 		arc4_crypt((arc4_context *) ssl->ctx_dec,
 			   ssl->in_msg, ssl->in_msglen);
@@ -639,7 +639,7 @@ static int ssl_decrypt_buf(ssl_context * ssl)
 		}
 
 		switch (ssl->ivlen) {
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 		case 8:
 			des3_crypt_cbc((des3_context *) ssl->ctx_dec,
 				       DES_DECRYPT, ssl->in_msglen,
@@ -648,7 +648,7 @@ static int ssl_decrypt_buf(ssl_context * ssl)
 #endif
 
 		case 16:
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 			if (ssl->session->cipher == TLS_RSA_WITH_AES_128_CBC_SHA ||
 			    ssl->session->cipher == TLS_RSA_WITH_AES_256_CBC_SHA ||
 			    ssl->session->cipher == TLS_DHE_RSA_WITH_AES_256_CBC_SHA) {
@@ -660,7 +660,7 @@ static int ssl_decrypt_buf(ssl_context * ssl)
 			}
 #endif
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 			if (ssl->session->cipher == TLS_RSA_WITH_CAMELLIA_128_CBC_SHA ||
 			    ssl->session->cipher == TLS_RSA_WITH_CAMELLIA_256_CBC_SHA ||
 			    ssl->session->cipher ==
@@ -1684,7 +1684,7 @@ int ssl_get_verify_result(const ssl_context * ssl)
 const char *ssl_get_cipher(const ssl_context * ssl)
 {
 	switch (ssl->session->cipher) {
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 	case TLS_RSA_WITH_RC4_128_MD5:
 		return ("TLS_RSA_WITH_RC4_128_MD5");
 
@@ -1692,7 +1692,7 @@ const char *ssl_get_cipher(const ssl_context * ssl)
 		return ("TLS_RSA_WITH_RC4_128_SHA");
 #endif
 
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	case TLS_RSA_WITH_3DES_EDE_CBC_SHA:
 		return ("TLS_RSA_WITH_3DES_EDE_CBC_SHA");
 
@@ -1700,7 +1700,7 @@ const char *ssl_get_cipher(const ssl_context * ssl)
 		return ("TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA");
 #endif
 
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 	case TLS_RSA_WITH_AES_128_CBC_SHA:
 		return ("TLS_RSA_WITH_AES_128_CBC_SHA");
 
@@ -1711,7 +1711,7 @@ const char *ssl_get_cipher(const ssl_context * ssl)
 		return ("TLS_DHE_RSA_WITH_AES_256_CBC_SHA");
 #endif
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	case TLS_RSA_WITH_CAMELLIA_128_CBC_SHA:
 		return ("TLS_RSA_WITH_CAMELLIA_128_CBC_SHA");
 
@@ -1730,30 +1730,30 @@ const char *ssl_get_cipher(const ssl_context * ssl)
 }
 
 int ssl_default_ciphers[] = {
-#if defined(TROPICSSL_DHM_C)
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_DHM)
+#if defined(TROPICSSL_AES)
 	TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
 #endif
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA,
 #endif
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA,
 #endif
 #endif
 
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 	TLS_RSA_WITH_AES_128_CBC_SHA,
 	TLS_RSA_WITH_AES_256_CBC_SHA,
 #endif
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	TLS_RSA_WITH_CAMELLIA_128_CBC_SHA,
 	TLS_RSA_WITH_CAMELLIA_256_CBC_SHA,
 #endif
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	TLS_RSA_WITH_3DES_EDE_CBC_SHA,
 #endif
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 	TLS_RSA_WITH_RC4_128_SHA,
 	TLS_RSA_WITH_RC4_128_MD5,
 #endif
@@ -1938,7 +1938,7 @@ void ssl_free(ssl_context * ssl)
 		memset(ssl->in_ctr, 0, SSL_BUFFER_LEN);
 		free(ssl->in_ctr);
 	}
-#if defined(TROPICSSL_DHM_C)
+#if defined(TROPICSSL_DHM)
 	dhm_free(&ssl->dhm_ctx);
 #endif
 

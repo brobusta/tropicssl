@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_DES_H
 #define TROPICSSL_DES_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_DES)
 #include <string.h>
 #include <inttypes.h>
 
@@ -161,14 +164,18 @@ extern "C" {
 			    uint8_t iv[8],
 			    const uint8_t *input, uint8_t *output);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/*
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int des_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_DES */
 #endif				/* des.h */

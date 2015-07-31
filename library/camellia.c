@@ -39,7 +39,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 
 #include "tropicssl/camellia.h"
 

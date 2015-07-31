@@ -33,6 +33,9 @@
 #ifndef TROPICSSL_CAMELLIA_H
 #define TROPICSSL_CAMELLIA_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_CAMELLIA)
 #include <inttypes.h>
 #include <string.h>
 
@@ -128,4 +131,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_CAMELLIA */
 #endif				/* camellia.h */

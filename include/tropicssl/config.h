@@ -89,6 +89,11 @@
 #define TROPICSSL_GENPRIME
 
 /*
+ * Uncomment to enable FileSystem operation.
+ */
+#define TROPICSSL_FS_IO
+
+/*
  * Uncomment this macro to store the AES tables in ROM.
  *
 #define TROPICSSL_AES_ROM_TABLES
@@ -103,7 +108,7 @@
  *      SSL_RSA_AES_256_SHA
  *      SSL_EDH_RSA_AES_256_SHA
  */
-#define TROPICSSL_AES_C
+#define TROPICSSL_AES
 
 /*
  * Module:  library/arc4.c
@@ -113,7 +118,7 @@
  *      SSL_RSA_RC4_128_MD5
  *      SSL_RSA_RC4_128_SHA
  */
-#define TROPICSSL_ARC4_C
+#define TROPICSSL_ARC4
 
 /*
  * Module:  library/base64.c
@@ -121,7 +126,7 @@
  *
  * This module is required for X.509 support.
  */
-#define TROPICSSL_BASE64_C
+#define TROPICSSL_BASE64
 
 /*
  * Module:  library/bignum.c
@@ -132,7 +137,7 @@
  *
  * This module is required for RSA and DHM support.
  */
-#define TROPICSSL_BIGNUM_C
+#define TROPICSSL_BIGNUM
 
 /*
  * Module:  library/camellia.c
@@ -140,7 +145,7 @@
  *
  * This module enabled the following cipher suites:
  */
-#define TROPICSSL_CAMELLIA_C
+#define TROPICSSL_CAMELLIA
 
 /*
  * Module:  library/certs.c
@@ -148,7 +153,7 @@
  *
  * This module is used for testing (ssl_client/server).
  */
-#define TROPICSSL_CERTS_C
+#define TROPICSSL_CERTS
 
 /*
  * Module:  library/debug.c
@@ -158,7 +163,7 @@
  *
  * This module provides debugging functions.
  */
-#define TROPICSSL_DEBUG_C
+#define TROPICSSL_DEBUG
 
 /*
  * Module:  library/des.c
@@ -168,7 +173,7 @@
  *      SSL_RSA_DES_168_SHA
  *      SSL_EDH_RSA_DES_168_SHA
  */
-#define TROPICSSL_DES_C
+#define TROPICSSL_DES
 
 /*
  * Module:  library/dhm.c
@@ -179,7 +184,7 @@
  *      SSL_EDH_RSA_DES_168_SHA
  *      SSL_EDH_RSA_AES_256_SHA
  */
-#define TROPICSSL_DHM_C
+#define TROPICSSL_DHM
 
 /*
  * Module:  library/havege.c
@@ -187,7 +192,7 @@
  *
  * This module enables the HAVEGE random number generator.
  */
-#define TROPICSSL_HAVEGE_C
+#define TROPICSSL_HAVEGE
 
 /*
  * Module:  library/md5.c
@@ -196,7 +201,7 @@
  *
  * This module is required for SSL/TLS and X.509.
  */
-#define TROPICSSL_MD5_C
+#define TROPICSSL_MD5
 
 /*
  * Module:  library/net.c
@@ -204,7 +209,7 @@
  *
  * This module provides TCP/IP networking routines.
  */
-#define TROPICSSL_NET_C
+#define TROPICSSL_NET
 
 /*
  * Module:  library/rsa.c
@@ -215,7 +220,7 @@
  *
  * This module is required for SSL/TLS and MD5-signed certificates.
  */
-#define TROPICSSL_RSA_C
+#define TROPICSSL_RSA
 
 /*
  * Module:  library/sha1.c
@@ -226,7 +231,7 @@
  *
  * This module is required for SSL/TLS and SHA1-signed certificates.
  */
-#define TROPICSSL_SHA1_C
+#define TROPICSSL_SHA1
 
 /*
  * Module:  library/sha2.c
@@ -234,7 +239,7 @@
  *
  * This module adds support for SHA-224 and SHA-256.
  */
-#define TROPICSSL_SHA2_C
+#define TROPICSSL_SHA2
 
 /*
  * Module:  library/sha4.c
@@ -242,7 +247,7 @@
  *
  * This module adds support for SHA-384 and SHA-512.
  */
-#define TROPICSSL_SHA4_C
+#define TROPICSSL_SHA4
 
 /*
  * Module:  library/ssl_cli.c
@@ -275,7 +280,7 @@
  *
  * This module is used by the HAVEGE random number generator.
  */
-#define TROPICSSL_TIMING_C
+#define TROPICSSL_TIMING
 
 /*
  * Module:  library/x509parse.c
@@ -285,7 +290,7 @@
  *
  * This module is required for X.509 certificate parsing.
  */
-#define TROPICSSL_X509_PARSE_C
+#define TROPICSSL_X509_PARSE
 
 /*
  * Module:  library/x509_write.c
@@ -299,6 +304,6 @@
  * Module:  library/xtea.c
  * Caller:
  */
-#define TROPICSSL_XTEA_C
+#define TROPICSSL_XTEA
 
 #endif /* config.h */

@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_TIMING_H
 #define TROPICSSL_TIMING_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_TIMING)
 #include <inttypes.h>
 
 /**
@@ -78,4 +81,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_TIMING */
 #endif				/* timing.h */

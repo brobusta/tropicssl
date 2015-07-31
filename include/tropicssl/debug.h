@@ -36,6 +36,8 @@
 #define SSL_DEBUG_H
 
 #include "tropicssl/config.h"
+
+#if defined(TROPICSSL_DEBUG)
 #include "tropicssl/ssl.h"
 
 #if defined(TROPICSSL_DEBUG_MSG)
@@ -90,4 +92,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_DEBUG */
 #endif				/* debug.h */

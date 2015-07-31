@@ -35,7 +35,9 @@
 #ifndef TROPICSSL_BIGNUM_H
 #define TROPICSSL_BIGNUM_H
 
-#if defined(TROPICSSL_SELF_TEST)
+#include "tropicssl/config.h"
+#if defined(TROPICSSL_BIGNUM)
+#if defined(TROPICSSL_SELF_TEST) || defined(TROPICSSL_FS_IO)
 #include <stdio.h>
 #endif
 
@@ -182,6 +184,7 @@ extern "C" {
 	 */
 	int mpi_write_string(const mpi * X, int radix, char *s, size_t *slen);
 
+#if defined(TROPICSSL_FS_IO)
 	/**
 	 * \brief          Read X from an opened file
 	 *
@@ -206,6 +209,7 @@ extern "C" {
 	 * \note           Set fout == NULL to print X on the console.
 	 */
 	int mpi_write_file(const char *p, const mpi * X, int radix, FILE * fout);
+#endif
 
 	/**
 	 * \brief          Import X from unsigned binary data, big endian
@@ -452,14 +456,18 @@ extern "C" {
 	int mpi_gen_prime(mpi * X, size_t nbits, int dh_flag,
 			  int (*f_rng) (void *), void *p_rng);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int mpi_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_BIGNUM */
 #endif				/* bignum.h */

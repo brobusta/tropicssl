@@ -35,7 +35,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_CERTS_C)
+#if defined(TROPICSSL_CERTS)
 
 const char test_ca_crt[] =
     "-----BEGIN CERTIFICATE-----\r\n"

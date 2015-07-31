@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_RSA_H
 #define TROPICSSL_RSA_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_RSA)
 #include "tropicssl/bignum.h"
 
 #define TROPICSSL_ERR_RSA_BAD_INPUT_DATA                    -0x0400
@@ -285,14 +288,18 @@ extern "C" {
 	 */
 	void rsa_free(rsa_context * ctx);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int rsa_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_RSA */
 #endif				/* rsa.h */

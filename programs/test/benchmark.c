@@ -70,20 +70,20 @@ int main(void)
 	int keysize;
 	uint32_t i, j, tsc;
 	uint8_t tmp[32];
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 	arc4_context arc4;
 #endif
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	des3_context des3;
 	des_context des;
 #endif
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 	aes_context aes;
 #endif
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	camellia_context camellia;
 #endif
-#if defined(TROPICSSL_RSA_C)
+#if defined(TROPICSSL_RSA)
 	rsa_context rsa;
 #endif
 
@@ -91,7 +91,7 @@ int main(void)
 
 	printf("\n");
 
-#if defined(TROPICSSL_MD5_C)
+#if defined(TROPICSSL_MD5)
 	printf("  MD5       :  ");
 	fflush(stdout);
 
@@ -107,7 +107,7 @@ int main(void)
 	       (hardclock() - tsc) / (j * BUFSIZE));
 #endif
 
-#if defined(TROPICSSL_SHA1_C)
+#if defined(TROPICSSL_SHA1)
 	printf("  SHA-1     :  ");
 	fflush(stdout);
 
@@ -123,7 +123,7 @@ int main(void)
 	       (hardclock() - tsc) / (j * BUFSIZE));
 #endif
 
-#if defined(TROPICSSL_SHA2_C)
+#if defined(TROPICSSL_SHA2)
 	printf("  SHA-256   :  ");
 	fflush(stdout);
 
@@ -139,7 +139,7 @@ int main(void)
 	       (hardclock() - tsc) / (j * BUFSIZE));
 #endif
 
-#if defined(TROPICSSL_ARC4_C)
+#if defined(TROPICSSL_ARC4)
 	printf("  ARC4      :  ");
 	fflush(stdout);
 
@@ -157,7 +157,7 @@ int main(void)
 	       (hardclock() - tsc) / (j * BUFSIZE));
 #endif
 
-#if defined(TROPICSSL_DES_C)
+#if defined(TROPICSSL_DES)
 	printf("  3DES      :  ");
 	fflush(stdout);
 
@@ -191,7 +191,7 @@ int main(void)
 	       (hardclock() - tsc) / (j * BUFSIZE));
 #endif
 
-#if defined(TROPICSSL_AES_C)
+#if defined(TROPICSSL_AES)
 	for (keysize = 128; keysize <= 256; keysize += 64) {
 		printf("  AES-%d   :  ", keysize);
 		fflush(stdout);
@@ -216,7 +216,7 @@ int main(void)
 	}
 #endif
 
-#if defined(TROPICSSL_CAMELLIA_C)
+#if defined(TROPICSSL_CAMELLIA)
 	for (keysize = 128; keysize <= 256; keysize += 64) {
 		printf("  CAMELLIA-%d   :  ", keysize);
 		fflush(stdout);
@@ -241,7 +241,7 @@ int main(void)
 	}
 #endif
 
-#if defined(TROPICSSL_RSA_C)
+#if defined(TROPICSSL_RSA)
 	rsa_init(&rsa, RSA_PKCS_V15, 0, myrand, NULL);
 	rsa_gen_key(&rsa, 1024, 65537);
 

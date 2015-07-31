@@ -33,7 +33,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_XTEA_C)
+#if defined(TROPICSSL_XTEA)
 
 #include "tropicssl/xtea.h"
 

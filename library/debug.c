@@ -35,7 +35,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_DEBUG_C)
+#if defined(TROPICSSL_DEBUG)
 
 #include "tropicssl/debug.h"
 

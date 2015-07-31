@@ -41,7 +41,7 @@
 
 #include "tropicssl/config.h"
 
-#if defined(TROPICSSL_RSA_C)
+#if defined(TROPICSSL_RSA)
 
 #include "tropicssl/rsa.h"
 

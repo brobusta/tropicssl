@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_AES_H
 #define TROPICSSL_AES_H
 
+#include "tropicssl/config.h"
+
+#if defined(TROPICSSL_AES)
 #include <string.h>
 #include <inttypes.h>
 
@@ -118,14 +121,18 @@ extern "C" {
 			      uint8_t iv[16],
 			      const uint8_t *input, uint8_t *output);
 
+#if defined(TROPICSSL_SELF_TEST)
 	/**
 	 * \brief          Checkup routine
 	 *
 	 * \return         0 if successful, or 1 if the test failed
 	 */
 	int aes_self_test(int verbose);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_AES */
 #endif				/* aes.h */

@@ -35,6 +35,9 @@
 #ifndef TROPICSSL_NET_H
 #define TROPICSSL_NET_H
 
+#include "tropicssl/config.h"
+
+#if defined (TROPICSSL_NET)
 #include <string.h>
 #include <inttypes.h>
 
@@ -133,4 +136,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif              /* TROPICSSL_NET */
 #endif				/* net.h */
