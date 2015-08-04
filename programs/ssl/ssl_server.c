@@ -45,6 +45,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "tropicssl/err.h"
 #include "tropicssl/havege.h"
 #include "tropicssl/certs.h"
 #include "tropicssl/x509.h"

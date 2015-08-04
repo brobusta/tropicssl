@@ -40,13 +40,6 @@
 #if defined(TROPICSSL_DHM)
 #include "tropicssl/bignum.h"
 
-#define TROPICSSL_ERR_DHM_BAD_INPUT_DATA                    -0x0480
-#define TROPICSSL_ERR_DHM_READ_PARAMS_FAILED                -0x0490
-#define TROPICSSL_ERR_DHM_MAKE_PARAMS_FAILED                -0x04A0
-#define TROPICSSL_ERR_DHM_READ_PUBLIC_FAILED                -0x04B0
-#define TROPICSSL_ERR_DHM_MAKE_PUBLIC_FAILED                -0x04C0
-#define TROPICSSL_ERR_DHM_CALC_SECRET_FAILED                -0x04D0
-
 typedef struct {
 	size_t len;		/*!<  size(P) in chars  */
 	mpi P;			/*!<  prime modulus     */

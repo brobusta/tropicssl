@@ -40,6 +40,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "tropicssl/err.h"
 #include "tropicssl/net.h"
 #include "tropicssl/ssl.h"
 #include "tropicssl/havege.h"

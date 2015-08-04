@@ -43,6 +43,7 @@
 
 #if defined(TROPICSSL_DES)
 
+#include "tropicssl/err.h"
 #include "tropicssl/des.h"
 
 /*

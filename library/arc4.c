@@ -42,6 +42,7 @@
 
 #if defined(TROPICSSL_ARC4)
 
+#include "tropicssl/err.h"
 #include "tropicssl/arc4.h"
 
 /*

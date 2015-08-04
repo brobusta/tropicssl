@@ -48,6 +48,7 @@
 
 #if defined(TROPICSSL_X509_PARSE)
 
+#include "tropicssl/err.h"
 #include "tropicssl/x509.h"
 #include "tropicssl/base64.h"
 #include "tropicssl/des.h"

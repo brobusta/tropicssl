@@ -42,6 +42,7 @@
 
 #if defined(TROPICSSL_MD5)
 
+#include "tropicssl/err.h"
 #include "tropicssl/md5.h"
 
 #include <stdio.h>

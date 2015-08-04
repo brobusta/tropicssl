@@ -41,17 +41,6 @@
 #include <string.h>
 #include <inttypes.h>
 
-#define TROPICSSL_ERR_NET_UNKNOWN_HOST                      -0x0F00
-#define TROPICSSL_ERR_NET_SOCKET_FAILED                     -0x0F10
-#define TROPICSSL_ERR_NET_CONNECT_FAILED                    -0x0F20
-#define TROPICSSL_ERR_NET_BIND_FAILED                       -0x0F30
-#define TROPICSSL_ERR_NET_LISTEN_FAILED                     -0x0F40
-#define TROPICSSL_ERR_NET_ACCEPT_FAILED                     -0x0F50
-#define TROPICSSL_ERR_NET_RECV_FAILED                       -0x0F60
-#define TROPICSSL_ERR_NET_SEND_FAILED                       -0x0F70
-#define TROPICSSL_ERR_NET_CONN_RESET                        -0x0F80
-#define TROPICSSL_ERR_NET_TRY_AGAIN                         -0x0F90
-
 #ifdef __cplusplus
 extern "C" {
 #endif

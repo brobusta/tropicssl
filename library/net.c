@@ -37,6 +37,7 @@
 
 #if defined(TROPICSSL_NET)
 
+#include "tropicssl/err.h"
 #include "tropicssl/net.h"
 
 #if defined(WIN32) || defined(_WIN32_WCE)

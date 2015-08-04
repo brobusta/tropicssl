@@ -42,6 +42,7 @@
 
 #if defined(TROPICSSL_DHM)
 
+#include "tropicssl/err.h"
 #include "tropicssl/dhm.h"
 
 #include <string.h>
@@ -54,13 +55,13 @@ static int dhm_read_bignum(mpi * X, uint8_t **p, const uint8_t *end)
 	int ret, n;
 
 	if (end - *p < 2)
-		return (TROPICSSL_ERR_DHM_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	n = ((*p)[0] << 8) | (*p)[1];
 	(*p) += 2;
 
 	if ((int)(end - *p) < n)
-		return (TROPICSSL_ERR_DHM_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	if ((ret = mpi_read_binary(X, *p, n)) != 0)
 		return (TROPICSSL_ERR_DHM_READ_PARAMS_FAILED | ret);
@@ -87,13 +88,13 @@ int dhm_read_params(dhm_context * ctx, uint8_t **p, const uint8_t *end)
 	ctx->len = mpi_size(&ctx->P);
 
 	if (end - *p < 2)
-		return (TROPICSSL_ERR_DHM_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	n = ((*p)[0] << 8) | (*p)[1];
 	(*p) += 2;
 
 	if (end != *p + n)
-		return (TROPICSSL_ERR_DHM_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	return (0);
 }
@@ -163,7 +164,7 @@ int dhm_read_public(dhm_context * ctx, const uint8_t *input, size_t ilen)
 	int ret;
 
 	if (ctx == NULL || ilen < 1 || ilen > ctx->len)
-		return (TROPICSSL_ERR_DHM_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	if ((ret = mpi_read_binary(&ctx->GY, input, ilen)) != 0)
 		return (TROPICSSL_ERR_DHM_READ_PUBLIC_FAILED | ret);
@@ -182,7 +183,7 @@ int dhm_make_public(dhm_context * ctx, int x_size,
 	uint8_t *p;
 
 	if (ctx == NULL || olen < 1 || olen > ctx->len)
-		return (TROPICSSL_ERR_DHM_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	/*
 	 * generate X and calculate GX = G^X mod P
@@ -219,7 +220,7 @@ int dhm_calc_secret(dhm_context * ctx, uint8_t *output, size_t *olen)
 	int ret;
 
 	if (ctx == NULL || *olen < ctx->len)
-		return (TROPICSSL_ERR_DHM_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	MPI_CHK(mpi_exp_mod(&ctx->K, &ctx->GY, &ctx->X, &ctx->P, &ctx->RP));
 

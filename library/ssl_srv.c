@@ -37,6 +37,7 @@
 
 #if defined(TROPICSSL_SSL_SRV_C)
 
+#include "tropicssl/err.h"
 #include "tropicssl/debug.h"
 #include "tropicssl/ssl.h"
 
@@ -883,7 +884,7 @@ int ssl_handshake_server(ssl_context * ssl)
 
 		default:
 			SSL_DEBUG_MSG(1, ("invalid state %d", ssl->state));
-			return (TROPICSSL_ERR_SSL_BAD_INPUT_DATA);
+			return (TROPICSSL_ERR_BAD_ARG);
 		}
 
 		if (ret != 0)

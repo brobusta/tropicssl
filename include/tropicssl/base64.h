@@ -41,9 +41,6 @@
 #include <string.h>
 #include <inttypes.h>
 
-#define TROPICSSL_ERR_BASE64_BUFFER_TOO_SMALL               -0x0010
-#define TROPICSSL_ERR_BASE64_INVALID_CHARACTER              -0x0012
-
 #ifdef __cplusplus
 extern "C" {
 #endif

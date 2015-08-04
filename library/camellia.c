@@ -41,6 +41,7 @@
 
 #if defined(TROPICSSL_CAMELLIA)
 
+#include "tropicssl/err.h"
 #include "tropicssl/camellia.h"
 
 /*

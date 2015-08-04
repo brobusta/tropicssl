@@ -40,15 +40,6 @@
 #if defined(TROPICSSL_RSA)
 #include "tropicssl/bignum.h"
 
-#define TROPICSSL_ERR_RSA_BAD_INPUT_DATA                    -0x0400
-#define TROPICSSL_ERR_RSA_INVALID_PADDING                   -0x0410
-#define TROPICSSL_ERR_RSA_KEY_GEN_FAILED                    -0x0420
-#define TROPICSSL_ERR_RSA_KEY_CHECK_FAILED                  -0x0430
-#define TROPICSSL_ERR_RSA_PUBLIC_FAILED                     -0x0440
-#define TROPICSSL_ERR_RSA_PRIVATE_FAILED                    -0x0450
-#define TROPICSSL_ERR_RSA_VERIFY_FAILED                     -0x0460
-#define TROPICSSL_ERR_RSA_OUTPUT_TO_LARGE                   -0x0470
-
 /*
  * PKCS#1 constants
  */

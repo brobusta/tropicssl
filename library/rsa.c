@@ -43,6 +43,7 @@
 
 #if defined(TROPICSSL_RSA)
 
+#include "tropicssl/err.h"
 #include "tropicssl/rsa.h"
 
 #include <stdlib.h>
@@ -75,7 +76,7 @@ int rsa_gen_key(rsa_context * ctx, int nbits, int exponent)
 	mpi P1, Q1, H, G;
 
 	if (ctx->f_rng == NULL || nbits < 128 || exponent < 3)
-		return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	mpi_init(&P1, &Q1, &H, &G, NULL);
 
@@ -200,7 +201,7 @@ int rsa_public(rsa_context * ctx, const uint8_t *input, uint8_t *output)
 
 	if (mpi_cmp_mpi(&T, &ctx->N) >= 0) {
 		mpi_free(&T, NULL);
-		return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 	}
 
 	olen = ctx->len;
@@ -232,7 +233,7 @@ int rsa_private(rsa_context * ctx, const uint8_t *input, uint8_t *output)
 
 	if (mpi_cmp_mpi(&T, &ctx->N) >= 0) {
 		mpi_free(&T, NULL);
-		return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 	}
 #if 0
 	MPI_CHK(mpi_exp_mod(&T, &T, &ctx->D, &ctx->N, &ctx->RN));
@@ -289,7 +290,7 @@ int rsa_pkcs1_encrypt(rsa_context * ctx,
 	case RSA_PKCS_V15:
 
 		if (ilen < 0 || olen < ilen + 11)
-			return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+			return (TROPICSSL_ERR_BAD_ARG);
 
 		nb_pad = olen - 3 - ilen;
 
@@ -332,7 +333,7 @@ int rsa_pkcs1_decrypt(rsa_context * ctx,
 	ilen = ctx->len;
 
 	if (ilen < 16 || ilen > sizeof(buf))
-		return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	ret = (mode == RSA_PUBLIC)
 	    ? rsa_public(ctx, input, buf)
@@ -403,11 +404,11 @@ int rsa_pkcs1_sign(rsa_context * ctx,
 			break;
 
 		default:
-			return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+			return (TROPICSSL_ERR_BAD_ARG);
 		}
 
 		if (nb_pad < 8)
-			return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+			return (TROPICSSL_ERR_BAD_ARG);
 
 		*p++ = 0;
 		*p++ = RSA_SIGN;
@@ -450,7 +451,7 @@ int rsa_pkcs1_sign(rsa_context * ctx,
 		break;
 
 	default:
-		return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 	}
 
 	return ((mode == RSA_PUBLIC)
@@ -473,7 +474,7 @@ int rsa_pkcs1_verify(rsa_context * ctx,
 	siglen = ctx->len;
 
 	if (siglen < 16 || siglen > sizeof(buf))
-		return (TROPICSSL_ERR_RSA_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	ret = (mode == RSA_PUBLIC)
 	    ? rsa_public(ctx, sig, buf)

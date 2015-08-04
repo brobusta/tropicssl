@@ -37,6 +37,7 @@
 
 #if defined(TROPICSSL_BASE64)
 
+#include "tropicssl/err.h"
 #include "tropicssl/base64.h"
 
 #include <inttypes.h>

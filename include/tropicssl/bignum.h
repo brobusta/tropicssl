@@ -44,16 +44,6 @@
 #include <string.h>
 #include <inttypes.h>
 
-#define TROPICSSL_ERR_MPI_OKAY								0
-#define TROPICSSL_ERR_MPI_FILE_IO_ERROR                     -0x0002
-#define TROPICSSL_ERR_MPI_BAD_INPUT_DATA                    -0x0004
-#define TROPICSSL_ERR_MPI_INVALID_CHARACTER                 -0x0006
-#define TROPICSSL_ERR_MPI_BUFFER_TOO_SMALL                  -0x0008
-#define TROPICSSL_ERR_MPI_NEGATIVE_VALUE                    -0x000A
-#define TROPICSSL_ERR_MPI_DIVISION_BY_ZERO                  -0x000C
-#define TROPICSSL_ERR_MPI_NOT_ACCEPTABLE                    -0x000E
-#define TROPICSSL_ERR_MPI_MALLOC_FAILED                     -0x0010
-
 #define MPI_CHK(f) if( ( ret = f ) != 0 ) goto cleanup
 
 /*

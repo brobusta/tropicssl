@@ -45,6 +45,7 @@
 
 #if defined(TROPICSSL_SSL_TLS_C)
 
+#include "tropicssl/err.h"
 #include "tropicssl/aes.h"
 #include "tropicssl/arc4.h"
 #include "tropicssl/camellia.h"
@@ -70,7 +71,7 @@ static int tls1_prf(uint8_t *secret, size_t slen, char *label,
 	uint8_t h_i[20];
 
 	if (sizeof(tmp) < 20 + strlen(label) + rlen)
-		return (TROPICSSL_ERR_SSL_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	hs = (slen + 1) / 2;
 	S1 = secret;
@@ -1658,7 +1659,7 @@ int ssl_set_dh_param(ssl_context * ssl, const char *dhm_P, const char *dhm_G)
 int ssl_set_hostname(ssl_context * ssl, const char *hostname)
 {
 	if (hostname == NULL)
-		return (TROPICSSL_ERR_SSL_BAD_INPUT_DATA);
+		return (TROPICSSL_ERR_BAD_ARG);
 
 	ssl->hostname_len = strlen(hostname);
 	ssl->hostname = (uint8_t *)malloc(ssl->hostname_len + 1);

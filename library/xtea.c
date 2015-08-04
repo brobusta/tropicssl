@@ -35,6 +35,7 @@
 
 #if defined(TROPICSSL_XTEA)
 
+#include "tropicssl/err.h"
 #include "tropicssl/xtea.h"
 
 #include <string.h>

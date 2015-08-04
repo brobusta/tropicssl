@@ -42,6 +42,7 @@
 
 #if defined(TROPICSSL_SHA4)
 
+#include "tropicssl/err.h"
 #include "tropicssl/sha4.h"
 
 #include <stdio.h>
