@@ -438,7 +438,7 @@ void sha2_hmac(const uint8_t *key, size_t keylen,
 /*
  * FIPS-180-2 test vectors
  */
-static uint8_t sha2_test_buf[3][57] = {
+static const uint8_t sha2_test_buf[3][57] = {
 	{"abc"},
 	{"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"},
 	{""}
@@ -491,7 +491,7 @@ static const uint8_t sha2_test_sum[6][32] = {
 /*
  * RFC 4231 test vectors
  */
-static uint8_t sha2_hmac_test_key[7][26] = {
+static const uint8_t sha2_hmac_test_key[7][26] = {
 	{
 	 "\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B"
 	 "\x0B\x0B\x0B\x0B"},
@@ -513,7 +513,7 @@ static const int sha2_hmac_test_keylen[7] = {
 	20, 4, 20, 25, 20, 131, 131
 };
 
-static uint8_t sha2_hmac_test_buf[7][153] = {
+static const uint8_t sha2_hmac_test_buf[7][153] = {
 	{"Hi There"},
 	{"what do ya want for nothing?"},
 	{

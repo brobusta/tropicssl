@@ -1691,7 +1691,7 @@ int x509_self_test(int verbose)
 	if (verbose != 0)
 		printf("passed\n  X.509 signature verify: ");
 
-	ret = x509parse_verify(&clicert, &cacert, "Joe User", &flags);
+	ret = x509parse_verify(&clicert, &cacert, "Test Client", &flags);
 	if (ret != 0) {
 		printf("flags = %02x ", flags);
 		if (verbose != 0)
