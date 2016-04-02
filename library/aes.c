@@ -375,9 +375,9 @@ static int aes_init_done = 0;
 
 static void aes_gen_tables(void)
 {
-	int i, x, y, z;
-	int pow[256];
-	int log[256];
+	uint32_t i, x, y, z;
+	uint32_t pow[256];
+	uint32_t log[256];
 
 	/*
 	 * compute pow and log tables over GF(2^8)
@@ -455,7 +455,7 @@ static void aes_gen_tables(void)
  */
 void aes_setkey_enc(aes_context * ctx, const uint8_t *key, unsigned int keysize)
 {
-	unsigned int i;
+	uint32_t i;
 	uint32_t *RK;
 
 #if !defined(TROPICSSL_AES_ROM_TABLES)
@@ -942,21 +942,14 @@ static const uint8_t aes_test_cfb128_ct[3][64] = {
 	 0x20, 0x31, 0x62, 0x3D, 0x55, 0xB1, 0xE4, 0x71}
 };
 
-/*
- * Checkup routine
- */
-int aes_self_test(int verbose)
+static int aes_test_mode_ecb(int verbose)
 {
-	int i, j, u, v;
-	size_t offset;
+	uint32_t i, j, u, v;
 	uint8_t key[32];
-	uint8_t buf[64];
-	uint8_t prv[16];
-	uint8_t iv[16];
+	uint8_t buf[16];
 	aes_context ctx;
 
-	memset(key, 0, 32);
-
+	memset(key, 0, sizeof(key));
 	/*
 	 * ECB mode
 	 */
@@ -968,7 +961,7 @@ int aes_self_test(int verbose)
 			printf("  AES-ECB-%3d (%s): ", 128 + u * 64,
 			       (v == AES_DECRYPT) ? "dec" : "enc");
 
-		memset(buf, 0, 16);
+		memset(buf, 0, sizeof(buf));
 
 		if (v == AES_DECRYPT) {
 			aes_setkey_dec(&ctx, key, 128 + u * 64);
@@ -976,7 +969,7 @@ int aes_self_test(int verbose)
 			for (j = 0; j < 10000; j++)
 				aes_crypt_ecb(&ctx, v, buf, buf);
 
-			if (memcmp(buf, aes_test_ecb_dec[u], 16) != 0) {
+			if (memcmp(buf, aes_test_ecb_dec[u], sizeof(buf)) != 0) {
 				if (verbose != 0)
 					printf("failed\n");
 
@@ -988,7 +981,7 @@ int aes_self_test(int verbose)
 			for (j = 0; j < 10000; j++)
 				aes_crypt_ecb(&ctx, v, buf, buf);
 
-			if (memcmp(buf, aes_test_ecb_enc[u], 16) != 0) {
+			if (memcmp(buf, aes_test_ecb_enc[u], sizeof(buf)) != 0) {
 				if (verbose != 0)
 					printf("failed\n");
 
@@ -1002,6 +995,20 @@ int aes_self_test(int verbose)
 
 	if (verbose != 0)
 		printf("\n");
+
+	return (0);
+}
+
+static int aes_test_mode_cbc(int verbose)
+{
+	uint32_t i, j, u, v;
+	uint8_t key[32];
+	uint8_t buf[16];
+	uint8_t prv[16];
+	uint8_t iv[16];
+	aes_context ctx;
+
+	memset(key, 0, sizeof(key));
 
 	/*
 	 * CBC mode
@@ -1014,17 +1021,17 @@ int aes_self_test(int verbose)
 			printf("  AES-CBC-%3d (%s): ", 128 + u * 64,
 			       (v == AES_DECRYPT) ? "dec" : "enc");
 
-		memset(iv, 0, 16);
-		memset(prv, 0, 16);
-		memset(buf, 0, 16);
+		memset(iv, 0, sizeof(iv));
+		memset(prv, 0, sizeof(prv));
+		memset(buf, 0, sizeof(buf));
 
 		if (v == AES_DECRYPT) {
 			aes_setkey_dec(&ctx, key, 128 + u * 64);
 
 			for (j = 0; j < 10000; j++)
-				aes_crypt_cbc(&ctx, v, 16, iv, buf, buf);
+				aes_crypt_cbc(&ctx, v, sizeof(buf), iv, buf, buf);
 
-			if (memcmp(buf, aes_test_cbc_dec[u], 16) != 0) {
+			if (memcmp(buf, aes_test_cbc_dec[u], sizeof(buf)) != 0) {
 				if (verbose != 0)
 					printf("failed\n");
 
@@ -1036,14 +1043,14 @@ int aes_self_test(int verbose)
 			for (j = 0; j < 10000; j++) {
 				uint8_t tmp[16];
 
-				aes_crypt_cbc(&ctx, v, 16, iv, buf, buf);
+				aes_crypt_cbc(&ctx, v, sizeof(buf), iv, buf, buf);
 
-				memcpy(tmp, prv, 16);
-				memcpy(prv, buf, 16);
-				memcpy(buf, tmp, 16);
+				memcpy(tmp, prv, sizeof(tmp));
+				memcpy(prv, buf, sizeof(prv));
+				memcpy(buf, tmp, sizeof(buf));
 			}
 
-			if (memcmp(prv, aes_test_cbc_enc[u], 16) != 0) {
+			if (memcmp(prv, aes_test_cbc_enc[u], sizeof(prv)) != 0) {
 				if (verbose != 0)
 					printf("failed\n");
 
@@ -1058,6 +1065,19 @@ int aes_self_test(int verbose)
 	if (verbose != 0)
 		printf("\n");
 
+	return (0);
+}
+
+static int aes_test_mode_cfb128(int verbose)
+{
+	uint32_t i, u, v;
+	size_t offset;
+	uint8_t key[32];
+	uint8_t buf[64];
+	uint8_t iv[16];
+	aes_context ctx;
+
+	memset(key, 0, sizeof(key));
 	/*
 	 * CFB128 mode
 	 */
@@ -1069,27 +1089,27 @@ int aes_self_test(int verbose)
 			printf("  AES-CFB128-%3d (%s): ", 128 + u * 64,
 			       (v == AES_DECRYPT) ? "dec" : "enc");
 
-		memcpy(iv, aes_test_cfb128_iv, 16);
+		memcpy(iv, aes_test_cfb128_iv, sizeof(iv));
 		memcpy(key, aes_test_cfb128_key[u], 16 + u * 8);
 
 		offset = 0;
 		aes_setkey_enc(&ctx, key, 128 + u * 64);
 
 		if (v == AES_DECRYPT) {
-			memcpy(buf, aes_test_cfb128_ct[u], 64);
-			aes_crypt_cfb128(&ctx, v, 64, &offset, iv, buf, buf);
+			memcpy(buf, aes_test_cfb128_ct[u], sizeof(buf));
+			aes_crypt_cfb128(&ctx, v, sizeof(buf), &offset, iv, buf, buf);
 
-			if (memcmp(buf, aes_test_cfb128_pt, 64) != 0) {
+			if (memcmp(buf, aes_test_cfb128_pt, sizeof(buf)) != 0) {
 				if (verbose != 0)
 					printf("failed\n");
 
 				return (1);
 			}
 		} else {
-			memcpy(buf, aes_test_cfb128_pt, 64);
-			aes_crypt_cfb128(&ctx, v, 64, &offset, iv, buf, buf);
+			memcpy(buf, aes_test_cfb128_pt, sizeof(buf));
+			aes_crypt_cfb128(&ctx, v, sizeof(buf), &offset, iv, buf, buf);
 
-			if (memcmp(buf, aes_test_cfb128_ct[u], 64) != 0) {
+			if (memcmp(buf, aes_test_cfb128_ct[u], sizeof(buf)) != 0) {
 				if (verbose != 0)
 					printf("failed\n");
 
@@ -1103,6 +1123,29 @@ int aes_self_test(int verbose)
 
 	if (verbose != 0)
 		printf("\n");
+
+	return (0);
+
+}
+
+/*
+ * Checkup routine
+ */
+int aes_self_test(int verbose)
+{
+	int ret;
+
+	ret = aes_test_mode_ecb(verbose);
+	if (ret != 0)
+		return (ret);
+
+	ret = aes_test_mode_cbc(verbose);
+	if (ret != 0)
+		return (ret);
+
+	ret = aes_test_mode_cfb128(verbose);
+	if (ret != 0)
+		return (ret);
 
 	return (0);
 }
