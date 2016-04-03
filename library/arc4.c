@@ -145,7 +145,7 @@ int arc4_self_test(int verbose)
 
 		memcpy(buf, arc4_test_pt[i], 8);
 
-		arc4_setup(&ctx, (uint8_t *)arc4_test_key[i], 8);
+		arc4_setup(&ctx, (const uint8_t *)arc4_test_key[i], 8);
 		arc4_crypt(&ctx, buf, 8);
 
 		if (memcmp(buf, arc4_test_ct[i], 8) != 0) {
