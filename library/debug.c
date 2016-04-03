@@ -54,7 +54,7 @@ char *debug_fmt(const char *format, ...)
 {
 	va_list argp;
 	static char str[512];
-	int maxlen = sizeof(str) - 1;
+	size_t maxlen = sizeof(str) - 1;
 
 	va_start(argp, format);
 	vsnprintf(str, maxlen, format, argp);
@@ -68,7 +68,7 @@ void debug_print_msg(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text)
 {
 	char str[512];
-	int maxlen = sizeof(str) - 1;
+	size_t maxlen = sizeof(str) - 1;
 
 	if (ssl->f_dbg == NULL)
 		return;
@@ -82,7 +82,7 @@ void debug_print_ret(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text, int ret)
 {
 	char str[512];
-	int maxlen = sizeof(str) - 1;
+	size_t maxlen = sizeof(str) - 1;
 
 	if (ssl->f_dbg == NULL)
 		return;
@@ -101,7 +101,7 @@ void debug_print_buf(const ssl_context * ssl, int level,
 	char str[512];
 	size_t i, maxlen = sizeof(str) - 1;
 
-	if (ssl->f_dbg == NULL || len < 0)
+	if (ssl->f_dbg == NULL)
 		return;
 
 	snprintf(str, maxlen, "%s(%04d): dumping '%s' (%d bytes)\n",
@@ -139,13 +139,13 @@ void debug_print_mpi(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text, const mpi * X)
 {
 	char str[512];
-	int j, k, maxlen = sizeof(str) - 1, zeros = 1;
-	size_t i, n;
+	int j, k, zeros = 1;
+	size_t i, n, maxlen = sizeof(str) - 1;
 
 	if (ssl->f_dbg == NULL || X == NULL)
 		return;
 
-	for (n = X->n - 1; n >= 0; n--)
+	for (n = X->n - 1; n > 0; n--)
 		if (X->p[n] != 0)
 			break;
 
@@ -204,7 +204,8 @@ void debug_print_crt(const ssl_context * ssl, int level,
 		     const char *file, int line, const char *text, const x509_cert * crt)
 {
 	char str[1024], prefix[64], *p;
-	int i = 0, maxlen = sizeof(prefix) - 1;
+	int i = 0;
+	size_t maxlen = sizeof(prefix) - 1;
 
 	if (ssl->f_dbg == NULL || crt == NULL)
 		return;
