@@ -237,7 +237,7 @@ static const uint8_t shifts[2][4][4] = {
 	 }
 };
 
-static const char indexes[2][4][20] = {
+static const int8_t indexes[2][4][20] = {
 	{
 	 {
 	  0, 1, 2, 3, 8, 9, 10, 11, 38, 39,
@@ -268,7 +268,7 @@ static const char indexes[2][4][20] = {
 	 }
 };
 
-static const char transposes[2][20] = {
+static const int8_t transposes[2][20] = {
 	{
 	 21, 22, 23, 20,
 	 -1, -1, -1, -1,
@@ -348,9 +348,9 @@ void camellia_feistel(const uint32_t x[2], const uint32_t k[2],
  * Camellia key schedule (encryption)
  */
 void camellia_setkey_enc(camellia_context * ctx, const uint8_t *key,
-			 unsigned int keysize)
+			 size_t keysize)
 {
-	int idx;
+	uint32_t idx;
 	size_t i;
 	uint32_t *RK;
 	uint8_t t[64];
@@ -457,7 +457,7 @@ void camellia_setkey_enc(camellia_context * ctx, const uint8_t *key,
  * Camellia key schedule (decryption)
  */
 void camellia_setkey_dec(camellia_context * ctx, const uint8_t *key,
-			 unsigned int keysize)
+			 size_t keysize)
 {
 	int idx;
 	size_t i;

@@ -62,7 +62,7 @@ extern "C" {
 	 * \param keysize  must be 128, 192 or 256
 	 */
 	void camellia_setkey_enc(camellia_context * ctx, const uint8_t *key,
-				 unsigned int keysize);
+				 size_t keysize);
 
 	/**
 	 * \brief          CAMELLIA key schedule (decryption)
@@ -72,7 +72,7 @@ extern "C" {
 	 * \param keysize  must be 128, 192 or 256
 	 */
 	void camellia_setkey_dec(camellia_context * ctx, const uint8_t *key,
-				 unsigned int keysize);
+				 size_t keysize);
 
 	/**
 	 * \brief          CAMELLIA-ECB block encryption/decryption
