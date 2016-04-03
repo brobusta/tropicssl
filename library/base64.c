@@ -141,7 +141,7 @@ int base64_decode(uint8_t *dst, size_t *dlen, const uint8_t *src, size_t slen)
 	uint32_t j, x;
 	uint8_t *p;
 
-	for (i = j = n = 0; i < slen; i++) {
+	for (i = n = 0, j = 0; i < slen; i++) {
 		if ((slen - i) >= 2 && src[i] == '\r' && src[i + 1] == '\n')
 			continue;
 
@@ -170,7 +170,7 @@ int base64_decode(uint8_t *dst, size_t *dlen, const uint8_t *src, size_t slen)
 		return (TROPICSSL_ERR_BASE64_BUFFER_TOO_SMALL);
 	}
 
-	for (j = 3, n = x = 0, p = dst; i > 0; i--, src++) {
+	for (j = 3, x = 0, n = 0, p = dst; i > 0; i--, src++) {
 		if (*src == '\r' || *src == '\n')
 			continue;
 
@@ -208,7 +208,7 @@ static const uint8_t base64_test_dec[64] = {
 	0xD1, 0x41, 0xBA, 0x95, 0x31, 0x5A, 0x0B, 0x97
 };
 
-static const uint8_t base64_test_enc[] =
+static const uint8_t base64_test_enc[88] =
     "JEhuVodiWr2/F9mixBcaAZTtjx4Rs9cJDLbpEG8i7hPK"
     "swcFdsn6MWwINP+Nwmw4AEPpVJevUEvRQbqVMVoLlw==";
 
@@ -218,13 +218,14 @@ static const uint8_t base64_test_enc[] =
 int base64_self_test(int verbose)
 {
 	size_t len;
-	uint8_t *src, buffer[128];
+	const uint8_t *src;
+	uint8_t buffer[128];
 
 	if (verbose != 0)
 		printf("  Base64 encoding test: ");
 
 	len = sizeof(buffer);
-	src = (uint8_t *)base64_test_dec;
+	src = (const uint8_t *)base64_test_dec;
 
 	if (base64_encode(buffer, &len, src, 64) != 0 ||
 	    memcmp(base64_test_enc, buffer, 88) != 0) {
