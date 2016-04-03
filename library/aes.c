@@ -554,7 +554,7 @@ void aes_setkey_enc(aes_context * ctx, const uint8_t *key, unsigned int keysize)
  */
 void aes_setkey_dec(aes_context * ctx, const uint8_t *key, unsigned int keysize)
 {
-	int i, j;
+	uint32_t i, j;
 	aes_context cty;
 	uint32_t *RK;
 	uint32_t *SK;
@@ -656,7 +656,7 @@ void aes_setkey_dec(aes_context * ctx, const uint8_t *key, unsigned int keysize)
 void aes_crypt_ecb(aes_context * ctx,
 		   int mode, const uint8_t input[16], uint8_t output[16])
 {
-	int i;
+	uint32_t i;
 	uint32_t *RK, X0, X1, X2, X3, Y0, Y1, Y2, Y3;
 
 	RK = ctx->rk;
@@ -749,7 +749,7 @@ void aes_crypt_cbc(aes_context * ctx,
 		   uint8_t iv[16],
 		   const uint8_t *input, uint8_t *output)
 {
-	int i;
+	uint32_t i;
 	uint8_t temp[16];
 
 	if (mode == AES_DECRYPT) {
@@ -791,7 +791,7 @@ void aes_crypt_cfb128(aes_context * ctx,
 		      uint8_t iv[16],
 		      const uint8_t *input, uint8_t *output)
 {
-	int c;
+	uint8_t c;
 	size_t n = *iv_off;
 
 	if (mode == AES_DECRYPT) {

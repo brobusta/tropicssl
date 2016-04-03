@@ -48,9 +48,9 @@
  * \brief          AES context structure
  */
 typedef struct {
-	int nr;			/*!<  number of rounds  */
-	uint32_t *rk;	/*!<  AES round keys    */
-	uint32_t buf[68];	/*!<  unaligned data    */
+	uint32_t nr;        /*!<  number of rounds  */
+	uint32_t *rk;       /*!<  AES round keys    */
+	uint32_t buf[68];   /*!<  unaligned data    */
 } aes_context;
 
 #ifdef __cplusplus
