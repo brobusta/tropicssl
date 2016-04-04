@@ -50,23 +50,23 @@
  * 32-bit integer manipulation macros (big endian)
  */
 #ifndef GET_UINT32_BE
-#define GET_UINT32_BE(n,b,i)								\
-	{													\
-		(n) = ( (uint32_t) (b)[(i)	   ] << 24 )	\
-			| ( (uint32_t) (b)[(i) + 1] << 16 )	\
-			| ( (uint32_t) (b)[(i) + 2] <<	 8 )	\
-			| ( (uint32_t) (b)[(i) + 3]	   );	\
-	}
+#define GET_UINT32_BE(n,b,i)					\
+	do {							\
+		(n) = ((uint32_t) (b)[(i)] << 24)		\
+			| ((uint32_t) (b)[(i) + 1] << 16)	\
+			| ((uint32_t) (b)[(i) + 2] << 8)	\
+			| ((uint32_t) (b)[(i) + 3]);		\
+	} while (0)
 #endif
 
 #ifndef PUT_UINT32_BE
-#define PUT_UINT32_BE(n,b,i)								\
-	{													\
-		(b)[(i)	   ] = (uint8_t) ( (n) >> 24 );	\
-		(b)[(i) + 1] = (uint8_t) ( (n) >> 16 );	\
-		(b)[(i) + 2] = (uint8_t) ( (n) >>	 8 );	\
-		(b)[(i) + 3] = (uint8_t) ( (n)	   );	\
-	}
+#define PUT_UINT32_BE(n,b,i)					\
+	do {							\
+		(b)[(i)] = (uint8_t) ((n) >> 24);		\
+		(b)[(i) + 1] = (uint8_t) ((n) >> 16);		\
+		(b)[(i) + 2] = (uint8_t) ((n) >> 8);		\
+		(b)[(i) + 3] = (uint8_t) ((n));			\
+	} while (0)
 #endif
 
 /*
@@ -244,54 +244,64 @@ static const uint32_t RHs[16] = {
 /*
  * Initial Permutation macro
  */
-#define DES_IP(X,Y)													\
-	{																\
-		T = ((X >>	4) ^ Y) & 0x0F0F0F0F; Y ^= T; X ^= (T <<  4);	\
-		T = ((X >> 16) ^ Y) & 0x0000FFFF; Y ^= T; X ^= (T << 16);	\
-		T = ((Y >>	2) ^ X) & 0x33333333; X ^= T; Y ^= (T <<  2);	\
-		T = ((Y >>	8) ^ X) & 0x00FF00FF; X ^= T; Y ^= (T <<  8);	\
-		Y = ((Y << 1) | (Y >> 31)) & 0xFFFFFFFF;					\
-		T = (X ^ Y) & 0xAAAAAAAA; Y ^= T; X ^= T;					\
-		X = ((X << 1) | (X >> 31)) & 0xFFFFFFFF;					\
-	}
+#define DES_IP(X,Y)						\
+	do {							\
+		T = ((X >> 4) ^ Y) & 0x0F0F0F0F;		\
+		Y ^= T; X ^= (T << 4);				\
+		T = ((X >> 16) ^ Y) & 0x0000FFFF;		\
+		Y ^= T; X ^= (T << 16);				\
+		T = ((Y >> 2) ^ X) & 0x33333333;		\
+		X ^= T; Y ^= (T << 2);				\
+		T = ((Y >> 8) ^ X) & 0x00FF00FF;		\
+		X ^= T; Y ^= (T << 8);				\
+		Y = ((Y << 1) | (Y >> 31)) & 0xFFFFFFFF;	\
+		T = (X ^ Y) & 0xAAAAAAAA; 			\
+		Y ^= T; X ^= T;					\
+		X = ((X << 1) | (X >> 31)) & 0xFFFFFFFF;	\
+	} while (0)
 
 /*
  * Final Permutation macro
  */
-#define DES_FP(X,Y)													\
-	{																\
-		X = ((X << 31) | (X >> 1)) & 0xFFFFFFFF;					\
-		T = (X ^ Y) & 0xAAAAAAAA; X ^= T; Y ^= T;					\
-		Y = ((Y << 31) | (Y >> 1)) & 0xFFFFFFFF;					\
-		T = ((Y >>	8) ^ X) & 0x00FF00FF; X ^= T; Y ^= (T <<  8);	\
-		T = ((Y >>	2) ^ X) & 0x33333333; X ^= T; Y ^= (T <<  2);	\
-		T = ((X >> 16) ^ Y) & 0x0000FFFF; Y ^= T; X ^= (T << 16);	\
-		T = ((X >>	4) ^ Y) & 0x0F0F0F0F; Y ^= T; X ^= (T <<  4);	\
-	}
+#define DES_FP(X,Y)						\
+	do {							\
+		X = ((X << 31) | (X >> 1)) & 0xFFFFFFFF;	\
+		T = (X ^ Y) & 0xAAAAAAAA;			\
+		X ^= T; Y ^= T;					\
+		Y = ((Y << 31) | (Y >> 1)) & 0xFFFFFFFF;	\
+		T = ((Y >> 8) ^ X) & 0x00FF00FF;		\
+		X ^= T; Y ^= (T << 8);				\
+		T = ((Y >> 2) ^ X) & 0x33333333;		\
+		X ^= T; Y ^= (T << 2);				\
+		T = ((X >> 16) ^ Y) & 0x0000FFFF;		\
+		Y ^= T; X ^= (T << 16);				\
+		T = ((X >> 4) ^ Y) & 0x0F0F0F0F;		\
+		Y ^= T; X ^= (T << 4);				\
+	} while (0)
 
 /*
  * DES round macro
  */
-#define DES_ROUND(X,Y)							\
-	{											\
-		T = *SK++ ^ X;							\
-		Y ^= SB8[ (T	  ) & 0x3F ] ^			\
-			SB6[ (T >>	 8) & 0x3F ] ^			\
-			SB4[ (T >> 16) & 0x3F ] ^			\
-			SB2[ (T >> 24) & 0x3F ];			\
-												\
+#define DES_ROUND(X,Y)						\
+	do {							\
+		T = *SK++ ^ X;					\
+		Y ^= SB8[(T) & 0x3F]				\
+			^ SB6[(T >> 8) & 0x3F]			\
+			^ SB4[(T >> 16) & 0x3F]			\
+			^ SB2[(T >> 24) & 0x3F];		\
+								\
 		T = *SK++ ^ ((X << 28) | (X >> 4));		\
-		Y ^= SB7[ (T	  ) & 0x3F ] ^			\
-			SB5[ (T >>	 8) & 0x3F ] ^			\
-			SB3[ (T >> 16) & 0x3F ] ^			\
-			SB1[ (T >> 24) & 0x3F ];			\
-	}
+		Y ^= SB7[(T) & 0x3F]				\
+			^ SB5[(T >> 8) & 0x3F]			\
+			^ SB3[(T >> 16) & 0x3F]			\
+			^ SB1[(T >> 24) & 0x3F];		\
+	} while (0)
 
-#define SWAP(a,b) { uint32_t t = a; a = b; b = t; t = 0; }
+#define SWAP(a,b) do {uint32_t t = a; a = b; b = t; t = 0;} while (0)
 
 static void des_setkey(uint32_t SK[32], const uint8_t key[8])
 {
-	int i;
+	uint32_t i;
 	uint32_t X, Y, T;
 
 	GET_UINT32_BE(X, key, 0);
@@ -371,7 +381,7 @@ void des_setkey_enc(des_context * ctx, const uint8_t key[8])
  */
 void des_setkey_dec(des_context * ctx, const uint8_t key[8])
 {
-	int i;
+	uint32_t i;
 
 	des_setkey(ctx->sk, key);
 
@@ -381,10 +391,10 @@ void des_setkey_dec(des_context * ctx, const uint8_t key[8])
 	}
 }
 
-static void des3_set2key(uint32_t esk[96],
-			 uint32_t dsk[96], const uint8_t key[16])
+static void des3_set2key(uint32_t esk[96], uint32_t dsk[96],
+		const uint8_t key[16])
 {
-	int i;
+	uint32_t i;
 
 	des_setkey(esk, key);
 	des_setkey(dsk + 32, key + 8);
@@ -426,10 +436,10 @@ void des3_set2key_dec(des3_context * ctx, const uint8_t key[16])
 	memset(sk, 0, sizeof(sk));
 }
 
-static void des3_set3key(uint32_t esk[96],
-			 uint32_t dsk[96], const uint8_t key[24])
+static void des3_set3key(uint32_t esk[96], uint32_t dsk[96],
+		const uint8_t key[24])
 {
-	int i;
+	uint32_t i;
 
 	des_setkey(esk, key);
 	des_setkey(dsk + 32, key + 8);
@@ -472,10 +482,9 @@ void des3_set3key_dec(des3_context * ctx, const uint8_t key[24])
 /*
  * DES-ECB block encryption/decryption
  */
-void des_crypt_ecb(des_context * ctx,
-		   const uint8_t input[8], uint8_t output[8])
+void des_crypt_ecb(des_context * ctx, const uint8_t input[8], uint8_t output[8])
 {
-	int i;
+	uint32_t i;
 	uint32_t X, Y, T, *SK;
 
 	SK = ctx->sk;
@@ -500,12 +509,13 @@ void des_crypt_ecb(des_context * ctx,
  * DES-CBC buffer encryption/decryption
  */
 void des_crypt_cbc(des_context * ctx,
-		   int mode,
-		   size_t length,
-		   uint8_t iv[8],
-		   const uint8_t *input, uint8_t *output)
+		int mode,
+		size_t length,
+		uint8_t iv[8],
+		const uint8_t *input,
+		uint8_t *output)
 {
-	int i;
+	uint32_t i;
 	uint8_t temp[8];
 
 	if (mode == DES_ENCRYPT) {
@@ -541,9 +551,10 @@ void des_crypt_cbc(des_context * ctx,
  * 3DES-ECB block encryption/decryption
  */
 void des3_crypt_ecb(des3_context * ctx,
-		    const uint8_t input[8], uint8_t output[8])
+		const uint8_t input[8],
+		uint8_t output[8])
 {
-	int i;
+	uint32_t i;
 	uint32_t X, Y, T, *SK;
 
 	SK = ctx->sk;
@@ -578,12 +589,13 @@ void des3_crypt_ecb(des3_context * ctx,
  * 3DES-CBC buffer encryption/decryption
  */
 void des3_crypt_cbc(des3_context * ctx,
-		    int mode,
-		    size_t length,
-		    uint8_t iv[8],
-		    const uint8_t *input, uint8_t *output)
+		int mode,
+		size_t length,
+		uint8_t iv[8],
+		const uint8_t *input,
+		uint8_t *output)
 {
-	int i;
+	uint32_t i;
 	uint8_t temp[8];
 
 	if (mode == DES_ENCRYPT) {
@@ -667,7 +679,7 @@ static const uint8_t des3_test_cbc_enc[3][8] = {
  */
 int des_self_test(int verbose)
 {
-	int i, j, u, v;
+	uint32_t i, j, u, v;
 	des_context ctx;
 	des3_context ctx3;
 	uint8_t key[24];
